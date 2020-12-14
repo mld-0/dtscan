@@ -1,0 +1,6 @@
+pytest
+argcomplete
+pandas
+freezegun
+pytz
+tzlocal
