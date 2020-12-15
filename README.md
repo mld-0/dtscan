@@ -35,26 +35,37 @@ splitsum - output sum of splits identified for each given interval (ymwdHMS) bet
 
 previous command, (to be implemented) 'uniques' (how? caller of dtscan? perl/xargs? don't tell me there isn't a tool for just such a thing), perform the given command once for each line containing a common value in a given column
 
+###	common arguments
+
+	Do not assume timezone of datetimes
+		--noassumetz
+	Input column delimitor
+		--IFS
+	Output column delimitor
+		--OFS
+	
 ### scan
 
 	Limit dt scan to given column
 		--col
-	Column delimitor, default="\t"
-		--col_delim
-	quickfilter start
+	quickfilter date start
 		--qfstart
-		quickfilter end
+	quickfilter date end
 		--qfend
+	quickfilter range, intervals before now
+		--qfnum
+	quickfilter interval
+		-qfinterval
 	Range filter start
 		--rfstart
 	Range filter end
 		--rfend
+	Invert Range Filter 
+		--rfinvert
 	Sort lines chronologically
 		--sortdt
-	Sort lines alphabetically
-		--sortalpha
 	Replace datetimes with given format
-		--replacefmt
+		--outfmt
 
 TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) seperators between '%F' and '%H/%M/%S'
 
@@ -70,7 +81,7 @@ TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) sepe
 
 ### deltas (continues 'matches')
 
-	<negative delta behaviour>
+	negative delta behaviour (Unimplemented)
 		--negativedelta
 	Use seconds for outputs
 		--nodhms

@@ -4,3 +4,4 @@ pandas
 freezegun
 pytz
 tzlocal
+dateparser
