@@ -58,9 +58,9 @@ class DTRange(object):
     dtconvert = DTConvert()
 
     #   If True, pass function inputs to _log.debug()
-    _printdebug_func_inputs = False
+    _printdebug_func_inputs = True
     #   If True, pass function results to _log.debug
-    _printdebug_func_outputs = False
+    _printdebug_func_outputs = True
     _warn_substitute = True
 
     def Update_Vars(self, _args):
@@ -135,11 +135,11 @@ class DTRange(object):
             raise Exception("unimplemented arg_datetime_start as int")
         if (isinstance(arg_datetime_end, int)):
             raise Exception("unimplemented arg_datetime_end as int")
-        if (self._printdebug_func_inputs):
-            _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
-            _log.debug("arg_datetime_end=(%s)" % str(arg_datetime_end))
-            _log.debug("arg_interval=(%s)" % str(arg_interval))
-            _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
+        #if (self._printdebug_func_inputs):
+        _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
+        _log.debug("arg_datetime_end=(%s)" % str(arg_datetime_end))
+        _log.debug("arg_interval=(%s)" % str(arg_interval))
+        _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
         import pandas
         dtRange_list = [ x for x in pandas.date_range(start=arg_datetime_start.strftime(dateformat_str), end=arg_datetime_end.strftime(dateformat_str), freq=datefrequency) ]
         if not (arg_type_datetime):
@@ -163,6 +163,7 @@ class DTRange(object):
         intervalEnd = None
         if isinstance(arg_interval, list):
             arg_interval = arg_interval[0]
+        _log.debug("arg_interval=(%s)" % str(arg_interval))
         #   (when) last item is '2020-11', this is actually 2020-11-01T00:00:00 - excluding items actually in month 2020-11. Therefore, find intervalEnd as last datetime + 1 interval
         #   {{{
         if (arg_interval == "y"):
@@ -180,6 +181,8 @@ class DTRange(object):
         elif (arg_interval == "S"):
             intervalEnd = arg_datetimes_sorted[-1] + relativedelta(seconds=1)
         #   }}}
+        if (intervalEnd is None):
+            raise Exception("intervalEnd is None")
         firstAndLast = [ arg_datetimes_sorted[0], intervalEnd ]
         if (self._printdebug_func_inputs):
             _log.debug("first=(%s), last=(%s)" % (str(firstAndLast[0]), str(firstAndLast[1])))

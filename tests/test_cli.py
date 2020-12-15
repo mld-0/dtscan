@@ -178,7 +178,7 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
-    #   test cases:
+    #   test cases: 
     #   scan (hello world)
     #       scan
     #   scan, current month: 
@@ -205,47 +205,77 @@ class Test_Cli(unittest.TestCase):
     #   deltas
     #   splitsum
 
-    def test_deltas(self):
+    def test_splitsum_d(self):
+    #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
-        path_check = self._getPath_CheckData("vimh-samples-deltas.txt")
+        path_check = self._getPath_CheckData("vimh-samples-splitsum-d-dhms.txt")
+        args_list = [ '-I', path_test, 'splitsum', '--interval', 'd']
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    def test_splitsum_nodhms(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-splitsum-s.txt")
+        args_list = [ '-I', path_test, '--nodhms', 'splitsum' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    def test_deltas(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-deltas-dhms.txt")
         args_list = [ '-I', path_test, 'deltas' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
-    def test_splitsum(self):
+    def test_deltas_nodhms(self):
+    #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
-        path_check = self._getPath_CheckData("vimh-samples-splitsum.txt")
-        args_list = [ '-I', path_test, 'splitsum' ]
+        path_check = self._getPath_CheckData("vimh-samples-deltas-s.txt")
+        args_list = [ '-I', path_test, '--nodhms', 'deltas' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
     def test_count(self):
+    #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-count-d.txt")
         args_list = [ '-I', path_test, 'count', '--interval', 'd' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
     def test_splits60(self):
+    #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-split60-dhms.txt")
         args_list = [ '-I', path_test, 'splits', '--splitlen', '60' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
     def test_splits60_nodhms(self):
+    #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-split60-s.txt")
         args_list = [ '-I', path_test, '--nodhms', 'splits', '--splitlen', '60' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
     def test_matches_col1(self):
+    #   {{{
         path_test = self._getPath_TestData("column-datetime.txt")
         path_check = self._getPath_CheckData("column-datetimes-col1.txt")
         args_list = [  '-I', path_test, 'matches', '--col', '1' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
     def test_scan_rfNov27Minutes(self):
     #   {{{
