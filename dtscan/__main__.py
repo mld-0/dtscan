@@ -19,6 +19,7 @@ _logging_format="%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
+#   these functions must call 'self.Update_Vars(_args)'
 def _Parsers_AssignFunc(arg_dtscanner):
     _subparser_scan.set_defaults(func = arg_dtscanner.Interface_Scan)
     _subparser_matches.set_defaults(func = arg_dtscanner.Interface_Matches)
@@ -77,7 +78,6 @@ def cliscan():
     dtscanner = DTScanner()
     _Parsers_AssignFunc(dtscanner)
     _args = _parser.parse_args()
-    dtscanner.Update_Vars(_args)
 
     if not hasattr(_args, 'func'):
         _log.error("No command given")
@@ -99,6 +99,8 @@ def cliscan():
         _log.debug("None result, exit")
         sys.exit(0)
     for loop_line in result_stream:
+        #   remove trailing newline:
+        loop_line = loop_line.rstrip()
         print(loop_line)
 
     ##   shtab

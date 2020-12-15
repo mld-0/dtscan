@@ -65,7 +65,12 @@ class DTConvert(object):
     _printdebug_func_failures = False
     _printdebug_warn_strict_parse = False
 
+    _IFS = ""
+    _OFS = ""
+
     def Update_Vars(self, _args):
+        self._IFS = _args.IFS
+        self._OFS = _args.OFS
         self._warn_substitute = _args.warnings
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
@@ -618,7 +623,7 @@ class DTConvert(object):
     #   {{{
     #   TODO: 2020-11-30T00:13:20AEDT a split should be an itterable object, storing columns of the split as a dictionary, and this method provided as the 'to-string' 
         #   If splitlist is a list of lists, vs list of scalars 
-        _delim = self._output_delim
+        _delim = self._OFS
         result_str = ""
         #for loop_item in arg_splitlist_item:
         #    result_str += str(loop_item) + _delim

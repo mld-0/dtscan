@@ -140,6 +140,10 @@ class DTScanner(object):
         self._printdebug_func_inputs = _args.debug
         self.dtrange.Update_Vars(_args)
         self.dtconvert.Update_Vars(_args)
+        if isinstance(_args.col, list):
+            self._scan_column = _args.col[0]
+        else:
+            self._scan_column = _args.col
     #   }}}
 
     #   flags:
@@ -168,13 +172,16 @@ class DTScanner(object):
     #   }}}
 
     #   Functions: Interface_(.*)
-    #   {{{
     def Interface_Scan(self, _args):
+    #   {{{
         _infile = _args.infile
         _infile = self._util_CombineStreamList(_infile)
         _infile = self._util_MakeStreamSeekable(_infile)
-        if (_args.col is not None):
-            self._scan_column = _args.col
+
+        self.Update_Vars(_args)
+        self.dtrange.Update_Vars(_args)
+        self.dtconvert.Update_Vars(_args)
+
         if (_args.sortdt):
             _infile = self.Scan_SortChrono(_infile)
         if (_args.qfstart is not None) or (_args.qfend is not None):
@@ -184,81 +191,86 @@ class DTScanner(object):
         if (_args.outfmt is not None):
             _infile = self.Scan_ReplaceDTs(_infile, _args.outfmt)
         return _infile
+    #   }}}
 
     def Interface_Matches(self, _args):
-        pass
+    #   {{{
+    #	TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
+    #   TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
+    #   TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that ScanStream_DateTimeItems is able to return line numbers corresponding to input, not those from filtered stream it processes)
+        _input_file = self.Interface_Scan(_args)
+        scanmatch_output_stream_list = []
+        scanmatch_output_stream = None
+
+        results_list = self.ScanStream_DateTimeItems(_input_file)
+        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
+        _args.infile.close()
+
+        if not (_args.pos):
+            scanmatch_output_stream = self._util_ListAsStream(scanmatch_output_text)
+        else:
+            _delim = "\t"
+            scanmatch_outputTextAndPosition = []
+
+            if (len(scanmatch_output_text) != len(scanmatch_positions)):
+                raise Exception("mismatch, len(scanmatch_output_text)=(%i), len(scanmatch_positions)=(%i)" % (len(scanmatch_output_text), len(scanmatch_positions)))
+
+            for loop_output_text, loop_position in zip(scanmatch_output_text, scanmatch_positions):
+                loop_list_item = loop_output_text + _delim
+                for loop_position_item in loop_position:
+                    loop_list_item += str(loop_position_item) + _delim
+                scanmatch_outputTextAndPosition.append(loop_list_item[0:-1])
+            scanmatch_output_stream = self._util_ListAsStream(scanmatch_outputTextAndPosition)
+
+        _input_file.close()
+
+        return scanmatch_output_stream
+    #   }}}
 
     def Interface_Count(self, _args):
-        pass
+    #   {{{
+        _input_file = self.Interface_Scan(_args)
+
+        results_list = self.ScanStream_DateTimeItems(_input_file)
+        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
+        _args.infile.close()
+
+        count_results = self.dtrange.DTRange_CountBy(scanmatch_datetimes, _args.interval)
+
+        #count_results = self.dtrange.DTRange_CountBy(_input_file, _args.interval)
+        count_results = list(zip(*count_results))
+        count_results_stream = self._util_ListOfListsAsStream(count_results)
+        return count_results_stream
+    #   }}}
 
     def Interface_Deltas(self, _args):
         pass
 
     def Interface_Splits(self, _args):
-        pass
+    #   {{{
+        _input_file = self.Interface_Scan(_args)
+        results_list = self.ScanStream_DateTimeItems(_input_file)
+        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
+        #result_splits_elapsed, result_splits = self.Split_DeltasList(scanmatch_delta_s, _args.splitlen, scanmatch_datetimes)
+        result_splits_elapsed, result_splits = self.Split_DeltasList(scanmatch_datetimes, scanmatch_delta_s, _args.splitlen)
+        if (result_splits is None):
+            raise Exception("result_splits is None")
+        _delim = self._OFS
+        result_output = []
+        for loop_split in result_splits:
+            loop_output = self.dtconvert.Convert_SplitListItem2String(loop_split, _args.nodhms)
+            result_output.append(loop_output)
+        scanmatch_splits_stream = self._util_ListAsStream(result_output)
+        _input_file.close()
+        return scanmatch_splits_stream
+    #   }}}
+
 
     def Interface_SplitSum(self, _args):
         pass
-    #   }}}
-
-    #   Functions: 
-    def Scan_SortChrono(self, arg_input_file, arg_reverse=False):
-    #   {{{
-        #   if there are multiple datetimes on a given line, we consider the first (or n-th) for the purpouses of sorting
-        if (self._printdebug_func_inputs):
-            _log.debug("sortdt")
-        input_lines = []
-        #   Continue: 2020-12-02T21:26:21AEDT implement sortdt - read lines, sort lines chronologically, write to new stream, and return
-        for loop_line in arg_input_file:
-            input_lines.append(loop_line.strip())
-        arg_input_file.seek(0)
-        scanresults_list = self.ScanStream_DateTimeItems(arg_input_file)
-        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
-        #result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_datetimes, arg_reverse)
-        result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_output_text, arg_reverse)
-        #_log.debug("result_lines=(%s)" % str(result_lines))
-        _stream_tempfile = self._util_ListAsStream(result_lines)
-        arg_input_file.close()
-        return _stream_tempfile
-    #   }}}
-
-    #   TODO: 2020-12-15T18:31:59AEDT sort is not stable?
-    def _Sort_LineRange_DateTimes(self, input_lines, match_positions, match_datetimes, arg_reverse=False, arg_incNonDTLines=True):
-    #   {{{
-        #   line numbers, sorted first by line number, second by position in line
-        lines_order = [ x[2] for x in sorted(match_positions, key=operator.itemgetter(2,3)) ]
-        #lines_order = [ x[2] for x in match_positions ]
-        if (self._printdebug_func_inputs):
-            _log.debug("lines_order=(%s)" % str(lines_order))
-        #   Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes with same value?
-        dtzipped = zip(match_datetimes, lines_order)
-        #dtzipped = sorted(dtzipped, key = operator.itemgetter(0), reverse=arg_reverse)
-        dtzipped = sorted(dtzipped, reverse=arg_reverse)
-        match_datetimes, lines_order= zip(*dtzipped)
-        #   Add lines (containing datetimes) in chronological order
-        results_lines = []
-        linenums_included = []
-        for loop_line in lines_order:
-            if loop_line not in linenums_included:
-                linenums_included.append(loop_line)
-                try:
-                    results_lines.append(input_lines[loop_line])
-                except Exception as e:
-                    _log.error("%s, %s, Out of bounds line" % (str(type(e)), str(e)))
-        #   Add any lines (not containing datetimes)
-        if (arg_incNonDTLines):
-            loop_i=0
-            while (loop_i < len(input_lines)):
-                if loop_i not in linenums_included:
-                    linenums_included.append(loop_i)
-                    results_lines.append(input_lines[loop_i])
-                loop_i += 1
-        if (self._printdebug_func_outputs):
-            _log.debug("lines_order=(%s)" % str(lines_order))
-        return results_lines
-    #   }}}
 
 
+    #   About: Replace datetime instances with those of arg_outfmt
     def Scan_ReplaceDTs(self, arg_infile, arg_outfmt):
         _log.error("unimplemented")
         return arg_infile
@@ -636,8 +648,8 @@ class DTScanner(object):
 
             #   Ongoing: 2020-11-30T21:44:54AEDT behaviour if self._scan_column > len(loop_split_columns)?
             loop_split_columns = []
-            if (self._scan_column is not None) and (self._scan_column_delim is not None):
-                loop_split_columns = [pos for pos, char in enumerate(stream_line) if char == self._scan_column_delim]
+            if (self._scan_column is not None) and (self._IFS is not None):
+                loop_split_columns = [pos for pos, char in enumerate(stream_line) if char == self._IFS]
                 loop_split_columns.append(len(stream_line))
                 #for loop_col_item in loop_cols:
                     #loop_split_columns.append(loop_col_item)
@@ -651,7 +663,7 @@ class DTScanner(object):
                 for loop_regex_match in loop_regex_item.finditer(stream_line):
 
                     loop_match_col_start = -1
-                    if (self._scan_column is not None) and (self._scan_column_delim is not None):
+                    if (self._scan_column is not None) and (self._IFS is not None):
                         #_log.debug("match start/end: %i, %i" % (loop_regex_match.start(), loop_regex_match.end()))
                         loop_match_col_start = 0
                         loop_match_col_end = 0
@@ -678,8 +690,9 @@ class DTScanner(object):
                         raise Exception("Failed to decipher match_item_datetime, loop_regex_match_group=(%s)" % str(loop_regex_match.group()))
 
                     #   Add result match_item to list matches_scan
-                    #if (self._scan_column is not None) and (self._scan_column_delim is not None) and (loop_match_col_start == self._scan_column):
+                    #if (self._scan_column is not None) and (self._IFS is not None) and (loop_match_col_start == self._scan_column):
                     #   Ongoing: 2020-11-30T23:06:33AEDT is our if condition here correct?
+                    #_log.error("loop_match_col_start=(%s)" % str(loop_match_col_start))
                     if (self._scan_column is None)  or (loop_match_col_start == self._scan_column):
                         scanmatch_text.append(loop_regex_match.group())
                         scanmatch_positions.append(match_item_list)
@@ -724,10 +737,180 @@ class DTScanner(object):
         return [ scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s ]
     #   }}}
 
+    def Split_DeltasList(self, arg_datetime_list, arg_deltalist, arg_split):
+        #_log.error("unimplemented")
+        #return arg_infile
+    #   {{{
+    #   TODO: 2020-12-09T22:23:19AEDT Replace split_table (list) with dictionary, indexes 0-7 with descriptive keys
+    #   TODO: 2020-11-25T18:22:27AEDT flag -> output delta quantities as Dhms instead of seconds
+    #   Ongoing: 2020-11-24T21:28:36AEDT use Decimal anywhere (currently) float is being used to store seconds
+    #   Ongoing: 2020-11-24T21:26:30AEDT (do we want to be) returning decimals instead of floats for elapsed/before/after -> (better solution presumedly being to) store as integer in microseconds, or using Python's builtin <datetime.delta> 
+        if isinstance(arg_split, list):
+            arg_split = arg_split[0]
+        if isinstance(arg_split, str):
+            arg_split = decimal.Decimal(arg_split)
+        result_splits = []
+        result_split_elapsed = []
+        #result_singles = []
+        if (len(arg_deltalist) != len(arg_datetime_list)):
+            raise Exception("mismatch, len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
+        try:
+            if (self._printdebug_func_inputs):
+                _log.debug("len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
+                _log.debug("arg_deltalist=(%s)" % str(arg_deltalist))
+            loop_i=0
+            #   split_table:
+            #       0:      start
+            #       1:      end
+            #       2:      count
+            #       3:      elapsed
+            #       4:      starttime
+            #       5:      endtime
+            #       6:      before
+            #       7:      after
+            _index_start = 0
+            _index_end = 1
+            _index_count = 2
+            _index_elapsed = 3
+            _index_starttime = 4
+            _index_endtime = 5
+            _index_before = 6
+            _index_after = 7
+            split_table = [0] * 8
+            split_table[_index_starttime] = arg_datetime_list[0]
+            split_table[_index_endtime] = '-'
+            split_table[_index_elapsed] = decimal.Decimal(0)
+            split_table[_index_before] = decimal.Decimal(0)
+            split_table[_index_after] = decimal.Decimal(0)
+            loop_elapsed = 0
+            for loop_delta_decimal in arg_deltalist:
+                #_log.debug("loop_i=(%i), loop_delta_decimal=(%s)" % (loop_i, str(loop_delta_decimal)))
+                #loop_delta_decimal = decimal.Decimal(str(loop_delta))
+                if (loop_delta_decimal > arg_split) and (loop_delta_decimal > 0):
+                    split_table[_index_end] = loop_i
+                    split_table[_index_after] = loop_delta_decimal
+                    split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
+                    split_table[_index_endtime] = arg_datetime_list[loop_i]
+                    split_table[_index_elapsed] = loop_elapsed
+                    result_splits.append(split_table)
+                    result_split_elapsed.append(loop_elapsed)
+                    #if (split_details['elapsed'] > 0):
+                    #    result_splits.append(split_details)
+                    #else:
+                    #    result_singles.append(split_details)
+                    #split_table = []
+                    split_table = [0] * 8
+                    split_table[_index_start] = loop_i
+                    split_table[_index_starttime] = arg_datetime_list[loop_i]
+                    split_table[_index_before] = loop_delta_decimal
+                    loop_elapsed = 0
+                    pass
+                elif (loop_delta_decimal >= 0):
+                    #_log.debug("add loop_delta_decimal=(%s)" % str(loop_delta_decimal))
+                    #split_details['elapsed'] += loop_delta_decimal
+                    #   Ongoing: 2020-11-24T20:04:36AEDT dealing with rounding errors?
+                    loop_elapsed += loop_delta_decimal
+                    #_log.debug("loop_delta_decimal=(%s)" % str(loop_delta_decimal))
+                    #_log.debug("loop_elapsed=(%s)" % str(loop_elapsed))
+                    pass
+                else:
+                    split_table[_index_end] = loop_i
+                    split_table[_index_after] = loop_delta_decimal
+                    split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
+                    split_table[_index_endtime] = arg_datetime_list[loop_i]
+                    split_table[_index_elapsed] = loop_elapsed
+                    result_splits.append(split_table)
+                    result_split_elapsed.append(loop_elapsed)
+                    #if (split_details['elapsed'] > 0):
+                    #    result_splits.append(split_details)
+                    #else:
+                    #    result_singles.append(split_details)
+                    split_table = [0] * 8
+                    split_table[_index_start] = loop_i
+                    split_table[_index_starttime] = arg_datetime_list[loop_i]
+                    split_table[_index_before] = loop_delta_decimal
+                    loop_elapsed = 0
+                    _log.warning("negative loop_delta_decimal=(%s)" % str(loop_delta_decimal))
+                loop_i += 1
 
-    def Split_DeltaList(self, arg_datetimes, arg_deltas, arg_split_s):
-        _log.error("unimplemented")
-        return arg_infile
+            split_table[_index_end] = (loop_i-1)
+            split_table[_index_after] = arg_deltalist[loop_i-1]
+            split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
+            split_table[_index_endtime] = arg_datetime_list[loop_i-1]
+            split_table[_index_elapsed] = loop_elapsed
+            result_splits.append(split_table)
+            result_split_elapsed.append(loop_elapsed)
+        except Exception as e:
+            _log.error("exception: %s %s" % (type(e), str(e)))
+            return [ None, None ]
+        if (self._printdebug_func_outputs):
+            _log.debug("len(result_splits)=(%i)" % len(result_splits))
+        #_log.debug("len(result_singles)=(%i)" % len(result_singles))
+
+        return [ result_split_elapsed, result_splits ]
+    #   }}}
+
+
+
+
+    #   TODO: 2020-12-15T19:12:03AEDT Sort functions need rewriting
+    def Scan_SortChrono(self, arg_input_file, arg_reverse=False):
+    #   {{{
+        #   if there are multiple datetimes on a given line, we consider the first (or n-th) for the purpouses of sorting
+        if (self._printdebug_func_inputs):
+            _log.debug("sortdt")
+        input_lines = []
+        #   Continue: 2020-12-02T21:26:21AEDT implement sortdt - read lines, sort lines chronologically, write to new stream, and return
+        for loop_line in arg_input_file:
+            input_lines.append(loop_line.strip())
+        arg_input_file.seek(0)
+        scanresults_list = self.ScanStream_DateTimeItems(arg_input_file)
+        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+        #result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_datetimes, arg_reverse)
+        result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_output_text, arg_reverse)
+        #_log.debug("result_lines=(%s)" % str(result_lines))
+        _stream_tempfile = self._util_ListAsStream(result_lines)
+        arg_input_file.close()
+        return _stream_tempfile
+    #   }}}
+    #   TODO: 2020-12-15T18:31:59AEDT sort is not stable?
+    def _Sort_LineRange_DateTimes(self, input_lines, match_positions, match_datetimes, arg_reverse=False, arg_incNonDTLines=True):
+    #   {{{
+        #   line numbers, sorted first by line number, second by position in line
+        lines_order = [ x[2] for x in sorted(match_positions, key=operator.itemgetter(2,3)) ]
+        #lines_order = [ x[2] for x in match_positions ]
+        if (self._printdebug_func_inputs):
+            _log.debug("lines_order=(%s)" % str(lines_order))
+        #   Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes with same value?
+        dtzipped = zip(match_datetimes, lines_order)
+        #dtzipped = sorted(dtzipped, key = operator.itemgetter(0), reverse=arg_reverse)
+        dtzipped = sorted(dtzipped, reverse=arg_reverse)
+        match_datetimes, lines_order= zip(*dtzipped)
+        #   Add lines (containing datetimes) in chronological order
+        results_lines = []
+        linenums_included = []
+        for loop_line in lines_order:
+            if loop_line not in linenums_included:
+                linenums_included.append(loop_line)
+                try:
+                    results_lines.append(input_lines[loop_line])
+                except Exception as e:
+                    _log.error("%s, %s, Out of bounds line" % (str(type(e)), str(e)))
+        #   Add any lines (not containing datetimes)
+        if (arg_incNonDTLines):
+            loop_i=0
+            while (loop_i < len(input_lines)):
+                if loop_i not in linenums_included:
+                    linenums_included.append(loop_i)
+                    results_lines.append(input_lines[loop_i])
+                loop_i += 1
+        if (self._printdebug_func_outputs):
+            _log.debug("lines_order=(%s)" % str(lines_order))
+        return results_lines
+    #   }}}
+
+    #   Functions: _util_(.*)
+    #   {{{
 
     #   Copy a given stream to a tempfile and return stream of tempfile. Closes arg_stream. If arg_force is False, return input stream if it is seekable, if True, create new stream regardless
     def _util_MakeStreamSeekable(self, arg_stream, arg_force=False):
@@ -786,6 +969,23 @@ class DTScanner(object):
             result_string += str(loop_str) + "\n"
         result_stream = io.StringIO(result_string)
         return self._util_MakeStreamSeekable(result_stream, True)
+    #   }}}
+
+    def _util_ListOfListsAsStream(self, arg_list):
+    #   {{{
+    #   TODO: 2020-12-09T19:47:36AEDT use delim from <>?
+        result_string = ""
+        _delim= "\t"
+        if (arg_list is None):
+            return None
+        for loop_list in arg_list:
+            for loop_item in loop_list:
+                result_string += str(loop_item) + _delim
+            result_string = result_string[0:-1] + "\n"
+        result_stream = io.StringIO(result_string)
+        return self._util_MakeStreamSeekable(result_stream, True)
+    #   }}}
+
     #   }}}
 
     #   Destructor, delete _path_temp_dir if it exists

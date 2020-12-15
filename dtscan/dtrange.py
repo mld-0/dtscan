@@ -44,6 +44,8 @@ from tzlocal import get_localzone
 from dateutil.relativedelta import relativedelta
 #   }}}1
 import dtscan
+
+from .dtconvert import DTConvert
 from .dtformats import datetime_formats
 
 _log = logging.getLogger('dtscan')
@@ -53,6 +55,7 @@ logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_loggin
 
 class DTRange(object):
 #   {{{
+    dtconvert = DTConvert()
 
     #   If True, pass function inputs to _log.debug()
     _printdebug_func_inputs = False
@@ -65,26 +68,27 @@ class DTRange(object):
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
 
-    #   Return tuple containing first and last datetimes from arg_stream
-    def DTRange_GetFirstAndLast(self, arg_stream):
-    #   {{{
-        arg_stream = dtscan._util_MakeStreamSeekable(arg_stream)
-        scanresults_list = None
-        try:
-            #   Ongoing: 2020-12-15T12:32:16AEDT 
-            scanresults_list = dtscan.Scan_DateTimes(arg_stream, datetime_formats['epoch'])
-            arg_stream.seek(0)
-        except Exception as e:
-            raise Exception("%s, %s, ScanStream_DateTimeItems() failed to read stream" % (str(type(e)), str(e)))
-        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
-        scanmatch_datetimes.sort()
-        result_dt_first = scanmatch_datetimes[0]
-        result_dt_last = scanmatch_datetimes[-1]
-        result_list = [ result_dt_first, result_dt_last ]
-        if (self._printdebug_func_outputs):
-            _log.debug("result_list=(%s)" % str(result_list))
-        return result_list
-        #   }}}
+    #   Ongoing: 2020-12-15T20:28:46AEDT not useable without (access to) dtscan
+    ##   Return tuple containing first and last datetimes from arg_stream
+    #def DTRange_GetFirstAndLast(self, arg_stream):
+    ##   {{{
+    #    arg_stream = dtscan._util_MakeStreamSeekable(arg_stream)
+    #    scanresults_list = None
+    #    try:
+    #        #   Ongoing: 2020-12-15T12:32:16AEDT 
+    #        scanresults_list = dtscan.Scan_DateTimes(arg_stream, datetime_formats['epoch'])
+    #        arg_stream.seek(0)
+    #    except Exception as e:
+    #        raise Exception("%s, %s, ScanStream_DateTimeItems() failed to read stream" % (str(type(e)), str(e)))
+    #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+    #    scanmatch_datetimes.sort()
+    #    result_dt_first = scanmatch_datetimes[0]
+    #    result_dt_last = scanmatch_datetimes[-1]
+    #    result_list = [ result_dt_first, result_dt_last ]
+    #    if (self._printdebug_func_outputs):
+    #        _log.debug("result_list=(%s)" % str(result_list))
+    #    return result_list
+    #    #   }}}
 
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?) 
     #   last datetime in resulting list is *after* arg_datetime_end
@@ -92,6 +96,9 @@ class DTRange(object):
     #   {{{
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
     #   TODO: 2020-12-07T19:14:18AEDT unimplemented hourly/minutly/secondly (HMS of ymwdHMS)
+        if isinstance(arg_interval, list):
+            arg_interval = arg_interval[0]
+
         dateformat_str = ""
         datefrequency = ""
         #   set datefrequency / dateformat_str as per arg_interval, (see below)
@@ -119,9 +126,9 @@ class DTRange(object):
             datefrequency = "S"
         #   If arg_datetime_(start|end) are strings, convert them to datetimes
         if (isinstance(arg_datetime_start, str)):
-            arg_datetime_start = self.Convert_string2DateTime(arg_datetime_start)
+            arg_datetime_start = self.dtconvert.Convert_string2DateTime(arg_datetime_start)
         if (isinstance(arg_datetime_end, str)):
-            arg_datetime_end = self.Convert_string2DateTime(arg_datetime_end)
+            arg_datetime_end = self.dtconvert.Convert_string2DateTime(arg_datetime_end)
         #   Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
         #   If arg_datetime_(start|end) are integers, offset current datetime by n intervals (use OffsetDateTime_DeltaYMWDhms)
         if (isinstance(arg_datetime_start, int)):
@@ -154,6 +161,8 @@ class DTRange(object):
     def _DTRange_Convert_SortedDTList2Range(self, arg_datetimes_sorted, arg_interval, arg_type_datetime):
     #   {{{
         intervalEnd = None
+        if isinstance(arg_interval, list):
+            arg_interval = arg_interval[0]
         #   (when) last item is '2020-11', this is actually 2020-11-01T00:00:00 - excluding items actually in month 2020-11. Therefore, find intervalEnd as last datetime + 1 interval
         #   {{{
         if (arg_interval == "y"):
@@ -179,16 +188,19 @@ class DTRange(object):
         return result_range
     #   }}}
 
-    #   About: Given a stream, determine first and last datetimes, get range list, and datetimes in stream corresponding to each range. Return list [ list_counts, list_intervals ]. Intervals with count 0 are excluded 
-    def DTRange_CountBy(self, arg_infile, arg_interval):
-    #   {{{
-        #arg_infile = self._util_MakeStreamSeekable(arg_infile)
-        #   ScanStream_DateTimeItems() handles is-datetime-in-column, provided self._scan_column has been specified
-        scanresults_list = self.ScanStream_DateTimeItems(arg_infile)
-        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+    ##   About: Given a stream, determine first and last datetimes, get range list, and datetimes in stream corresponding to each range. Return list [ list_counts, list_intervals ]. Intervals with count 0 are excluded 
+    #def DTRange_CountBy(self, arg_infile, arg_interval):
+    ##   {{{
+    #    #arg_infile = self._util_MakeStreamSeekable(arg_infile)
+    #    #   ScanStream_DateTimeItems() handles is-datetime-in-column, provided self._scan_column has been specified
+    #    scanresults_list = self.ScanStream_DateTimeItems(arg_infile)
+    #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+
+    def DTRange_CountBy(self, arg_scanmatch_datetimes, arg_interval):
         #   TODO: 2020-12-08T15:15:45AEDT handle cases of (only) 0/1 datetimes 
         #   Get first and last datetime in input
-        scanmatch_datetimes_sorted = sorted(scanmatch_datetimes)
+        scanmatch_datetimes_sorted = sorted(arg_scanmatch_datetimes)
+        #_log.error("scanmatch_datetimes_sorted=(%s)" % str(scanmatch_datetimes_sorted))
         #   for item in range list, create list of datetimes which are after item, but before next item
         datetime_range = self._DTRange_Convert_SortedDTList2Range(scanmatch_datetimes_sorted, arg_interval, True)
         datetime_range_str = self._DTRange_Convert_SortedDTList2Range(scanmatch_datetimes_sorted, arg_interval, False)
@@ -197,7 +209,7 @@ class DTRange(object):
         loop_i = 0
         while (loop_i < len(datetime_range)-1):
             count_range.append(0)
-            for loop_datetime in scanmatch_datetimes:
+            for loop_datetime in arg_scanmatch_datetimes:
                 loop_tz = loop_datetime.tzinfo
                 if (loop_datetime >= datetime_range[loop_i].replace(tzinfo=loop_tz) and loop_datetime < datetime_range[loop_i+1].replace(tzinfo=loop_tz)):
                     count_range[loop_i] += 1
@@ -243,7 +255,7 @@ class DTRange(object):
             loop_i += 1
         if not (arg_nodhms):
             interval_split_sum_temp = interval_split_sum
-            interval_split_sum = [ self.Convert_seconds2Dhms(x) for x in interval_split_sum_temp ]
+            interval_split_sum = [ self.dtconvert.Convert_seconds2Dhms(x) for x in interval_split_sum_temp ]
             #_log.debug("interval_split_sum=(%s)" % str(interval_split_sum))
         result_list = [ [], [] ]
         for loop_count, loop_dtStr in zip(interval_split_sum, datetime_range_str):

@@ -53,6 +53,8 @@ class Test_Cli(unittest.TestCase):
     dtscan_instance._printdebug_func_inputs = True
     dtscan_instance._printdebug_func_outputs = True
 
+    _arg_debug = '-v'
+
     def _util_assertExists(self, path_file):
         self.assertTrue(os.path.isfile(path_file), "file path_file=(%s) not found" % str(path_file))
 
@@ -121,6 +123,8 @@ class Test_Cli(unittest.TestCase):
     #   {{{
         print("%s" % str(self._printdebug_tests_leading))
         _Parsers_AssignFunc(self.dtscan_instance)
+        if (len(self._arg_debug) > 0):
+            args_list.insert(0, self._arg_debug)
         args = _parser.parse_args(args_list)
         _test_result = None
         #if (args.debug):
@@ -166,7 +170,7 @@ class Test_Cli(unittest.TestCase):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_TestData("vimh-samples.txt")
-        args_list = [ '-I', path_test, 'scan' ]
+        args_list = [  '-I', path_test, 'scan' ]
         _test_result = None
         self._util_assertExists(path_test)
         with freeze_time("2020-11-01"):
@@ -187,18 +191,67 @@ class Test_Cli(unittest.TestCase):
     #       scan --qfstart 2020-05 --qfend 2020-08
     #   scan dayrange, Oct-Nov
     #       scan --qfinterval d --qfstart 2020-10 --qfend 2020-11
+    #       <more qfstart/qfend>
     #   scan range
     #       scan --rfstart 2020-11-27T22:24:10 --rfend 2020-11-27T22:26:00AEDT
+    #       <more rfstart/rfend>
     #   scan, chronological sort
     #       scan --sortdt
     #   matches, only first column
     #       matches --col 1
+    #   matches, 
+    #   count <interval>
+    #   splits
+    #   deltas
+    #   splitsum
+
+    def test_deltas(self):
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-deltas.txt")
+        args_list = [ '-I', path_test, 'deltas' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+
+    def test_splitsum(self):
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-splitsum.txt")
+        args_list = [ '-I', path_test, 'splitsum' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+
+    def test_count(self):
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-count-d.txt")
+        args_list = [ '-I', path_test, 'count', '--interval', 'd' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+
+    def test_splits60(self):
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-split60-dhms.txt")
+        args_list = [ '-I', path_test, 'splits', '--splitlen', '60' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+
+    def test_splits60_nodhms(self):
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-split60-s.txt")
+        args_list = [ '-I', path_test, '--nodhms', 'splits', '--splitlen', '60' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+
+    def test_matches_col1(self):
+        path_test = self._getPath_TestData("column-datetime.txt")
+        path_check = self._getPath_CheckData("column-datetimes-col1.txt")
+        args_list = [  '-I', path_test, 'matches', '--col', '1' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_scan_rfNov27Minutes(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov27Minutes.txt")
-        args_list = [ '-v', '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:24:10", "--rfend", "2020-11-27T22:25:55AEDT" ]
+        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:24:10", "--rfend", "2020-11-27T22:25:55AEDT" ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
@@ -207,7 +260,7 @@ class Test_Cli(unittest.TestCase):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
-        args_list = [ '-v', '-I', path_test, 'scan', '--qfinterval', 'm', '--qfstart', '0' ]
+        args_list = [  '-I', path_test, 'scan', '--qfinterval', 'm', '--qfstart', '0' ]
         _test_result = None
         self._util_assertExists(path_test)
         with freeze_time("2020-11-01"):
@@ -215,14 +268,16 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
-    #   Sort is unstable?
-    #def test_scan_sortdt(self):
-    #    path_test = self._getPath_TestData("vimh-sample-scrambled.txt")
-    #    path_check = self._getPath_TestData("vimh-samples.txt")
-    #    args_list = [ '-v', '-I', path_test, 'scan', '--sortdt' ]
-    #    _test_result = self.runtest_parseargs(args_list)
-    #    self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    def test_scan_sortdt(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-sample-scrambled.txt")
+        path_check = self._getPath_TestData("vimh-samples.txt")
+        args_list = [   '-I', path_test, 'scan', '--sortdt' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
 
 #   }}}
+
 #   }}}1
 
