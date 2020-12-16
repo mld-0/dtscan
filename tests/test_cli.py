@@ -307,6 +307,16 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    def test_matches_sortdt_linenums(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-sample-scrambled.txt")
+        path_check = self._getPath_CheckData("vimh-sample-scrambled-sortdt-pos.txt")
+        args_list = [ '-I', path_test, 'matches', '--pos', '--sortdt' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+
 #   }}}
 
 #   }}}1

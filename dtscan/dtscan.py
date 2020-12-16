@@ -15,6 +15,7 @@ import inspect
 import sys
 import os
 import importlib
+import importlib.resources
 import math
 import csv
 import time
@@ -32,6 +33,7 @@ import dateutil.relativedelta
 import time
 import tempfile
 import decimal
+import logging
 from subprocess import Popen, PIPE, STDOUT
 from os.path import expanduser
 from pathlib import Path
@@ -42,9 +44,6 @@ from tzlocal import get_localzone
 from dateutil.relativedelta import relativedelta
 #   }}}1
 #   {{{1
-
-import importlib.resources
-import logging
 from .dtconvert import DTConvert
 from .dtrange import DTRange
 from .dtsplit import DTsplit
@@ -59,7 +58,6 @@ logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_loggin
 class DTScanner(object):
 #   {{{
     #   class vars:
-    #   {{{
     dtconvert = DTConvert()
     dtrange = DTRange()
 
@@ -97,7 +95,6 @@ class DTScanner(object):
     #   TODO: 2020-11-28T20:31:23AEDT Only create _path_temp_dir when needed
     _path_temp_dir = tempfile.mkdtemp()
 
-    #   }}}
 
     def __init__(self):
         self.Read_RegexList()
@@ -233,6 +230,11 @@ class DTScanner(object):
         _infile = _args.infile
         _infile = self._util_CombineStreamList(_infile)
         _infile = self._util_MakeStreamSeekable(_infile)
+
+        self._input_linenum_map = []
+        for loop_i, loop_line in enumerate(_infile):
+            self._input_linenum_map.append(loop_i + 1)
+        _infile.seek(0)
 
         self.Update_Vars(_args)
         self.dtrange.Update_Vars(_args)
@@ -453,10 +455,13 @@ class DTScanner(object):
 
         #   Copy lines from arg_input_stream to tempfile_stream_write if they contain a string in filter_dates_list
         #   {{{
+        previous_input_linenums_map = self._input_linenum_map
+        self._input_linenum_map = []
         _output_lines = 0
-        for loop_line in arg_input_stream:
+        for loop_i, loop_line in enumerate(arg_input_stream):
             if any(x in loop_line for x in filter_dates_list):
                 tempfile_stream_write.write(loop_line)
+                self._input_linenum_map.append(previous_input_linenums_map[loop_i])
                 _output_lines += 1
         #   }}}
 
@@ -584,7 +589,9 @@ class DTScanner(object):
         #   }}}
         #   Identify lines containing datetimes (inside/outside) range, [arg_start, arg_end], and denote them to be copied: _linenums_copy[i] = 1
         for loop_i, (loop_datetime, loop_match) in enumerate(zip(scanmatch_datetimes, scanmatch_positions)):
-            loop_linenum = loop_match[2]
+
+            loop_linenum = loop_match[2]-1
+
             if (not arg_invert and ((loop_datetime >= arg_start) and (loop_datetime <= arg_end or arg_end is None))) or (arg_invert and ((loop_datetime < arg_start or arg_start is None) or (loop_datetime > arg_end or arg_end is None))):
                 _linenums_copy[loop_linenum] = 1
                 #   {{{
@@ -610,11 +617,17 @@ class DTScanner(object):
 
         #   copy lines where _linenums_copy[<>] = 1
         #   {{{
-        loop_i = 0
-        for loop_line in arg_input_stream:
+        #loop_i = 0
+        previous_input_linenums_map = self._input_linenum_map
+        self._input_linenum_map = []
+        for loop_i, loop_line in enumerate(arg_input_stream):
             if (_linenums_copy[loop_i] == 1):
                 tempfile_stream_write.write(loop_line)
                 _output_lines += 1
+                #self._input_linenum_map.append(loop_i + 1)
+                self._input_linenum_map.append(previous_input_linenums_map[loop_i])
+
+
             loop_i += 1
         arg_input_stream.seek(0)
         #   }}}
@@ -650,8 +663,8 @@ class DTScanner(object):
 
         #   TODO: 2020-11-27T18:16:59AEDT write stream to tempfile if it is not seekable
 
-        #   Attempt 1) Search for regex matches in arg_stream - itterate over each line, for each regex given in file qvar_scanstream_regexlist. 
         scanmatch_text = []
+        #   positions: [ match_num, regex_num, line_num, start_index, end_index, len ]
         scanmatch_positions = []
         scanmatch_datetimes = []
         scanmatch_output_text = []
@@ -722,7 +735,11 @@ class DTScanner(object):
                         #else:
                         #    _log.debug("item col: %i" % loop_match_col_start)
 
-                    match_item_list = [ loop_match_num, loop_regex_item_num, loop_line_num, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group()) ]
+                    linenum_lookup = self._input_linenum_map[loop_line_num]
+                    match_item_list = [ loop_match_num, loop_regex_item_num, linenum_lookup, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group()) ]
+                    #_log.debug("linenum_lookup=(%s)" % str(linenum_lookup))
+                    #match_item_list = [ loop_match_num, loop_regex_item_num, loop_line_num, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group()) ]
+
                     match_item_datetime = self.dtconvert.Convert_string2DateTime(loop_regex_match.group())
 
                     if not (match_item_datetime is None):
@@ -781,6 +798,7 @@ class DTScanner(object):
         return [ scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s ]
     #   }}}
 
+    #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
     def Split_DeltasList(self, arg_datetime_list, arg_deltalist, arg_split):
         #_log.error("unimplemented")
         #return arg_infile
@@ -798,6 +816,7 @@ class DTScanner(object):
         #result_singles = []
         if (len(arg_deltalist) != len(arg_datetime_list)):
             raise Exception("mismatch, len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
+
         try:
             if (self._printdebug_func_inputs):
                 _log.debug("len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
@@ -826,12 +845,14 @@ class DTScanner(object):
             split_table[_index_elapsed] = decimal.Decimal(0)
             split_table[_index_before] = decimal.Decimal(0)
             split_table[_index_after] = decimal.Decimal(0)
+            split_table[_index_start] = 1
             loop_elapsed = 0
+
             for loop_delta_decimal in arg_deltalist:
                 #_log.debug("loop_i=(%i), loop_delta_decimal=(%s)" % (loop_i, str(loop_delta_decimal)))
                 #loop_delta_decimal = decimal.Decimal(str(loop_delta))
                 if (loop_delta_decimal > arg_split) and (loop_delta_decimal > 0):
-                    split_table[_index_end] = loop_i
+                    split_table[_index_end] = loop_i + 1
                     split_table[_index_after] = loop_delta_decimal
                     split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
                     split_table[_index_endtime] = arg_datetime_list[loop_i]
@@ -844,11 +865,10 @@ class DTScanner(object):
                     #    result_singles.append(split_details)
                     #split_table = []
                     split_table = [0] * 8
-                    split_table[_index_start] = loop_i
+                    split_table[_index_start] = loop_i + 1
                     split_table[_index_starttime] = arg_datetime_list[loop_i]
                     split_table[_index_before] = loop_delta_decimal
                     loop_elapsed = 0
-                    pass
                 elif (loop_delta_decimal >= 0):
                     #_log.debug("add loop_delta_decimal=(%s)" % str(loop_delta_decimal))
                     #split_details['elapsed'] += loop_delta_decimal
@@ -856,9 +876,8 @@ class DTScanner(object):
                     loop_elapsed += loop_delta_decimal
                     #_log.debug("loop_delta_decimal=(%s)" % str(loop_delta_decimal))
                     #_log.debug("loop_elapsed=(%s)" % str(loop_elapsed))
-                    pass
                 else:
-                    split_table[_index_end] = loop_i
+                    split_table[_index_end] = loop_i + 1
                     split_table[_index_after] = loop_delta_decimal
                     split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
                     split_table[_index_endtime] = arg_datetime_list[loop_i]
@@ -870,14 +889,14 @@ class DTScanner(object):
                     #else:
                     #    result_singles.append(split_details)
                     split_table = [0] * 8
-                    split_table[_index_start] = loop_i
+                    split_table[_index_start] = loop_i + 1
                     split_table[_index_starttime] = arg_datetime_list[loop_i]
                     split_table[_index_before] = loop_delta_decimal
                     loop_elapsed = 0
                     _log.warning("negative loop_delta_decimal=(%s)" % str(loop_delta_decimal))
                 loop_i += 1
 
-            split_table[_index_end] = (loop_i-1)
+            split_table[_index_end] = (loop_i-1)+1
             split_table[_index_after] = arg_deltalist[loop_i-1]
             split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
             split_table[_index_endtime] = arg_datetime_list[loop_i-1]
@@ -900,36 +919,33 @@ class DTScanner(object):
     #   TODO: 2020-12-15T19:12:03AEDT Sort functions need rewriting
     def Scan_SortChrono(self, arg_input_file, arg_reverse=False):
     #   {{{
-        #   if there are multiple datetimes on a given line, we consider the first (or n-th) for the purpouses of sorting
         if (self._printdebug_func_inputs):
             _log.debug("sortdt")
         input_lines = []
-        #   Continue: 2020-12-02T21:26:21AEDT implement sortdt - read lines, sort lines chronologically, write to new stream, and return
         for loop_line in arg_input_file:
             input_lines.append(loop_line.strip())
         arg_input_file.seek(0)
         scanresults_list = self.ScanStream_DateTimeItems(arg_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
-        #result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_datetimes, arg_reverse)
         result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_output_text, arg_reverse)
-        #_log.debug("result_lines=(%s)" % str(result_lines))
         _stream_tempfile = self._util_ListAsStream(result_lines)
         arg_input_file.close()
         return _stream_tempfile
     #   }}}
-    #   TODO: 2020-12-15T18:31:59AEDT sort is not stable?
+
     def _Sort_LineRange_DateTimes(self, input_lines, match_positions, match_datetimes, arg_reverse=False, arg_incNonDTLines=True):
     #   {{{
-        #   line numbers, sorted first by line number, second by position in line
-        lines_order = [ x[2] for x in sorted(match_positions, key=operator.itemgetter(2,3)) ]
+        #   if there are multiple datetimes on a given line, we consider the first (chronologically) for the purpouses of sorting
+        #   line numbers, sorted first by line number, second by position in line. Convert from 1-indexed to 0-indexed
+        lines_order = [ x[2]-1 for x in sorted(match_positions, key=operator.itemgetter(2,3)) ]
         #lines_order = [ x[2] for x in match_positions ]
         if (self._printdebug_func_inputs):
             _log.debug("lines_order=(%s)" % str(lines_order))
         #   Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes with same value?
-        dtzipped = zip(match_datetimes, lines_order)
+        dtzipped = zip(match_datetimes, lines_order, self._input_linenum_map)
         #dtzipped = sorted(dtzipped, key = operator.itemgetter(0), reverse=arg_reverse)
         dtzipped = sorted(dtzipped, reverse=arg_reverse)
-        match_datetimes, lines_order= zip(*dtzipped)
+        match_datetimes, lines_order, self._input_linenum_map = zip(*dtzipped)
         #   Add lines (containing datetimes) in chronological order
         results_lines = []
         linenums_included = []
@@ -944,7 +960,7 @@ class DTScanner(object):
         if (arg_incNonDTLines):
             loop_i=0
             while (loop_i < len(input_lines)):
-                if loop_i not in linenums_included:
+                if (loop_i) not in linenums_included:
                     linenums_included.append(loop_i)
                     results_lines.append(input_lines[loop_i])
                 loop_i += 1
