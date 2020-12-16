@@ -140,10 +140,6 @@ class Test_Cli(unittest.TestCase):
             _test_result = args.func(args)
         except Exception as e:
             _log.error("%s\n%s, %s, for 'args.func(args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(args.func.__name__)))
-            try:
-                args.print_help()
-            except Exception as e:
-                _log.error("%s, %s, failed to call print_help() after initial exception processing 'args.func(args)'" % (str(type(e)), str(e)))
         #   Verify that _test_result is a list containing TextIOWrapper instances
         #   {{{
         self.assertTrue(isinstance(_test_result, io.TextIOWrapper), "Expect TextIOWrapper_test_result=(%s)" % str(type(_test_result)))
@@ -164,19 +160,6 @@ class Test_Cli(unittest.TestCase):
         with importlib.resources.path(self._pkg_testdata, arg_fname) as p:
             path_test = str(p)
         return path_test
-
-    #   About: compare input to itself - given no arguments, scan should output same stream as input
-    def test_scan_helloworld(self):
-    #   {{{
-        path_test = self._getPath_TestData("vimh-samples.txt")
-        path_check = self._getPath_TestData("vimh-samples.txt")
-        args_list = [  '-I', path_test, 'scan' ]
-        _test_result = None
-        self._util_assertExists(path_test)
-        with freeze_time("2020-11-01"):
-            _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
-    #   }}}
 
     #   test cases: 
     #   scan (hello world)
@@ -205,6 +188,20 @@ class Test_Cli(unittest.TestCase):
     #   deltas
     #   splitsum
 
+    #   compare input to itself - given no arguments, scan should output same stream as input
+    def test_scan_helloworld(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_TestData("vimh-samples.txt")
+        args_list = [  '-I', path_test, 'scan' ]
+        _test_result = None
+        self._util_assertExists(path_test)
+        with freeze_time("2020-11-01"):
+            _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   splitsum by days
     def test_splitsum_d(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -214,6 +211,27 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   splitsum by months
+    def test_splitsum_m(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-splitsum-m-dhms.txt")
+        args_list = [ '-I', path_test, 'splitsum', '--interval', 'm']
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   splitsum by years
+    def test_splitsum_y(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-splitsum-y-dhms.txt")
+        args_list = [ '-I', path_test, 'splitsum', '--interval', 'y']
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   splitsum with seconds output
     def test_splitsum_nodhms(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -223,6 +241,7 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   deltas
     def test_deltas(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -232,6 +251,7 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   deltas with seconds output
     def test_deltas_nodhms(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -241,7 +261,8 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
-    def test_count(self):
+    #   count by days
+    def test_count_d(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-count-d.txt")
@@ -250,6 +271,47 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   count by months
+    def test_count_m(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-count-m.txt")
+        args_list = [ '-I', path_test, 'count', '--interval', 'm' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   count by years
+    def test_count_y(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-count-y.txt")
+        args_list = [ '-I', path_test, 'count', '--interval', 'y' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   count by hours
+    def test_count_H(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-count-H.txt")
+        args_list = [ '-I', path_test, 'count', '--interval', 'H' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   split by 300s
+    def test_splits300(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-split300-dhms.txt")
+        args_list = [ '-I', path_test, 'splits', '--splitlen', '300' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   split by 60s
     def test_splits60(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -259,6 +321,7 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   split by 60s, seconds output
     def test_splits60_nodhms(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -268,6 +331,17 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   matches in column 2 
+    def test_matches_col2(self):
+    #   {{{
+        path_test = self._getPath_TestData("column-datetime.txt")
+        path_check = self._getPath_CheckData("column-datetimes-col2.txt")
+        args_list = [  '-I', path_test, 'matches', '--col', '2' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   matches in column 1
     def test_matches_col1(self):
     #   {{{
         path_test = self._getPath_TestData("column-datetime.txt")
@@ -277,6 +351,27 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   matches in column 0
+    def test_matches_col0(self):
+    #   {{{
+        path_test = self._getPath_TestData("column-datetime.txt")
+        path_check = self._getPath_CheckData("column-datetimes-col0.txt")
+        args_list = [  '-I', path_test, 'matches', '--col', '0' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   matches in column 3
+    def test_matches_col3(self):
+    #   {{{
+        path_test = self._getPath_TestData("column-datetime.txt")
+        path_check = self._getPath_CheckData("column-datetimes-col3.txt")
+        args_list = [  '-I', path_test, 'matches', '--col', '3' ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   get specific items within ~27M interval
     def test_scan_rfNov27Minutes(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -286,6 +381,27 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   get specific items within ~27M interval
+    def test_scan_rfMar(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-Mar.txt")
+        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-03-01", "--rfend", "2020-04-01" ]
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   Backwards range-filter date range
+    def test_scan_rfNovBackward27Minutes(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-Nov27Minutes.txt")
+        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:25:55AEDT", "--rfend", "2020-11-27T22:24:10" ]
+        with self.assertRaises(Exception) as context:
+            _test_result = self.runtest_parseargs(args_list)
+    #   }}}
+
+    #   quick-filter for current (Novemeber) month
     def test_scan_qfMonthqfStart0(self):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
@@ -298,19 +414,45 @@ class Test_Cli(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   quick-filter, same start and end date
+    def test_scan_qfMonthqfStartEndNov(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
+        args_list = [  '-I', path_test, 'scan', '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-11' ]
+        _test_result = None
+        self._util_assertExists(path_test)
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+    #   }}}
+
+    #   quick-filter, backwards date range
+    def test_scan_qfMonthqfStartNovEndOct(self):
+    #   {{{
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
+        args_list = [  '-I', path_test, 'scan', '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-10' ]
+        _test_result = None
+        self._util_assertExists(path_test)
+        with self.assertRaises(Exception) as context:
+            _test_result = self.runtest_parseargs(args_list)
+    #   }}}
+
+    #   scan with chronological sort
     def test_scan_sortdt(self):
     #   {{{
-        path_test = self._getPath_TestData("vimh-sample-scrambled.txt")
+        path_test = self._getPath_TestData("vimh-samples-scrambled.txt")
         path_check = self._getPath_TestData("vimh-samples.txt")
         args_list = [   '-I', path_test, 'scan', '--sortdt' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
 
+    #   matches with chronological sort
     def test_matches_sortdt_linenums(self):
     #   {{{
-        path_test = self._getPath_TestData("vimh-sample-scrambled.txt")
-        path_check = self._getPath_CheckData("vimh-sample-scrambled-sortdt-pos.txt")
+        path_test = self._getPath_TestData("vimh-samples-scrambled.txt")
+        path_check = self._getPath_CheckData("vimh-samples-scrambled-sortdt-pos.txt")
         args_list = [ '-I', path_test, 'matches', '--pos', '--sortdt' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)

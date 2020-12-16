@@ -69,6 +69,7 @@ class DTConvert(object):
     _OFS = ""
 
     def Update_Vars(self, _args):
+    #   {{{
         self._IFS = _args.IFS
         self._OFS = _args.OFS
         self._warn_substitute = _args.warnings
@@ -79,6 +80,7 @@ class DTConvert(object):
         self._assume_local_Tz = not _args.noassumetz
         self._warn_LocalTz = _args.warnings
         self._printdebug_warn_strict_parse = _args.warnings
+    #   }}}
 
     #   About: given two python datetimes, calculate the difference between them using dateutil.relativedelta, and return as 'YMWDhms' string
     def Convert_DateTimes2Delta_YMWDhms(self, arg_datetime_start, arg_datetime_end):

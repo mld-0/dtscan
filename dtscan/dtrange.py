@@ -3,7 +3,6 @@
 #   vim: set tabstop=4 modeline modelines=10 foldmethod=marker:
 #   vim: set foldlevel=2 foldcolumn=3: 
 #   }}}1
-#   {{{1
 #   {{{3
 import operator
 import shutil
@@ -43,6 +42,7 @@ from io import StringIO
 from tzlocal import get_localzone
 from dateutil.relativedelta import relativedelta
 #   }}}1
+#   {{{1
 import dtscan
 
 from .dtconvert import DTConvert
@@ -88,7 +88,7 @@ class DTRange(object):
     #    if (self._printdebug_func_outputs):
     #        _log.debug("result_list=(%s)" % str(result_list))
     #    return result_list
-    #    #   }}}
+    ##   }}}
 
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?) 
     #   last datetime in resulting list is *after* arg_datetime_end
@@ -135,11 +135,13 @@ class DTRange(object):
             raise Exception("unimplemented arg_datetime_start as int")
         if (isinstance(arg_datetime_end, int)):
             raise Exception("unimplemented arg_datetime_end as int")
-        #if (self._printdebug_func_inputs):
-        _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
-        _log.debug("arg_datetime_end=(%s)" % str(arg_datetime_end))
-        _log.debug("arg_interval=(%s)" % str(arg_interval))
-        _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
+        if (arg_datetime_start > arg_datetime_end):
+            raise Exception("backwards arg_datetime_start=(%s), arg_datetime_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+        if (self._printdebug_func_inputs):
+            _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
+            _log.debug("arg_datetime_end=(%s)" % str(arg_datetime_end))
+            _log.debug("arg_interval=(%s)" % str(arg_interval))
+            _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
         import pandas
         dtRange_list = [ x for x in pandas.date_range(start=arg_datetime_start.strftime(dateformat_str), end=arg_datetime_end.strftime(dateformat_str), freq=datefrequency) ]
         if not (arg_type_datetime):
@@ -184,6 +186,8 @@ class DTRange(object):
         if (intervalEnd is None):
             raise Exception("intervalEnd is None")
         firstAndLast = [ arg_datetimes_sorted[0], intervalEnd ]
+        if (arg_datetimes_sorted[0] > intervalEnd):
+            raise Exception("arg_datetimes_sorted[0] > intervalEnd")
         if (self._printdebug_func_inputs):
             _log.debug("first=(%s), last=(%s)" % (str(firstAndLast[0]), str(firstAndLast[1])))
         #   Get datetime range for first/last datetimes and arg_interval

@@ -61,22 +61,23 @@ class DTScanner(object):
     dtconvert = DTConvert()
     dtrange = DTRange()
 
-    _scan_regexfile = [ 'dtscan', 'dt-regex-items.txt' ]
-    _scan_regexlist = []
-
     #   substitute: _scan_column_delim
     _IFS = ""
     #   substitute: _printdebug_warn_assume_tz
     _warn_substitute = False
-
     _OFS = ""
     _assume_LocalTz = True
     _warn_LocalTz = True
-
     #   If True, pass function inputs to _log.debug()
     _printdebug_func_inputs = True
     #   If True, pass function results to _log.debug
     _printdebug_func_outputs = True
+    #   If True, destructor __del__() logs actions it performs (deleting tempfile/dir)
+    _printdebug_destructor = True
+
+    #   default file, containing regexes to be used by scan
+    _scan_regexfile = [ 'dtscan', 'dt-regex-items.txt' ]
+    _scan_regexlist = []
 
     #   variables: _scan_(.*), filled by Interface_Scan(), if not None, used by 
     _scan_column = None
@@ -91,13 +92,40 @@ class DTScanner(object):
 
     #   Used in name of tempfiles, itterated every time tempfile is created
     _tempfile_counter = 0
-
     #   TODO: 2020-11-28T20:31:23AEDT Only create _path_temp_dir when needed
     _path_temp_dir = tempfile.mkdtemp()
 
+    #   flags: (currently?) unused
+    #   {{{
+    #   If True, Convert_string2DateTime() assigns the system local timezone to any datetimes that do not have a timezone
+    #flag_assume_local_timezone = True
+    #   If True, Convert_DateTime2String() uses 'isoformat()' instead of strftime
+    flag_dt2str_prefer_tz_Z = True
+    #   If False, disable function _PrintArgs()
+    _printdebug_printargs = False
+    #   If True, _PrintArgs() only outputs arguments not equal to their argparse default value 
+    _printdebug_args_only_nondefault = True
+    #   If True, include convert functions in debug output
+    _printdebug_func_includeConvert = False
+    #   If True, pass 'failures to pass input' to _log.debug(), for functions that attempt multiple methods to parse given input
+    _printdebug_func_failures = False
+    #   If True, warn when substituting characters in input
+    _printdebug_warn_substitute = False
+    #   Warn about multiple regex matches 
+    _printdebug_warn_strict_parse = False
+    #   }}}
 
     def __init__(self):
         self.Read_RegexList()
+
+    #   Destructor, delete _path_temp_dir if it exists
+    def __del__(self):
+    #   {{{
+        if (os.path.exists(self._path_temp_dir)):
+            if (self._printdebug_destructor):
+                _log.debug("delete _path_temp_dir=(%s)" % str(self._path_temp_dir))
+            shutil.rmtree(self._path_temp_dir)
+    #   }}}
 
     #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
     #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
@@ -142,32 +170,6 @@ class DTScanner(object):
         else:
             self._scan_column = _args.col
     #   }}}
-
-    #   flags:
-    #   {{{
-    #   If True, destructor __del__() logs actions it performs (deleting tempfile/dir)
-    _printdebug_destructor = True
-
-    #   If True, Convert_string2DateTime() assigns the system local timezone to any datetimes that do not have a timezone
-    #flag_assume_local_timezone = True
-
-    #   If True, Convert_DateTime2String() uses 'isoformat()' instead of strftime
-    flag_dt2str_prefer_tz_Z = True
-    #   If False, disable function _PrintArgs()
-    _printdebug_printargs = False
-    #   If True, _PrintArgs() only outputs arguments not equal to their argparse default value 
-    _printdebug_args_only_nondefault = True
-
-    #   If True, include convert functions in debug output
-    _printdebug_func_includeConvert = False
-    #   If True, pass 'failures to pass input' to _log.debug(), for functions that attempt multiple methods to parse given input
-    _printdebug_func_failures = False
-    #   If True, warn when substituting characters in input
-    _printdebug_warn_substitute = False
-    #   Warn about multiple regex matches 
-    _printdebug_warn_strict_parse = False
-    #   }}}
-
 
     def Interface_Deltas(self, _args):
     #   {{{
@@ -223,8 +225,6 @@ class DTScanner(object):
         _log.error("unimplemented")
         return arg_infile
 
-
-    #   Functions: Interface_(.*)
     def Interface_Scan(self, _args):
     #   {{{
         _infile = _args.infile
@@ -320,7 +320,6 @@ class DTScanner(object):
         return scanmatch_splits_stream
     #   }}}
 
-
     def Scan_QuickFilter(self, arg_input_stream, arg_date_start, arg_date_end, arg_interval):
     #   {{{
     #   TODO: 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
@@ -401,6 +400,9 @@ class DTScanner(object):
         if (arg_date_end is None):
             arg_date_end = date_now
 
+        if (arg_date_start > arg_date_end):
+            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+
         #   About Pandas date range:
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
@@ -480,7 +482,7 @@ class DTScanner(object):
         tempfile_stream_write.close()
         tempfile_stream_result = open(_path_tempfile, "r")
         return tempfile_stream_result
-        #   }}}
+    #   }}}
 
     def Scan_RangeFilter(self, arg_input_stream, arg_start, arg_end, arg_invert=False, arg_includeNonDTs=False):
     #   {{{
@@ -498,6 +500,9 @@ class DTScanner(object):
             arg_start = self.dtconvert.Convert_string2DateTime(arg_start)
         if isinstance(arg_end, str):
             arg_end = self.dtconvert.Convert_string2DateTime(arg_end)
+
+        if (arg_start is not None) and (arg_end is not None) and (arg_start > arg_end):
+            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
 
         #   if arg_input_stream is a string, consisting of a valid filepath, create stream from said file
         _input_path = None
@@ -800,8 +805,6 @@ class DTScanner(object):
 
     #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
     def Split_DeltasList(self, arg_datetime_list, arg_deltalist, arg_split):
-        #_log.error("unimplemented")
-        #return arg_infile
     #   {{{
     #   TODO: 2020-12-09T22:23:19AEDT Replace split_table (list) with dictionary, indexes 0-7 with descriptive keys
     #   TODO: 2020-11-25T18:22:27AEDT flag -> output delta quantities as Dhms instead of seconds
@@ -912,8 +915,6 @@ class DTScanner(object):
 
         return [ result_split_elapsed, result_splits ]
     #   }}}
-
-
 
 
     #   TODO: 2020-12-15T19:12:03AEDT Sort functions need rewriting
@@ -1046,15 +1047,6 @@ class DTScanner(object):
         return self._util_MakeStreamSeekable(result_stream, True)
     #   }}}
 
-    #   }}}
-
-    #   Destructor, delete _path_temp_dir if it exists
-    def __del__(self):
-    #   {{{
-        if (os.path.exists(self._path_temp_dir)):
-            if (self._printdebug_destructor):
-                _log.debug("delete _path_temp_dir=(%s)" % str(self._path_temp_dir))
-            shutil.rmtree(self._path_temp_dir)
     #   }}}
 
 #   }}}
