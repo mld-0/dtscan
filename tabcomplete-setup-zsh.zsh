@@ -7,7 +7,6 @@
 nl=$'\n'; tab=$'\t';
 
 #	If shtab is installed, and dtscan is installed, and user shell is zsh, then continue
-#	{{{
 if ! command -v shtab > /dev/null; then
 	echo "error, shtab not found" > /dev/stderr
 	exit 2
@@ -20,7 +19,6 @@ if [[ $SHELL == ".*/zsh" ]]; then
 	echo "error, not zsh" > /dev/stderr
 	exit 2
 fi
-#	}}}
 
 #	zsh site-functions, standard directory for completion scripts
 path_sitefunctions="/usr/local/share/zsh/site-functions"

@@ -62,8 +62,9 @@ class DTConvert(object):
     #   If True, pass function results to _log.debug
     _printdebug_func_outputs = False
     _warn_substitute = True
-    _printdebug_func_failures = False
     _printdebug_warn_strict_parse = False
+
+    _printdebug_func_failures = False
 
     _IFS = ""
     _OFS = ""
@@ -76,7 +77,6 @@ class DTConvert(object):
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
         self._printdebug_func_includeConvert = _args.debug
-        self._printdebug_func_failures = _args.debug
         self._assume_local_Tz = not _args.noassumetz
         self._warn_LocalTz = _args.warnings
         self._printdebug_warn_strict_parse = _args.warnings

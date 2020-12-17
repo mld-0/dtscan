@@ -69,11 +69,12 @@ class DTScanner(object):
     _assume_LocalTz = True
     _warn_LocalTz = True
     #   If True, pass function inputs to _log.debug()
-    _printdebug_func_inputs = True
+    _printdebug_func_inputs = False
     #   If True, pass function results to _log.debug
-    _printdebug_func_outputs = True
+    _printdebug_func_outputs = False
     #   If True, destructor __del__() logs actions it performs (deleting tempfile/dir)
-    _printdebug_destructor = True
+    _printdebug_destructor = False
+
 
     #   default file, containing regexes to be used by scan
     _scan_regexfile = [ 'dtscan', 'dt-regex-items.txt' ]
@@ -94,6 +95,10 @@ class DTScanner(object):
     _tempfile_counter = 0
     #   TODO: 2020-11-28T20:31:23AEDT Only create _path_temp_dir when needed
     _path_temp_dir = tempfile.mkdtemp()
+
+    _sorted_match_positions = None
+    _sorted_match_output_datetimes = None
+    _sorted_match_datetimes = None
 
     #   flags: (currently?) unused
     #   {{{
@@ -163,6 +168,7 @@ class DTScanner(object):
         self._warn_substitute = _args.warnings
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
+        self._printdebug_destructor = _args.debug
         self.dtrange.Update_Vars(_args)
         self.dtconvert.Update_Vars(_args)
         if isinstance(_args.col, list):
@@ -227,6 +233,10 @@ class DTScanner(object):
 
     def Interface_Scan(self, _args):
     #   {{{
+        self._sorted_match_positions = None
+        self._sorted_match_datetimes = None
+        self._sorted_match_output_datetimes = None
+
         _infile = _args.infile
         _infile = self._util_CombineStreamList(_infile)
         _infile = self._util_MakeStreamSeekable(_infile)
@@ -259,9 +269,18 @@ class DTScanner(object):
         _input_file = self.Interface_Scan(_args)
         scanmatch_output_stream_list = []
         scanmatch_output_stream = None
+        scanmatch_output_text = None
+        scanmatch_datetimes = None
 
-        results_list = self.ScanStream_DateTimeItems(_input_file)
-        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
+        #   If we have sorted our input stream, use the sorted position and datetime lists, (as opposed to results of scanstream, run on sorted stream)
+        if (self._sorted_match_positions is not None) and (self._sorted_match_output_datetimes is not None) and (self._sorted_match_datetimes is not None):
+            scanmatch_positions = self._sorted_match_positions
+            scanmatch_output_text = self._sorted_match_output_datetimes
+            scanmatch_datetimes = self._sorted_match_datetimes
+        else:
+            results_list = self.ScanStream_DateTimeItems(_input_file)
+            scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
+
         _args.infile.close()
 
         if not (_args.pos):
@@ -663,7 +682,7 @@ class DTScanner(object):
 
         if len(self._scan_regexlist) == 0:
             raise Exception("self._scan_regexlist_len=(%s)" % len(self._scan_regexlist))
-        if (self._scan_regexlist):
+        if (self._printdebug_func_outputs) and (self._scan_regexlist):
             _log.debug("self._scan_regexlist_len=(%s)" % len(self._scan_regexlist))
 
         #   TODO: 2020-11-27T18:16:59AEDT write stream to tempfile if it is not seekable
@@ -928,26 +947,33 @@ class DTScanner(object):
         arg_input_file.seek(0)
         scanresults_list = self.ScanStream_DateTimeItems(arg_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
-        result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_positions, scanmatch_output_text, arg_reverse)
+        result_lines = self._Sort_LineRange_DateTimes(input_lines, scanmatch_datetimes, scanmatch_positions, scanmatch_output_text, arg_reverse)
         _stream_tempfile = self._util_ListAsStream(result_lines)
         arg_input_file.close()
         return _stream_tempfile
     #   }}}
 
-    def _Sort_LineRange_DateTimes(self, input_lines, match_positions, match_datetimes, arg_reverse=False, arg_incNonDTLines=True):
+    def _Sort_LineRange_DateTimes(self, input_lines, match_datetimes, match_positions, match_output_datetimes, arg_reverse=False, arg_incNonDTLines=True):
     #   {{{
-        #   if there are multiple datetimes on a given line, we consider the first (chronologically) for the purpouses of sorting
+        #   Ongoing: 2020-12-17T17:05:51AEDT here we 1) sort stream chronologically, with each line being positioned according to the earliest datetime it contains. Also, match_positions and match_output_datetimes
+
         #   line numbers, sorted first by line number, second by position in line. Convert from 1-indexed to 0-indexed
         lines_order = [ x[2]-1 for x in sorted(match_positions, key=operator.itemgetter(2,3)) ]
         #lines_order = [ x[2] for x in match_positions ]
         if (self._printdebug_func_inputs):
             _log.debug("lines_order=(%s)" % str(lines_order))
         #   Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes with same value?
-        dtzipped = zip(match_datetimes, lines_order, self._input_linenum_map)
+        dtzipped = zip(match_datetimes, match_output_datetimes, lines_order, match_positions)
         #dtzipped = sorted(dtzipped, key = operator.itemgetter(0), reverse=arg_reverse)
         dtzipped = sorted(dtzipped, reverse=arg_reverse)
-        match_datetimes, lines_order, self._input_linenum_map = zip(*dtzipped)
-        #   Add lines (containing datetimes) in chronological order
+        match_datetimes, match_output_datetimes, lines_order, match_positions = zip(*dtzipped)
+
+        #   Once we have sorted datetimes (by calling this function), store sorted lists (for use by 'matches', <others?>)
+        self._sorted_match_positions = match_positions
+        self._sorted_match_output_datetimes = match_output_datetimes
+        self._sorted_match_datetimes = match_datetimes
+
+        #   Add lines (containing datetimes) in chronological order to (what will become) our new stream
         results_lines = []
         linenums_included = []
         for loop_line in lines_order:

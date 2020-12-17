@@ -71,6 +71,8 @@ TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) sepe
 
 ### matches (continues 'scan')
 
+	only historical
+		--historic
 	include position of matches
 		--pos
 	

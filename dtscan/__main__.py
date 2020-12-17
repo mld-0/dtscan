@@ -53,6 +53,8 @@ def _SetupParser_Scan(arg_parser):
 
 def _SetupParser_Matches(arg_parser):
     _SetupParser_Scan(arg_parser)
+    #   TODO: 2020-12-17T00:02:31AEDT dtscan, implement '--historic'
+    arg_parser.add_argument('--historic', action='store_true', default=False, help="Only include datetimes before the present time")
     arg_parser.add_argument('--pos', action='store_true', default=False, help="Include positions of matches <headings?>")
 
 def _SetupParser_Count(arg_parser):
