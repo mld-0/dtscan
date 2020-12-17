@@ -76,8 +76,10 @@ class DTScanner(object):
     _printdebug_destructor = False
 
 
-    #   default file, containing regexes to be used by scan
+    #   Ongoing: 2020-12-17T18:13:28AEDT two locations - where 'dtscan' (vs dtscan.dtscan) points to depends on what is our entry point to the application
+    #   default file, containing regexes to be used by scan 
     _scan_regexfile = [ 'dtscan', 'dt-regex-items.txt' ]
+    _scan_regexfile_second = [ 'dtscan.dtscan', 'dt-regex-items.txt' ]
     _scan_regexlist = []
 
     #   variables: _scan_(.*), filled by Interface_Scan(), if not None, used by 
@@ -136,6 +138,8 @@ class DTScanner(object):
     #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
     def Read_RegexList(self, arg_regexfile=None):
     #   {{{
+        self._scan_regexlist = []
+
         try:
             _scan_regexlist_stream = importlib.resources.open_text(*self._scan_regexfile)
             for loop_line in _scan_regexlist_stream:
@@ -143,8 +147,18 @@ class DTScanner(object):
                 self._scan_regexlist.append(loop_regex_item)
             _scan_regexlist_stream.close()
         except Exception as e:
-            _log.error("%s, %s, failed to read dt-regex-items.txt" % (type(e), str(e)))
-            sys.exit(2)
+            #_log.error("%s, %s, failed to read dt-regex-items.txt" % (type(e), str(e)))
+            pass
+        try:
+            _scan_regexlist_stream = importlib.resources.open_text(*self._scan_regexfile_second)
+            for loop_line in _scan_regexlist_stream:
+                loop_regex_item = re.compile(loop_line.strip())
+                self._scan_regexlist.append(loop_regex_item)
+            _scan_regexlist_stream.close()
+        except Exception as e:
+            #_log.error("%s, %s, failed to read dt-regex-items.txt" % (type(e), str(e)))
+            pass
+
         if (arg_regexfile is not None):
             try:
                 f = open(arg_regexfile, "r")
@@ -154,6 +168,11 @@ class DTScanner(object):
                 f.close()
             except Exception as e:
                 _log.error("%s, %s, failed to read arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
+
+        if (len(self._scan_regexlist) == 0):
+            _log.error("Failed to read _scan_regexlist")
+            sys.exit(2)
+            
         if (self._printdebug_func_outputs):
             _log.debug("_scan_regexlist=(%s)" % str(self._scan_regexlist))
     #   }}}
@@ -759,8 +778,15 @@ class DTScanner(object):
                         #else:
                         #    _log.debug("item col: %i" % loop_match_col_start)
 
-                    linenum_lookup = self._input_linenum_map[loop_line_num]
+                    #   Ongoing: 2020-12-17T18:11:13AEDT (I don't like it) - either use _input_linenum_map or dont? Why are we even making this exception anyway? (out-of-bounds exception when calling DTRange_GetFirstAndLast() directly from python code)
+                    linenum_lookup = None
+                    if (len(self._input_linenum_map) > loop_line_num):
+                        linenum_lookup = self._input_linenum_map[loop_line_num]
+                    else:
+                        linenum_lookup = loop_line_num
+
                     match_item_list = [ loop_match_num, loop_regex_item_num, linenum_lookup, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group()) ]
+
                     #_log.debug("linenum_lookup=(%s)" % str(linenum_lookup))
                     #match_item_list = [ loop_match_num, loop_regex_item_num, loop_line_num, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group()) ]
 
@@ -994,6 +1020,28 @@ class DTScanner(object):
         if (self._printdebug_func_outputs):
             _log.debug("lines_order=(%s)" % str(lines_order))
         return results_lines
+    #   }}}
+
+    #   Ongoing: 2020-12-15T20:28:46AEDT not useable without (access to) dtscan
+    #   Return tuple containing first and last datetimes from arg_stream
+    def DTRange_GetFirstAndLast(self, arg_stream):
+    #   {{{
+        arg_stream = self._util_MakeStreamSeekable(arg_stream)
+        scanresults_list = None
+        try:
+            #   Ongoing: 2020-12-15T12:32:16AEDT 
+            scanresults_list = self.ScanStream_DateTimeItems(arg_stream)
+            arg_stream.seek(0)
+        except Exception as e:
+            raise Exception("%s, %s, ScanStream_DateTimeItems() failed to read stream" % (str(type(e)), str(e)))
+        scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+        scanmatch_datetimes.sort()
+        result_dt_first = scanmatch_datetimes[0]
+        result_dt_last = scanmatch_datetimes[-1]
+        result_list = [ result_dt_first, result_dt_last ]
+        if (self._printdebug_func_outputs):
+            _log.debug("result_list=(%s)" % str(result_list))
+        return result_list
     #   }}}
 
     #   Functions: _util_(.*)

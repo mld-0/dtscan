@@ -68,28 +68,6 @@ class DTRange(object):
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
 
-    #   Ongoing: 2020-12-15T20:28:46AEDT not useable without (access to) dtscan
-    ##   Return tuple containing first and last datetimes from arg_stream
-    #def DTRange_GetFirstAndLast(self, arg_stream):
-    ##   {{{
-    #    arg_stream = dtscan._util_MakeStreamSeekable(arg_stream)
-    #    scanresults_list = None
-    #    try:
-    #        #   Ongoing: 2020-12-15T12:32:16AEDT 
-    #        scanresults_list = dtscan.Scan_DateTimes(arg_stream, datetime_formats['epoch'])
-    #        arg_stream.seek(0)
-    #    except Exception as e:
-    #        raise Exception("%s, %s, ScanStream_DateTimeItems() failed to read stream" % (str(type(e)), str(e)))
-    #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
-    #    scanmatch_datetimes.sort()
-    #    result_dt_first = scanmatch_datetimes[0]
-    #    result_dt_last = scanmatch_datetimes[-1]
-    #    result_list = [ result_dt_first, result_dt_last ]
-    #    if (self._printdebug_func_outputs):
-    #        _log.debug("result_list=(%s)" % str(result_list))
-    #    return result_list
-    ##   }}}
-
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?) 
     #   last datetime in resulting list is *after* arg_datetime_end
     def DTRange_FromDates(self, arg_datetime_start, arg_datetime_end, arg_interval="d", arg_type_datetime=False):
