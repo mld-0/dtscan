@@ -26,7 +26,7 @@ import traceback
 #   }}}1
 #   {{{1
 from dtscan.dtscan import DTScanner
-from dtscan.__main__ import _Parsers_AssignFunc, _parser
+from dtscan.__main__ import _Parsers_AssignFunc_cliscan, _parser_cliscan
 
 #   debug logging
 _log = logging.getLogger('dtscan')
@@ -34,7 +34,7 @@ _logging_format="%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
-class Test_Cli(unittest.TestCase):
+class Test_CliScan(unittest.TestCase):
 #   {{{
 
     #   flags
@@ -122,10 +122,10 @@ class Test_Cli(unittest.TestCase):
     def runtest_parseargs(self, args_list, arg_flag_expectStreamList=True):
     #   {{{
         print("%s" % str(self._printdebug_tests_leading))
-        _Parsers_AssignFunc(self.dtscan_instance)
+        _Parsers_AssignFunc_cliscan(self.dtscan_instance)
         if (len(self._arg_debug) > 0):
             args_list.insert(0, self._arg_debug)
-        args = _parser.parse_args(args_list)
+        args = _parser_cliscan.parse_args(args_list)
         _test_result = None
         #if (args.debug):
         #    #logging.basicConfig(level=logging.DEBUG)
@@ -133,7 +133,7 @@ class Test_Cli(unittest.TestCase):
         #    self.dtscan_instance._printdebug_func_inputs = True
         #    self.dtscan_instance._printdebug_func_outputs = True
         #    if (_flag_printargs):
-        #        self.dtscan_instance._PrintArgs(args, _parser)
+        #        self.dtscan_instance._PrintArgs(args, _parser_cliscan)
         if not hasattr(args, 'func'):
             raise Exception("No subparser command given\n")
         try:

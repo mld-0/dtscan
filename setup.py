@@ -50,7 +50,10 @@ setup(
     packages = ['dtscan', 'tests'],
     tests_require=test_depend,
     entry_points={
-        'console_scripts': [ 'dtscan= dtscan.__main__:cliscan' ],
+        'console_scripts': [ 
+        'dtscan= dtscan.__main__:cliscan',
+        'dtrange=dtscan.__main__:clirange',
+        ],
     }
 )
 

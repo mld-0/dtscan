@@ -63,15 +63,21 @@ class DTRange(object):
     _printdebug_func_outputs = True
     _warn_substitute = True
 
+    def Interface_Range(self, _args):
+        return ""
+        result_range = self.DTRange_FromDates(_args.qfstart, _args.qfend, _args.qfinterval)
+
     def Update_Vars(self, _args):
         self._warn_substitute = _args.warnings
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
 
+
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?) 
     #   last datetime in resulting list is *after* arg_datetime_end
     def DTRange_FromDates(self, arg_datetime_start, arg_datetime_end, arg_interval="d", arg_type_datetime=False):
     #   {{{
+    #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as Scan_QuickFilter -> code in which is to be replaced by call to this function)
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
     #   TODO: 2020-12-07T19:14:18AEDT unimplemented hourly/minutly/secondly (HMS of ymwdHMS)
         if isinstance(arg_interval, list):
@@ -102,11 +108,21 @@ class DTRange(object):
         elif (arg_interval == "S"):
             dateformat_str = "%Y-%m-%dT%H:%M:%S"
             datefrequency = "S"
+        else:
+            raise Exception("Invalid arg_interval=(%s)" % str(arg_interval))
+
         #   If arg_datetime_(start|end) are strings, convert them to datetimes
         if (isinstance(arg_datetime_start, str)):
             arg_datetime_start = self.dtconvert.Convert_string2DateTime(arg_datetime_start)
         if (isinstance(arg_datetime_end, str)):
             arg_datetime_end = self.dtconvert.Convert_string2DateTime(arg_datetime_end)
+
+        #   If args are integers, subtract that many intervals from current date to get value for argument
+        if (isinstance(arg_datetime_start, int)):
+            pass
+        if (isinstance(arg_datetime_end, int)):
+            pass
+
         #   Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
         #   If arg_datetime_(start|end) are integers, offset current datetime by n intervals (use OffsetDateTime_DeltaYMWDhms)
         if (isinstance(arg_datetime_start, int)):
@@ -115,18 +131,27 @@ class DTRange(object):
             raise Exception("unimplemented arg_datetime_end as int")
         if (arg_datetime_start > arg_datetime_end):
             raise Exception("backwards arg_datetime_start=(%s), arg_datetime_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+
         if (self._printdebug_func_inputs):
             _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
             _log.debug("arg_datetime_end=(%s)" % str(arg_datetime_end))
             _log.debug("arg_interval=(%s)" % str(arg_interval))
             _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
+
+        #   About Pandas date range:
+        #   LINK: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html
+        #   LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
+
         import pandas
         dtRange_list = [ x for x in pandas.date_range(start=arg_datetime_start.strftime(dateformat_str), end=arg_datetime_end.strftime(dateformat_str), freq=datefrequency) ]
+
         if not (arg_type_datetime):
             dtRange_list = [ x.strftime(dateformat_str) for x in dtRange_list ]
+
         if (self._printdebug_func_outputs):
-            #_log.debug("dtRange_list=(%s)" % str(dtRange_list))
+            _log.debug("dtRange_list=(%s)" % str(dtRange_list))
             _log.debug("len(dtRange_list)=(%i)" % len(dtRange_list))
+
         return dtRange_list
         #   }}}
 
