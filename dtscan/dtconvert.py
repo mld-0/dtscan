@@ -58,9 +58,9 @@ class DTConvert(object):
 
     _printdebug_func_includeConvert = False
     #   If True, pass function inputs to _log.debug()
-    _printdebug_func_inputs = False
+    _printdebug_func_inputs = True
     #   If True, pass function results to _log.debug
-    _printdebug_func_outputs = False
+    _printdebug_func_outputs = True
     _warn_substitute = True
     _printdebug_warn_strict_parse = False
 

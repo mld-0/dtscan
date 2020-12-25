@@ -74,7 +74,26 @@ class Test_CliRange(unittest.TestCase):
         args_list = [ 'range', '--qfinterval', 'm', '--qfstart', '0' ]
         _test_result = self.runtest_parseargs(args_list)
 
+    def test_dateFromInteger(self):
+        dtrange = DTRange()
+        test_freezetime = "2020-11-01"
+        test_intervals = [ 'y', 'm', 'w', 'd', 'H', 'M', 'S' ]
+        test_datetimes = [ 1, 1, 1, 1, 1, 1, 1 ]
+        test_expectedresults  = [ "2019-11-01", "2020-10-01", "2020-10-25", "2020-10-31", "2020-10-31T23:00:00", "2020-10-31T23:59:00", "2020-10-31T23:59:59" ]
 
+        for arg_interval, arg_datetime, expected_result_str in zip(test_intervals, test_datetimes, test_expectedresults):
+            expected_result = dateutil.parser.parse(expected_result_str)
+            with freeze_time(test_freezetime):
+                _test_result = dtrange._DTRange_Date_From_Integer(arg_datetime, arg_interval)
+                message_str = "result=(%s), expected=(%s)" % (str(_test_result), str(expected_result))
+                self.assertEqual(_test_result, expected_result, message_str)
+        
+        #arg_interval = 'y'
+        #arg_datetime = 1
+        #expected_result = dateutil.parser.parse("2019-11-01")
+        #with freeze_time("2020-11-01"):
+        #    _test_result = dtrange._DTRange_Date_From_Integer(arg_datetime, arg_interval)
+        #    self.assertEqual(_test_result, expected_result)
 
 #   }}}1
 

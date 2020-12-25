@@ -360,7 +360,7 @@ class DTScanner(object):
 
     def Scan_QuickFilter(self, arg_input_stream, arg_date_start, arg_date_end, arg_interval):
     #   {{{
-    #   TODO: 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
+    #   TODO: 2020-12-23T19:17:35AEDT 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
     #   TODO: 2020-11-25T16:14:04AEDT code to write stream to temp file -> used (duplicatate) by both FilterDateTimes_FastFilter() and FilterDateTimes_ScanStream(), place in dedicated function
     #   TODO: 2020-11-29T14:24:40AEDT get date range without using pandas
         #   Get list of all year-and-month-s that fall between arg_date_start and arg_date_end
@@ -402,6 +402,7 @@ class DTScanner(object):
                 arg_date_end = int(arg_date_end)
         except Exception as e:
             pass
+
         if (isinstance(arg_date_end, int)):
             pass
             offset_list = [0] * 7
@@ -412,6 +413,7 @@ class DTScanner(object):
             elif (arg_interval == 'y'):
                 offset_list[0] = arg_date_end
             arg_date_end = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
+
         if (isinstance(arg_date_start, int)):
             pass
             offset_list = [0] * 7

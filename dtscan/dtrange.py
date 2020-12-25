@@ -72,6 +72,32 @@ class DTRange(object):
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
 
+    def _DTRange_Date_From_Integer(self, arg_datetime, arg_interval):
+        date_now = datetime.now()
+        arg_datetime = -1 * arg_datetime
+        offset_list = [0] * 7
+        if (arg_interval == 'y'):
+            offset_list[0] = arg_datetime
+        elif (arg_interval == 'm'):
+            offset_list[1] = arg_datetime
+        elif (arg_interval == 'w'):
+            offset_list[2] = arg_datetime
+        elif (arg_interval == 'd'):
+            offset_list[3] = arg_datetime
+        elif (arg_interval == 'H'):
+            offset_list[4] = arg_datetime
+        elif (arg_interval == 'M'):
+            offset_list[5] = arg_datetime
+        elif (arg_interval == 'S'):
+            offset_list[6] = arg_datetime
+        else:
+            raise Exception("Invalid arg_interval=(%s), must be one of [ymwdHMS]" % str(arg_interval))
+        #if (self._printdebug_func_inputs):
+        #    _log.debug("arg_datetime=(%s)" % str(arg_datetime))
+        #    _log.debug("offset_list=(%s)" % str(offset_list))
+        arg_datetime = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
+        return arg_datetime
+
 
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?) 
     #   last datetime in resulting list is *after* arg_datetime_end
@@ -83,6 +109,10 @@ class DTRange(object):
         if isinstance(arg_interval, list):
             arg_interval = arg_interval[0]
 
+        delim_date = "-"
+        delim_time = ":"
+        delim_seperate = "T"
+
         dateformat_str = ""
         datefrequency = ""
         #   set datefrequency / dateformat_str as per arg_interval, (see below)
@@ -91,22 +121,22 @@ class DTRange(object):
             dateformat_str = "%Y"
             datefrequency = "YS"
         elif (arg_interval == "m"):
-            dateformat_str = "%Y-%m"
+            dateformat_str = "%Y" + delim_date + "%m"
             datefrequency = "MS"
         elif (arg_interval == "w"):
-            dateformat_str = "%Y-%m-%d"
+            dateformat_str = "%Y" + delim_date + "%m" + delim_date + "%d"
             datefrequency = "W"
         elif (arg_interval == "d"):
-            dateformat_str = "%Y-%m-%d"
+            dateformat_str = "%Y"+ delim_date +"%m"+ delim_date +"%d"
             datefrequency = "D"
         elif (arg_interval == "H"):
-            dateformat_str = "%Y-%m-%dT%H"
+            dateformat_str = "%Y"+ delim_date +"%m"+ delim_date +"%d" + delim_seperate + "%H"
             datefrequency = "H"
         elif (arg_interval == "M"):
-            dateformat_str = "%Y-%m-%dT%H:%M"
+            dateformat_str = "%Y"+ delim_date +"%m"+ delim_date +"%d"+ delim_seperate + "%H" + delim_time + "%M"
             datefrequency = "T"
         elif (arg_interval == "S"):
-            dateformat_str = "%Y-%m-%dT%H:%M:%S"
+            dateformat_str = "%Y"+ delim_date +"%m"+ delim_date +"%d"+ delim_seperate +"%H"+ delim_time + "%M" + delim_time + "%S"
             datefrequency = "S"
         else:
             raise Exception("Invalid arg_interval=(%s)" % str(arg_interval))
@@ -117,18 +147,18 @@ class DTRange(object):
         if (isinstance(arg_datetime_end, str)):
             arg_datetime_end = self.dtconvert.Convert_string2DateTime(arg_datetime_end)
 
+        #   Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
         #   If args are integers, subtract that many intervals from current date to get value for argument
         if (isinstance(arg_datetime_start, int)):
-            pass
+            arg_datetime_start = self._DTRange_Date_From_Integer(arg_datetime_start, arg_interval)
         if (isinstance(arg_datetime_end, int)):
-            pass
-
-        #   Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
+            arg_datetime_end = self._DTRange_Date_From_Integer(arg_datetime_end, arg_interval)
         #   If arg_datetime_(start|end) are integers, offset current datetime by n intervals (use OffsetDateTime_DeltaYMWDhms)
-        if (isinstance(arg_datetime_start, int)):
-            raise Exception("unimplemented arg_datetime_start as int")
-        if (isinstance(arg_datetime_end, int)):
-            raise Exception("unimplemented arg_datetime_end as int")
+        #if (isinstance(arg_datetime_start, int)):
+        #    raise Exception("unimplemented arg_datetime_start as int")
+        #if (isinstance(arg_datetime_end, int)):
+        #    raise Exception("unimplemented arg_datetime_end as int")
+
         if (arg_datetime_start > arg_datetime_end):
             raise Exception("backwards arg_datetime_start=(%s), arg_datetime_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
 
