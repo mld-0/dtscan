@@ -64,17 +64,19 @@ class DTRange(object):
     _warn_substitute = True
 
     def Interface_Range(self, _args):
-        return ""
         result_range = self.DTRange_FromDates(_args.qfstart, _args.qfend, _args.qfinterval)
+        return result_range
 
     def Update_Vars(self, _args):
         self._warn_substitute = _args.warnings
         self._printdebug_func_outputs = _args.debug
         self._printdebug_func_inputs = _args.debug
 
+    #   About: Given an integer, and an interval [ymwdHMS], subtract given number of intervals from current datetime
     def _DTRange_Date_From_Integer(self, arg_datetime, arg_interval):
+    #   {{{
         date_now = datetime.now()
-        arg_datetime = -1 * arg_datetime
+        arg_datetime =  -1 * arg_datetime
         offset_list = [0] * 7
         if (arg_interval == 'y'):
             offset_list[0] = arg_datetime
@@ -97,7 +99,7 @@ class DTRange(object):
         #    _log.debug("offset_list=(%s)" % str(offset_list))
         arg_datetime = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
         return arg_datetime
-
+    #   }}}
 
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?) 
     #   last datetime in resulting list is *after* arg_datetime_end
@@ -106,8 +108,28 @@ class DTRange(object):
     #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as Scan_QuickFilter -> code in which is to be replaced by call to this function)
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
     #   TODO: 2020-12-07T19:14:18AEDT unimplemented hourly/minutly/secondly (HMS of ymwdHMS)
+
         if isinstance(arg_interval, list):
             arg_interval = arg_interval[0]
+        if isinstance(arg_datetime_start, list):
+            arg_datetime_start = arg_datetime_start[0]
+        if isinstance(arg_datetime_end, list):
+            arg_datetime_end = arg_datetime_end[0]
+
+        try:
+            if (arg_datetime_start is not None):
+                arg_datetime_start = int(arg_datetime_start)
+        except Exception as e:
+            pass
+        try:
+            if (arg_datetime_end is not None):
+                arg_datetime_end = int(arg_datetime_end)
+        except Exception as e:
+            pass
+        if (arg_datetime_start is None):
+            arg_datetime_start = 0
+        if (arg_datetime_end is None):
+            arg_datetime_end = 0
 
         delim_date = "-"
         delim_time = ":"
@@ -147,20 +169,16 @@ class DTRange(object):
         if (isinstance(arg_datetime_end, str)):
             arg_datetime_end = self.dtconvert.Convert_string2DateTime(arg_datetime_end)
 
-        #   Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
-        #   If args are integers, subtract that many intervals from current date to get value for argument
+        #   Ongoing: 2020-12-07T18:40:38AEDT treatment of negative numbers '-' as arguments (dtscan, python argparse)
+        #   If arg_datetime_(start|end) are integers, subtract that many intervals from current date to get value for argument
         if (isinstance(arg_datetime_start, int)):
             arg_datetime_start = self._DTRange_Date_From_Integer(arg_datetime_start, arg_interval)
         if (isinstance(arg_datetime_end, int)):
             arg_datetime_end = self._DTRange_Date_From_Integer(arg_datetime_end, arg_interval)
-        #   If arg_datetime_(start|end) are integers, offset current datetime by n intervals (use OffsetDateTime_DeltaYMWDhms)
-        #if (isinstance(arg_datetime_start, int)):
-        #    raise Exception("unimplemented arg_datetime_start as int")
-        #if (isinstance(arg_datetime_end, int)):
-        #    raise Exception("unimplemented arg_datetime_end as int")
 
-        if (arg_datetime_start > arg_datetime_end):
-            raise Exception("backwards arg_datetime_start=(%s), arg_datetime_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+        #   Require arg_datetime_start to not be after arg_datetime_end
+        if (arg_datetime_start.replace(tzinfo=None) > arg_datetime_end.replace(tzinfo=None)):
+            raise Exception("backward interval, arg_datetime_start=(%s), arg_datetime_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
 
         if (self._printdebug_func_inputs):
             _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
@@ -169,9 +187,12 @@ class DTRange(object):
             _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
 
         #   About Pandas date range:
+        #   {{{
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
+        #   }}}
 
+        #   pandas not imported until needed (due to ~1s loadtime)
         import pandas
         dtRange_list = [ x for x in pandas.date_range(start=arg_datetime_start.strftime(dateformat_str), end=arg_datetime_end.strftime(dateformat_str), freq=datefrequency) ]
 
@@ -188,6 +209,7 @@ class DTRange(object):
     def DTRange_FromDateAndDelta(self, arg_datetime_start, arg_delta, arg_interval):
         pass
         #   Adjust arg_datetime_start by arg_delta, and return DTRange_FromDates()
+
 
     #   Given a stream of datetimes (as strings), newline seperated, combine entries from the same 'group interval' (YMWDhms) onto the same line 
     def DTRange_GroupInterval(self, arg_DTRange, arg_groupinterval):

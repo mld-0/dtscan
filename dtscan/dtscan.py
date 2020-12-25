@@ -403,6 +403,11 @@ class DTScanner(object):
         except Exception as e:
             pass
 
+        if (arg_date_start is None):
+            arg_date_start = date_now
+        if (arg_date_end is None):
+            arg_date_end = date_now
+
         if (isinstance(arg_date_end, int)):
             pass
             offset_list = [0] * 7
@@ -413,7 +418,6 @@ class DTScanner(object):
             elif (arg_interval == 'y'):
                 offset_list[0] = arg_date_end
             arg_date_end = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
-
         if (isinstance(arg_date_start, int)):
             pass
             offset_list = [0] * 7
@@ -434,11 +438,6 @@ class DTScanner(object):
             arg_date_end = self.dtconvert.Convert_string2DateTime(arg_date_end)
             if arg_date_end is None:
                 raise Exception("Got None for arg_date_end")
-
-        if (arg_date_start is None):
-            arg_date_start = date_now
-        if (arg_date_end is None):
-            arg_date_end = date_now
 
         if (arg_date_start > arg_date_end):
             raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
