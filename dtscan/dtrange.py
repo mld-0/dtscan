@@ -210,7 +210,6 @@ class DTRange(object):
         pass
         #   Adjust arg_datetime_start by arg_delta, and return DTRange_FromDates()
 
-
     #   Given a stream of datetimes (as strings), newline seperated, combine entries from the same 'group interval' (YMWDhms) onto the same line 
     def DTRange_GroupInterval(self, arg_DTRange, arg_groupinterval):
         pass
@@ -257,8 +256,10 @@ class DTRange(object):
     #    #   ScanStream_DateTimeItems() handles is-datetime-in-column, provided self._scan_column has been specified
     #    scanresults_list = self.ScanStream_DateTimeItems(arg_infile)
     #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+    #   }}}
 
     def DTRange_CountBy(self, arg_scanmatch_datetimes, arg_interval):
+    #   {{{
         #   TODO: 2020-12-08T15:15:45AEDT handle cases of (only) 0/1 datetimes 
         #   Get first and last datetime in input
         scanmatch_datetimes_sorted = sorted(arg_scanmatch_datetimes)
