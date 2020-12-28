@@ -385,7 +385,7 @@ class Test_CliScan(unittest.TestCase):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov27Minutes.txt")
-        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:24:10", "--rfend", "2020-11-27T22:25:55AEDT" ]
+        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:24:10AEDT", "--rfend", "2020-11-27T22:25:55AEDT" ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
     #   }}}
@@ -405,7 +405,7 @@ class Test_CliScan(unittest.TestCase):
     #   {{{
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov27Minutes.txt")
-        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:25:55AEDT", "--rfend", "2020-11-27T22:24:10" ]
+        args_list = [  '-I', path_test, 'scan', "--rfstart", "2020-11-27T22:25:55AEDT", "--rfend", "2020-11-27T22:24:10AEDT" ]
         with self.assertRaises(Exception) as context:
             _test_result = self.runtest_parseargs(args_list)
     #   }}}

@@ -34,6 +34,7 @@ import dateutil.relativedelta
 import time
 import tempfile
 import decimal
+import dateparser
 from subprocess import Popen, PIPE, STDOUT
 from os.path import expanduser
 from pathlib import Path
@@ -42,6 +43,7 @@ from subprocess import Popen, PIPE, STDOUT
 from io import StringIO
 from tzlocal import get_localzone
 from dateutil.relativedelta import relativedelta
+
 #   }}}1
 #   {{{2
 from .dtformats import datetime_formats
@@ -248,10 +250,11 @@ class DTConvert(object):
         parse_result = None
         _attempts_len = 3 + len(datetime_formats.items())
         #_log.debug("arg_datetime_str=(%s)" % str(arg_datetime_str))
-        if (arg_datetime_str is None) and (self._printdebug_func_includeConvert):
-            _log.warning("arg_datetime_str=(None)")
-            return None
-        #   TODO: 2020-10-12T22:22:38AEDT Decimal timestamps?
+        #if (arg_datetime_str is None) and (self._printdebug_func_includeConvert):
+        #    _log.warning("arg_datetime_str=(None)")
+        #    return None
+        ##   TODO: 2020-10-12T22:22:38AEDT Decimal timestamps?
+
         try:
             parse_result_int = int(arg_datetime_str)
             parse_result = datetime.fromtimestamp(parse_result_int)
@@ -261,8 +264,20 @@ class DTConvert(object):
                 _log.debug("parse_result_str=(%s)" % str(parse_result_str))
             return parse_result
         except Exception as e:
-            if (self._printdebug_func_failures) and (self._printdebug_func_includeConvert):
-                _log.debug("attempt 1/%i, exception: fromtimestamp (epoch), %s" % (_attempts_len, str(e)))
+            pass
+            #if (self._printdebug_func_failures) and (self._printdebug_func_includeConvert):
+            #    _log.debug("attempt 1/%i, exception: fromtimestamp (epoch), %s" % (_attempts_len, str(e)))
+#settings={'RETURN_AS_TIMEZONE_AWARE': True}
+
+        try:
+            parse_result = dateparser.parse(arg_datetime_str, settings={'RETURN_AS_TIMEZONE_AWARE': True})
+            parse_result_str = self.Convert_DateTime2String(parse_result)
+            if (self._printdebug_func_outputs) and (self._printdebug_func_includeConvert):
+                parse_result_str = self.Convert_DateTime2String(parse_result)
+                _log.debug("parse_result_str=(%s)" % str(parse_result_str))
+            return parse_result
+        except Exception as e:
+            pass
 
         #   Ongoing: 2020-10-12T22:08:30AEDT Decimal epoch?
         try:
@@ -273,8 +288,9 @@ class DTConvert(object):
                 _log.debug("parse_result_str=(%s)" % str(parse_result_str))
             return parse_result
         except Exception as e:
-            if (self._printdebug_func_failures) and (self._printdebug_func_includeConvert):
-                _log.debug("attempt 2/%i, exception: dateutil.parse(), %s" % (_attempts_len, str(e)))
+            pass
+            #if (self._printdebug_func_failures) and (self._printdebug_func_includeConvert):
+            #    _log.debug("attempt 2/%i, exception: dateutil.parse(), %s" % (_attempts_len, str(e)))
         #   TODO: 2020-10-12T16:51:03AEDT If arg_datetime_str can be parsed as an epoch, do so and return said value as datetime
 
         loop_i = 2
@@ -287,19 +303,18 @@ class DTConvert(object):
                     _log.debug("parse_result_str=(%s)" % str(parse_result_str))
                 return parse_result
             except Exception as e:
-                if (self._printdebug_func_failures):
-                    _log.debug("attempt %i/%i, exception: datetime.strptime %s" % (loop_i, _attempts_len, str(e)))
+                pass
+                #if (self._printdebug_func_failures):
+                #    _log.debug("attempt %i/%i, exception: datetime.strptime %s" % (loop_i, _attempts_len, str(e)))
             loop_i += 1
 
         try:
-            import dateparser
             _dateParser_suppliedFormats = []
             for k, v in datetime_formats.items():
                 _dateParser_suppliedFormats.append(v)
         except Exception as e:
-            _log.error("exception: failed to supply dateparser with custom datetime_formats, %s, %s" % (type(e), str(e)))
+            _log.error("failed to supply dateparser with custom datetime_formats, %s, %s" % (type(e), str(e)))
             return None
-
         try:
             parse_result = dateparser.parse(arg_datetime_str, date_formats=_dateParser_suppliedFormats)
             parse_result_str = self.Convert_DateTime2String(parse_result)
@@ -308,9 +323,13 @@ class DTConvert(object):
                 _log.debug("parse_result_str=(%s)" % str(parse_result_str))
             return parse_result
         except Exception as e:
-            if (self._printdebug_func_failures):
-                _log.debug("attempt %i/%i: exception: dateparser.parse(), %s" % (_attempts_len, _attempts_len, str(e)))
+            pass
+
+            #if (self._printdebug_func_failures):
+            #    _log.debug("attempt %i/%i: exception: dateparser.parse(), %s" % (_attempts_len, _attempts_len, str(e)))
+
         return None
+
     #   }}}
 
     #   About: If _assume_local_Tz is True, for input result_datetime (python datetime), if it does not contain timezone information, and _assume_local_Tz is True, determine the local timezone as of the given datetime and add to variable. Returns input result_datetime with our without additional information
