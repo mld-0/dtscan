@@ -234,9 +234,9 @@ class DTScanner(object):
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         result_splits_elapsed, result_splits = self.Split_DeltasList(scanmatch_datetimes, scanmatch_delta_s, _args.splitlen)
-        _log.error("result_splits=(%s)" % str(result_splits))
+        _log.debug("len(result_splits)=(%s)" % str(len(result_splits)))
         splits_sum = self.dtrange.DTRange_SumSplits(result_splits, _args.interval, _args.nodhms)
-        _log.error("splits_sum=(%s)" % str(splits_sum))
+        _log.debug("splits_sum=(%s)" % str(splits_sum))
         splits_sum = list(zip(*splits_sum))
         splits_sum_stream = self._util_ListOfListsAsStream(splits_sum)
         _input_file.close()
@@ -440,7 +440,7 @@ class DTScanner(object):
                 raise Exception("Got None for arg_date_end")
 
         if (arg_date_start > arg_date_end):
-            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_date_start), str(arg_date_end)))
 
         #   About Pandas date range:
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html
@@ -541,7 +541,7 @@ class DTScanner(object):
             arg_end = self.dtconvert.Convert_string2DateTime(arg_end)
 
         if (arg_start is not None) and (arg_end is not None) and (arg_start > arg_end):
-            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_start), str(arg_end)))
 
         #   if arg_input_stream is a string, consisting of a valid filepath, create stream from said file
         _input_path = None

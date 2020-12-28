@@ -242,6 +242,7 @@ class DTConvert(object):
     #   About: Convert a string into a python datetime. Attempt conversion with dateutil.parser.parse(), then with datetime.strptime for formats in datetime_formats, then finally try dateparser.parse(), (which is not imported earlier, due to ~1s time to import)
     def Convert_string2DateTime(self, arg_datetime_str):
     #   {{{
+    #   TODO: 2020-12-28T18:43:19AEST dtscan, Convert_string2DateTime -> (test oriented rewrite), focused around correct handeling of datetimes
         global self_name
         func_name = inspect.currentframe().f_code.co_name
         parse_result = None
@@ -262,6 +263,7 @@ class DTConvert(object):
         except Exception as e:
             if (self._printdebug_func_failures) and (self._printdebug_func_includeConvert):
                 _log.debug("attempt 1/%i, exception: fromtimestamp (epoch), %s" % (_attempts_len, str(e)))
+
         #   Ongoing: 2020-10-12T22:08:30AEDT Decimal epoch?
         try:
             parse_result = dateutil.parser.parse(arg_datetime_str)
@@ -274,6 +276,7 @@ class DTConvert(object):
             if (self._printdebug_func_failures) and (self._printdebug_func_includeConvert):
                 _log.debug("attempt 2/%i, exception: dateutil.parse(), %s" % (_attempts_len, str(e)))
         #   TODO: 2020-10-12T16:51:03AEDT If arg_datetime_str can be parsed as an epoch, do so and return said value as datetime
+
         loop_i = 2
         for k, v in datetime_formats.items():
             try:
@@ -287,6 +290,7 @@ class DTConvert(object):
                 if (self._printdebug_func_failures):
                     _log.debug("attempt %i/%i, exception: datetime.strptime %s" % (loop_i, _attempts_len, str(e)))
             loop_i += 1
+
         try:
             import dateparser
             _dateParser_suppliedFormats = []
@@ -295,6 +299,7 @@ class DTConvert(object):
         except Exception as e:
             _log.error("exception: failed to supply dateparser with custom datetime_formats, %s, %s" % (type(e), str(e)))
             return None
+
         try:
             parse_result = dateparser.parse(arg_datetime_str, date_formats=_dateParser_suppliedFormats)
             parse_result_str = self.Convert_DateTime2String(parse_result)

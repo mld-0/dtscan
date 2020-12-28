@@ -161,6 +161,7 @@ class Test_CliScan(unittest.TestCase):
             path_test = str(p)
         return path_test
 
+    #   {{{
     #   test cases: 
     #   scan (hello world)
     #       scan
@@ -187,6 +188,7 @@ class Test_CliScan(unittest.TestCase):
     #   splits
     #   deltas
     #   splitsum
+    #   }}}
 
     def test_matches_sortdt_order(self):
         path_test = self._getPath_TestData("mixed-text-datetimes.txt")
@@ -194,7 +196,6 @@ class Test_CliScan(unittest.TestCase):
         args_list = [ '-I', path_test, 'matches', '--sortdt', '--pos' ]
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
-
 
     #   compare input to itself - given no arguments, scan should output same stream as input
     def test_scan_helloworld(self):
