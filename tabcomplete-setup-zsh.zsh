@@ -29,11 +29,10 @@ name_completefile_range="_dtrange"
 
 #	create zsh completions and write to path_sitefunctions
 echo "Create file$nl$tab$path_sitefunctions/$name_completefile" > /dev/stderr
-shtab dtscan.__main__._parser_cliscan --shell=zsh > "$path_sitefunctions/$name_completefile" 2> /dev/null
-
+shtab dtscan.__main__._parser_cliscan --shell=zsh > "$path_sitefunctions/$name_completefile" #2> /dev/null
 
 echo "Create file$nl$tab$path_sitefunctions/$name_completefile_range" > /dev/stderr
-shtab dtscan.__main__._parser_clirange --shell=zsh > "$path_sitefunctions/$name_completefile_range" 2> /dev/null
+shtab dtscan.__main__._parser_clirange --shell=zsh > "$path_sitefunctions/$name_completefile_range" #2> /dev/null
 
 
 #	}}}1

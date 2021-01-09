@@ -1,6 +1,6 @@
 #	dtscan (Date-Time Scanner)
 
-Python cli utility, identify/convert datetimes in text, and provide various information about results.
+Python cli utility, identify/convert/analyse datetimes in text. 
 
 ##	Getting Started
 ###	Prerequisites

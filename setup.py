@@ -43,7 +43,7 @@ test_depend = [
 setup(
     name="dtscan",
     version=version,
-    author="Matthew Davis",
+    author="Matthew L Davis",
     author_email="mld.0@protonmail.com",
     description="Scan for, parse, and analyse datetimes in text",
     long_description=long_descr,
