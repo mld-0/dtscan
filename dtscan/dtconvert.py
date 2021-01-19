@@ -657,13 +657,14 @@ class DTConvert(object):
         split_elapsed = arg_splitlist_item[3] 
         split_before = arg_splitlist_item[6]
         split_datetime_start = self.Convert_DateTime2String(arg_splitlist_item[4])
+        split_datetime_end = self.Convert_DateTime2String(arg_splitlist_item[5])
         if not (arg_nodhms):
             split_elapsed_Dhms = self.Convert_seconds2Dhms(split_elapsed)
             split_before_Dhms = self.Convert_seconds2Dhms(split_before)
         else:
             split_elapsed_Dhms = split_elapsed
             split_before_Dhms = split_before
-        result_str = "%-10s%-6s%16s%30s%16s" % (str(arg_splitlist_item[0]), str(arg_splitlist_item[2]), split_elapsed_Dhms, str(split_datetime_start), split_before_Dhms)
+        result_str = "%-8s%-6s%16s%26s%26s%16s" % (str(arg_splitlist_item[0]), str(arg_splitlist_item[2]), split_elapsed_Dhms, str(split_datetime_start), str(split_datetime_end), split_before_Dhms)
         return result_str
     #   }}}
 

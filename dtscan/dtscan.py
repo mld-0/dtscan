@@ -55,6 +55,8 @@ _logging_format="%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
+#   Continue: 2021-01-19T17:42:37AEDT menu item, splitsum for global vimh for today
+
 class DTScanner(object):
 #   {{{
     #   class vars:
@@ -904,7 +906,7 @@ class DTScanner(object):
                     split_table[_index_end] = loop_i + 1
                     split_table[_index_after] = loop_delta_decimal
                     split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
-                    split_table[_index_endtime] = arg_datetime_list[loop_i]
+                    split_table[_index_endtime] = arg_datetime_list[loop_i-1]
                     split_table[_index_elapsed] = loop_elapsed
                     result_splits.append(split_table)
                     result_split_elapsed.append(loop_elapsed)
@@ -929,7 +931,7 @@ class DTScanner(object):
                     split_table[_index_end] = loop_i + 1
                     split_table[_index_after] = loop_delta_decimal
                     split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
-                    split_table[_index_endtime] = arg_datetime_list[loop_i]
+                    split_table[_index_endtime] = arg_datetime_list[loop_i-1]
                     split_table[_index_elapsed] = loop_elapsed
                     result_splits.append(split_table)
                     result_split_elapsed.append(loop_elapsed)
