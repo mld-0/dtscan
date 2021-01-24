@@ -1,0 +1,10 @@
+2020-03-14T21:42:14AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh
+2020-03-14T21:42:17AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh
+2020-03-14T21:43:01AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh
+2020-03-14T21:43:25AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh
+2020-03-14T21:43:26AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh
+2020-03-14T21:44:28AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh
+2020-03-14T21:45:37AEDT	_qindex.sh	Minerva	BufReadPre	/Users/mldavis/Dropbox/_mld-macos/_qindex.sh
+2020-03-14T21:46:24AEDT	_qindex.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/_qindex.sh
+2020-03-14T21:48:40AEDT	2020-03.worklog.vimgpg	Minerva	BufWritePost	/Users/mldavis/Dropbox/_TaskLogs/_worklog/2020-03.worklog.vimgpg
+2020-03-14T21:48:44AEDT	bash-create-reminder.sh	Minerva	BufWritePost	/Users/mldavis/Dropbox/_mld-macos/applescript/bash-create-reminder.sh

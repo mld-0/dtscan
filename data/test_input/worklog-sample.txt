@@ -1,0 +1,3277 @@
+VIM SETTINGS: {{{4
+vim: set tabstop=4 modeline modelines=10:
+vim: set foldmethod=marker foldcolumn=3:
+vim: set ft=worklog foldlevel=2:
+}}}1==========       Monthly Worklog Template          ==========
+
+Tasklog-GrabBlocks-Start:
+{{{4
+Grab-Labels={ Bugs,Bug,0; Bugfixes,Bugfix,0; Concepts,Concept,0; Continues,Continue,0; Deliverables,Deliverable,0; Delivereds,Delivered,0; ITEMs,ITEM,0; LINKs,LINK,0; Notes,Note,1; Ongoings,Ongoing,a; Stopwatches,Stopwatch,a1; TODOs,TODO,a; Task-Breakdowns,Task-Breakdown,0; Thoerys,Thoery,0; cmcats,cmcat,0; }
+Grab-Label-Postfix={:}
+Grab-Label-NewlineCount={0}
+Bugs:
+{{{
+	Bug: 2020-12-13T18:29:53AEDT 'dtscan matches --detail --sortdt' line numbers are those from sorted input, not those
+	Bug: 2020-12-12T02:07:37AEDT dtscan, importing shtab in dtscan.__main__ causes tox tests to fail with ModuleNotFound error
+	Bug: 2020-12-11T22:59:33AEDT dtscan, tests run when called as scripts, however pytest fails
+	Bug: 2020-12-08T19:49:07AEDT 'vimh' if run with <invalid/temp> directory as working directory, error(s) related to 'unable to get pwd?'
+	Bug: 2020-12-05T02:14:33AEDT dtscan, --splitdt results in stream not seekable exception
+	Bug: 2020-12-05T02:07:50AEDT dtscan, filter-by-column delimitor '-F', as in 'cat ~/.vimh | python -m dtscan splits -F "\t" -C 0 --fastrange 1 --seconds 300' doesn't work? command absent -F doesn't results in negative splits (from datetimes as filenames), but specifying column delimitor breaks this
+	Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes/lines with same value?
+	Bug: 2020-12-01T19:47:09AEDT vim doesn't reset window title when <closing/leaving>
+}}}
+
+Bugfixes:
+{{{
+	Bugfix: 2020-12-12T02:08:17AEDT only import shtab inside if __main__ condition
+	Bugfix: 2020-12-11T23:04:24AEDT dtscan, broken tests, do not include __init__.py in directory test (should it be tests?) (if one wants to use) pytest
+	Bugfix: 2020-12-07T03:02:36AEDT vimh_split -> $F in perl oneliner should be \$F
+}}}
+
+Concepts:
+{{{
+}}}
+
+Continues:
+{{{
+	Continue: 2020-12-15T21:07:27AEDT dtscan, (0.2), test_splitsum(), test_deltas()
+	Continue: 2020-12-15T11:28:56AEDT dtscan, reading regex datafile, (how to) organise test imports (given) can't specify directory as resource?
+	Continue: 2020-12-14T23:11:06AEDT dtscan, module/class setup,
+	Continue: 2020-12-13T20:38:17AEDT plot datetimes vs qtys to loop_filename
+	Continue: 2020-12-13T18:33:51AEDT When 'dtscan matches --detail' are all in same format, dtscan_vi only has to sort that same list alphabetically (along with line numbers), (and it has) chronological list of linenumbers for those with datetimes on them
+	Continue: 2020-12-12T19:41:52AEDT dtscan, update tests (output now has/should-have unique items headings, newline seperators between streams)
+	Continue: 2020-12-12T19:40:27AEDT dtscan, combine vimh/zsh_history
+	Continue: 2020-12-12T19:37:13AEDT dtscan, install script (should) setup bash and/or zsh tab-completion, and increase maximum open files limit 'ulimit 2048'
+	Continue: 2020-12-12T19:36:46AEDT dtscan, implement '--dhms' arg flag
+	Continue: 2020-12-12T02:36:23AEDT (takeawy is) writing zsh completion scripts, from scatch - completion as per dtscan presumedly is a repedative rather than complex?
+	Continue: 2020-12-12T02:10:00AEDT (what can we do with) zsh-completion script for dtscan
+	Continue: 2020-12-11T16:59:51AEDT Python Cookbook 3rd Edition, Ch10, Packages, how packages work, standard/best practice for 'I want to run this'
+	Continue: 2020-12-11T03:56:40AEDT snek (is) docopt based, tab completion for snek?
+	Continue: 2020-12-11T00:09:41AEDT python, 'snek' example, 'Snek Infrastructure Overhaul' - making all sneks dynamically loaded
+	Continue: 2020-12-10T21:51:10AEDT python (installing packages and) entry points, (see below), 'snek'
+	Continue: 2020-12-10T18:28:11AEDT zsh completion (before) python-in-zsh completion
+	Continue: 2020-12-09T20:02:42AEDT implement DTRange_SumSplit(), return answer-as-stream to responsible test_cli method
+	Continue: 2020-12-08T20:47:08AEDT dtscan, arguments/tests for unique-count-by-interval, split-sum-by-interval
+	Continue: 2020-12-08T16:29:46AEDT dtscan, Convert_RangeStartEnd2Partial(), Convert_Partial2RangeStartEnd()
+	Continue: 2020-12-08T16:29:02AEDT dtscan, DTRange_SumSplitsBy()
+	Continue: 2020-12-07T19:45:39AEDT dtscan_vi plugin, scan buffer, list linenums (sort by datetime chronologically) (the long awaited replacement for DTS_Navigate) (or open in new pane?)
+	Continue: 2020-12-07T19:42:10AEDT dtscan, 'scan', along with '--uniques' (dividing input by unique item in a given column), '--rangesplit', if given, divide input stream into multiple streams, (with) one per range item in input, where range items are calculated for a given interval, between the first and last (chronologically) datetimes in input. Split by interval <before/after?> split by unique? -> before?
+	Continue: 2020-12-07T19:41:22AEDT dtscan, uniques - sum-by-interval, count-by-interval
+	Continue: 2020-12-07T19:38:30AEDT dtscan, intervals, cli arguments for 'range', implement range FromDateTimeAndDelta, implement test_cli for range,
+	Continue: 2020-12-06T22:51:11AEDT python running tests for package not in ~/pybin
+	Continue: 2020-12-06T22:46:37AEDT (there must be a) book on python testing? (or other more complete reference)
+	Continue: 2020-12-06T22:37:02AEDT about 'setup.py' file(s)
+	Continue: 2020-12-06T21:39:08AEDT making all dtscan tests run with a single command from pacakge toplevel, (that being) how package tests should be setup
+	Continue: 2020-12-06T20:04:50AEDT python tests, (running all), (running with each common test framework)
+	Continue: 2020-12-06T20:04:27AEDT (review of) python package layout/naming rules, imports, (specifically with regards to tests) <- name of directory containing package, vs name of source file of package, source file within package directory
+	Continue: 2020-12-02T22:52:48AEDT cmcat_python, zip(), sort(), lambda, <ect> -> sort collection of data by one category, (and) sort list-of-lists-of-lists by value in lowest level
+	Continue: 2020-12-02T22:52:23AEDT dtscan, --sortdt - sort lines by datetime values
+	Continue: 2020-12-02T21:26:21AEDT dtscan, implement 'sortdt' - read lines, sort lines chronologically, write to new stream, and return it
+	Continue: 2020-12-02T03:24:23AEDT commits
+	Continue: 2020-12-02T03:19:17AEDT dtscan, process stream-of-streams as output from Interface_Scan
+	Continue: 2020-12-02T01:02:57AEDT for each loop_key, create a stream comprised of lines in loop_linenums_list -> a list of streams is a valid thing to return (albiet if not one that the callee is prepared to handle?)
+	Continue: 2020-12-02T00:00:10AEDT _Interface_Uniques
+}}}
+
+Deliverables:
+{{{
+}}}
+
+Delivereds:
+{{{
+	Delivered: 2020-12-07T15:18:21AEDT pulse, log 'peaks'
+	Delivered: 2020-12-02T02:18:21AEDT vimh -F <search>
+	Delivered: 2020-12-01T19:44:20AEDT (huge qol?) iTerm2 (tmux and naitive windows) set tab title to vim filename
+}}}
+
+ITEMs:
+{{{
+	ITEM: zsh, tabcompletion
+	ITEM: zsh completion
+	ITEM: zsh completion
+	ITEM: vim, set iterm title
+	ITEM: vim, jedi python completion
+	ITEM: uniques, perl, python
+	ITEM: tox (setup for) dtscan
+	ITEM: snek, shtab tabcompletion
+	ITEM: snek, cleanup
+	ITEM: python, unittest vs pytest
+	ITEM: python, tabcompletion
+	ITEM: python, tabcompletion
+	ITEM: python, sys.path, locally installed python packages, grep (-B|-A)
+	ITEM: python, packaging and imports
+	ITEM: python packages, cleanup
+	ITEM: pycli_clickSetuptools
+	ITEM: pulse, log 'peaks'
+	ITEM: plot ~/.pulse-peaks.log
+	ITEM: plot ~/.pulse-peaks.log
+	ITEM: plot ~/.pulse-peaks.log
+	ITEM: greeter, shtab (working) example
+	ITEM: git, transfer folder between repos
+	ITEM: find, xargs
+	ITEM: dtscan-0.2, modules/classes/functions
+	ITEM: dtscan-0.2
+	ITEM: dtscan, uniques
+	ITEM: dtscan, test split, deltas
+	ITEM: dtscan, tab-completion
+	ITEM: dtscan, sum-by-interval
+	ITEM: dtscan, sum-by-interval
+	ITEM: dtscan, sum (splits), count (instances),
+	ITEM: dtscan, sortdt
+	ITEM: dtscan, sortalpha, sortdt
+	ITEM: dtscan, shtab completion
+	ITEM: dtscan, shtab completion
+	ITEM: dtscan, scan list-of-streams
+	ITEM: dtscan, resources
+	ITEM: dtscan, package layout
+	ITEM: dtscan, ongoing
+	ITEM: dtscan, intervals,
+	ITEM: dtscan, fix test
+	ITEM: dtscan, dhms by default, add arg --nodhms
+	ITEM: dtscan, count-by-range
+	ITEM: dtscan, count-by-range
+	ITEM: dtscan, count-by-interval
+	ITEM: dtscan, complete initial rudimentary tests
+	ITEM: dtscan, commit
+	ITEM: dtscan, cleanup, design of 'count', 'splitsum'
+	ITEM: dtscan, cleanup
+	ITEM: dtscan, cleanup
+	ITEM: dtscan, _Interface_Uniques
+	ITEM: dtscan, _Interface_Uniques
+	ITEM: dtscan, 'hello-world' test
+	ITEM: dtscan,
+	ITEM: dtscan,
+	ITEM: dtscan
+	ITEM: dtscan
+	ITEM: cmcat_python, examples
+	ITEM: cmcat_python, examples
+	ITEM: autocommit
+	ITEM: VM (Lyrna), zsh with vi-mode
+	ITEM: Qnap
+	ITEM: Fix tasklog open
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+	ITEM:
+}}}
+
+LINKs:
+{{{
+	LINK: https://www.semicolonworld.com/question/54191/hash-function-in-python-3-3-returns-different-results-between-sessions
+	LINK: https://www.semicolonworld.com/question/43461/sorting-a-python-list-by-two-fields
+	LINK: https://www.csse.uwa.edu.au/programming/linux/zsh-doc/zsh_23.html
+	LINK: https://unix.stackexchange.com/questions/606298/debugging-zsh-completion-method
+	LINK: https://superuser.com/questions/169051/whats-the-difference-between-c-and-d-for-unix-mac-os-x-terminal
+	LINK: https://stackoverflow.com/questions/448271/what-is-init-py-for
+	LINK: https://stackoverflow.com/questions/19048732/python-setup-py-develop-vs-install
+	LINK: https://stackoverflow.com/questions/15643234/remapping-tab-completions-in-vim
+	LINK: https://realpython.com/iterate-through-dictionary-python/
+	LINK: https://pypi.org/project/pyzshcomplete/
+	LINK: https://pypi.org/project/pytest-parallel/
+	LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html
+	LINK: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org
+	LINK: https://github.com/kylebebak/notes
+	LINK: https://github.com/kislyuk/argcomplete
+	LINK: https://github.com/iterative/shtab
+	LINK: https://github.com/iterative/shtab
+	LINK: https://github.com/garbas/vim-snipmate
+	LINK: https://gist.github.com/trongthanh/2779392
+	LINK: https://forum.qnap.com/viewtopic.php?t=17988
+	LINK: https://blog.methodsconsultants.com/posts/pytesting-your-python-package/
+	LINK: https://bic-berkeley.github.io/psych-214-fall-2016/sys_path.html#sys-path
+	LINK: https://amir.rachum.com/blog/2017/07/28/python-entry-points/
+	LINK: https://amir.rachum.com/blog/2017/07/28/python-entry-points/
+	LINK: http://zsh.sourceforge.net/Doc/Release/Completion-System.html
+	LINK: http://ocert.org/advisories/ocert-2011-003.html
+	LINK: http://mywiki.wooledge.org/ParsingLs
+	#	LINK: http://bewatermyfriend.org/p/2012/003/
+}}}
+
+Notes:
+{{{
+	Note: 2020-12-10T20:25:43AEDT zsh has (see below) a ~~decent~~ large set of manpages
+	Note: 2020-12-10T19:53:12AEDT ls <tab> vs ls -<tab>, difference between list-of-options, and list of files-in-pwd
+	Note: 2020-12-07T03:03:47AEDT (as per stackoverflow) no easy way for an executed script to set parent environment working-directory
+	Note: 2020-12-07T00:40:41AEDT (see below) verification of 'echoerr' being implemented as (see below)
+	Note: 2020-12-06T21:38:19AEDT (so apparently) I have been an egregious offender of the 80 character limit (as f----- if) for lines in python
+	Note: 2020-12-05T00:07:27AEDT being able to do replacements git-wide is why there should be one git-repo per project?
+	Note: 2020-12-05T00:05:03AEDT (broken 'test-methods.py') is why replace should be done git-wide
+	Note: 2020-12-02T02:13:04AEDT don't 'cat $file | grep $filter > $file' in a single line -> this step needs a temp file to work, (how this breaks is beyond the scope of this sentence)
+	Note: 2020-12-02T01:06:40AEDT use of python [ <> ] notation, (and), sorted, lambda -> the tools meant for manipulating dict/lists concicely, (and therefore those that make questions like 'unique items in a column, sorted by occurance count' easier to answer)
+}}}
+
+Ongoings:
+{{{
+	Ongoing: 2020-12-13T20:09:56AEDT dtscan.datetimescanner when imported from within package, dtscan.dtscan.datetimescanner when imported from outside?
+	Ongoing: 2020-12-13T19:29:48AEDT would symlinks not be easier, as a file containing items (in that directory) which are to be link, wrt current directory to $HOME, i.e: 'ln "$mld_src/plot-pulsepeaks-daily.zsh" "$HOME/bin/plot-pulsepeaks-daily"' in $mld_src/_links.sh?
+	Ongoing: 2020-12-12T02:08:42AEDT python package install/test dependencies (recall shtab causing dtscan tox tests to fail)
+	Ongoing: 2020-12-11T22:32:01AEDT a warning, about being unable to ignore posibility of newline in filename (see below)
+	Ongoing: 2020-12-11T21:38:17AEDT git, ignore vim swap files?
+	Ongoing: 2020-12-11T21:33:15AEDT Where-apon once again we run-into the problems of trying to keep a python project organised, without a proper working knowledge of how python projects are organised
+	Ongoing: 2020-12-11T20:16:03AEDT would have been f----- had we skipped making an external repo? This is the kind of thing which Git-in-Dropbox presumedly offers some limited protection,
+	Ongoing: 2020-12-11T15:20:40AEDT (need to be able to) manually debug a completion script, (or just) bypass libraries like shtab/argcomplete, and complete the (basics of a) tabcompletion script for a given cli application manually
+	Ongoing: 2020-12-10T23:07:24AEDT (newly renamed) reader-tasklogTaskBlocks will read a (decrypted) tasklog and output info about taskblocks (to stdout), but isn't able to say 'read all tasklogs' - that being mostly the point
+	Ongoing: 2020-12-10T23:02:19AEDT 'git grep -l' doesn't examine parent directories
+	Ongoing: 2020-12-10T20:32:42AEDT zsh, tab completions, $fpath vs $FPATH?
+	Ongoing: 2020-12-10T20:09:58AEDT qindex is no longer sourced by zprofile -> 1) $( typeset ) is so much cleaner, 2) what breaks now?
+	Ongoing: 2020-12-09T22:53:38AEDT python, if statement of the form 'if (a < b) and (a > c)' as 'if (c < a < b)'?
+	Ongoing: 2020-12-08T20:42:04AEDT dtscan, (why does) 'deltas' have (among others) '-S' seconds argument -> something applicable (only) to splits?
+	Ongoing: 2020-12-08T16:45:44AEDT Absolutely f------ beyond this ... (see below), check_list is a list of lists beforehand, aftewards it is a list of tuples, hence the rather inelegent loop conversion done imediately after -> (presumedly) unpacking a list turns it into a tuple?
+	Ongoing: 2020-12-08T13:06:41AEDT dtscan, when counting by range, return both count and (optionally) representation of interval - either partial datetime, i.e: '2020-03' for a monthly range, or both start and end of interval '2020-03-01T00:00:00, 2020-03-31T23:59:59'?
+	Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
+	Ongoing: 2020-12-07T14:49:04AEDT /tmp is full of directories '_TaskLog_SetupFile_AddGrabLabels.$(date +%s)'
+	Ongoing: 2020-12-06T21:34:56AEDT dealing with the 'these files are the same' problem vis-a-vis vimh and files being renamed (consider rename of both git and non-git file)
+	Ongoing: 2020-12-06T21:16:13AEDT test/check data in <project>/tests/data/ vs <project>/data/
+	Ongoing: 2020-12-05T01:47:57AEDT env -> is too long, (see) mld_unix_(.*)
+	Ongoing: 2020-12-04T01:12:54AEDT _util_positions2linesnums(self, match_positions) (not the first) lesson in why dictionaries (with their *labeled* categories) might be better practice
+	Ongoing: 2020-12-04T01:08:53AEDT dtscan, sorting datetimes, with multiple items per line (either) use (chronologically) earliest/last datetime on line, or (position/order) first / last /n-th on line
+	Ongoing: 2020-12-01T19:46:14AEDT can duplicate lines in schedule (just) be assumed to be duplicates?
+	Ongoing: 2020-12-01T19:43:49AEDT how long, do you want to suppose, until (you) ditch the practice of prefixing every url with 'LINK'
+	Ongoing: 2020-12-01T17:55:57AEDT assessment of TasklogOpen -> f...... kill it with fire and re-write (creation of new tasklog for each month, opening of current tasklog given a month-offset, and combining of grab-labels from previous months)
+}}}
+
+Stopwatches:
+{{{
+}}}
+
+TODOs:
+{{{
+	TODO: 2020-12-15T00:01:54AEDT autocommit, commits more than 3 months old - remove all but last commit for each month
+	TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that ScanStream_DateTimeItems is able to return line numbers corresponding to input, not those from filtered stream it processes)
+	TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
+	TODO: 2020-12-11T21:43:09AEDT python, <book>, ch10, about packages
+	TODO: 2020-12-11T19:51:26AEDT pycli_snek, pycli_greeter -> move (along with git history) to cmcat_python
+	TODO: 2020-12-10T20:16:41AEDT zsh completion, (specifically if for anything for vi), seperate files from folders in tabcompletion
+	TODO: 2020-12-09T23:09:07AEDT dtscan, actually verify 'check' matches 'test' data -> this being an exercise in learning python test, thrus far mostly we have been presuming that any date calculuation that isn't 'error' is correct, (so) verify the function verfication data -> wolframalpha is the obvious reference
+	TODO: 2020-12-08T13:20:14AEDT dtscan, scan, if dividing by 'unique' items, attach (to list of streams) title, or 'key' (the unique item), (can streams be given names?), or (use filename given each stream is a tempfile - need to use any possible string include paths/invalid filename chars?) -> have class variable uniques_keys, containing titles of results of most recent invocation of uniques?
+	TODO: 2020-12-08T13:04:42AEDT dtscan, function, take partial datetime, eg: '2020-03' and produce earlierst and latest posible datetimes which are still part of partial datetime, i.e: '2020-03-01T00:00:00, 2020-03-31T23:59:59'
+	TODO: 2020-12-07T21:55:03AEDT dtscan, test_methods/test/_cli -> assign timezone <AEST/AEDT?>
+	TODO: 2020-12-07T19:14:57AEDT dtscan, unify use of ymwdHMS (there are instances of YMWDhms)
+	TODO: 2020-12-07T14:50:59AEDT dtscan, convert (various) datetime formats (in input) to specified format (replaced, inplaced in text) -> /tmp/pulse.log contains epochs (the sort of thing one might want to) (covert to iso datetimes)
+	TODO: 2020-12-04T22:50:16AEDT dtscan/test-methods.py -> names of (various) functions incorrect, tests broken, what has been removed, what has been renamed?
+	TODO: 2020-12-04T22:28:04AEDT dtscan, sort line-range wise
+	TODO: 2020-12-04T02:01:26AEDT cmcat_python, 'operator' (as in lists), other list sorting / manipulating functions, map(), <ect>
+	TODO: 2020-12-04T01:50:42AEDT dtscan, sortdt, test cases for earliest->latest and the reverse, with multiple datetimes on each line,
+	TODO: 2020-12-03T22:46:52AEDT cmcat_python, dictionary itteration
+	TODO: 2020-12-02T02:15:48AEDT vimh, reduce to real files (optional step in vimh) (which should be one not two scripts in /bin), replace paths-to-symlinks (find one, replace them all) with origional path (realpath?)
+}}}
+
+Task-Breakdowns:
+{{{
+}}}
+
+Thoerys:
+{{{
+}}}
+
+cmcats:
+{{{
+}}}
+
+}}}1:Tasklog-GrabBlocks-Done
+
+#------CurrentPrevious-FoldMarker-CURRENT--{{{1
+
+======== StartDay: (2020-12-17)-W(50)-D(Thursday) ========-{{{
+	Daily-Elapsed: 
+	Today-Tasks:
+		dtscan, matches, sortdt, linenums
+
+	ITEM: 
+	Start-Time: 2020-12-17T01:03:36AEDT
+	{{{ 	
+
+Ongoing: 2020-12-17T01:20:30AEDT dtscan, all fields of matches --pos should be sorted along with the datetimes
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 
+	}}}
+	Block-Elapsed: 
+
+	ITEM: 
+	Start-Time: 2020-12-17T01:01:47AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-17T02:01:56AEDT
+	has the surgery worked -> looking for line 303 <- f------ line number is f------ wrong
+
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 
+	}}}
+	Block-Elapsed: 
+
+	ITEM: 
+	Start-Time: 2020-12-17T16:19:57AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 
+	}}}
+	Block-Elapsed: 
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-17)-W(50)-D(Thursday) ********
+
+
+#-}}}1-CurrentPrevious-FoldMarker-PREVIOUS-{{{1
+======== StartDay: (2020-12-16)-W(50)-D(Wednesday) ========-{{{
+	Daily-Elapsed: 4h49m39s
+	Today-Tasks:
+		dtrange, historic
+		dtrange, executable/entry-point, as per qfstart/qfend -> output range line-by-line
+		dtscan, re-write sort functions
+		dtscan, orderered line nums,
+		dtscan, test cases (intervals), <>
+		dtscan_vi, 
+		dtscan, replace
+		plot pulse peaks
+		transparent read/write/append/ect zipped text file
+
+	ITEM: dtscan, line numbers
+	Start-Time: 2020-12-16T12:26:13AEDT
+	{{{ 	
+2020-12-16T12:55:14AEDT perl, seperators
+
+Ongoing: 2020-12-16T12:55:26AEDT dtscan, line numbers are (currently) zero-indexed
+
+	Evaluation: 2020-12-16T13:08:45AEDT 
+		linenums (now) one-indexed instead of zero indexed
+
+	DeltaPrevious: 
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-16T13:09:18AEDT 
+	}}}
+	Block-Elapsed: 43m5s
+
+	ITEM: dtscan, line numbers
+	Start-Time: 2020-12-16T13:55:12AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-16T14:42:40AEDT 
+		time and time, 
+
+		2020-12-16T14:51:05AEDT commit 
+	DeltaPrevious: 45m54s
+	TimeQuality: (0.56) aim=.5 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-16T14:51:11AEDT 
+	}}}
+	Block-Elapsed: 55m59s
+
+	ITEM: dtscan, test cases, '%y-%m' input behaviour
+	Start-Time: 2020-12-16T15:00:54AEDT
+	{{{ 	
+
+Bug: 2020-12-16T15:40:34AEDT dtscan, strings with format '%y-%m' - string2datetime gives result in middle of month, range-filter, '2020-11/2020-12' works as a date range, but '2020-03/2020-04' does not? (However) '2020-03-01'/2020-04-01' does? -> '2020-03' becomes '2020-03-16 00:00:00+11:00', '2020-11' becomes '2020-11-16 00:00:00+11:00'
+2020-12-16T15:46:14AEDT 
+
+TODO: 2020-12-16T15:52:32AEDT dtscan, fix behaviour of Convert_string2DateTime() when given partial date, '2020-03' currently becomes '2020-03-16' -> desired behaviour is 2020-03-01T00:00:00'
+2020-12-16T15:54:05AEDT 
+
+	Evaluation: 2020-12-16T15:54:07AEDT 
+time and time and time
+
+	DeltaPrevious: 9m43s
+	TimeQuality: (0.50) aim=.5 val=.5 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-16T15:54:36AEDT 
+	}}}
+	Block-Elapsed: 53m42s
+
+	ITEM: 
+	Start-Time: 2020-12-16T20:03:40AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 4h9m4s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-16T21:47:40AEDT
+	}}}
+	Block-Elapsed: 1h44m
+
+	ITEM: 
+	Start-Time: 2020-12-16T23:32:27AEDT
+	{{{ 	
+
+		TODO: 2020-12-17T00:02:31AEDT dtscan, implement '--historic'
+
+	Evaluation: 2020-12-17T00:04:42AEDT 
+time and time and time
+
+Bug: 2020-12-17T00:04:47AEDT dtscan '--sortdt' -> line numbers are not correct (try example with lines that do not contain datetimes)
+
+	DeltaPrevious: 1h44m47s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	ime-Done: 2020-12-17T00:05:20AEDT 
+	}}}
+	Block-Elapsed: 32m53s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-16)-W(50)-D(Wednesday) ********
+
+
+======== StartDay: (2020-12-15)-W(50)-D(Tuesday) ========-{{{
+	Daily-Elapsed: 8h32m59s
+	Today-Tasks:
+		dtscan, resources, (i.e: test data, regex definitions) location declaration
+		dtscan, methods -> classes
+		dtscan, (output-as-stream?) (testable in way print() isn't?)
+
+	ITEM: dtscan, resources
+	Start-Time: 2020-12-15T10:56:28AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-15T11:28:50AEDT 
+		Continue: 2020-12-15T11:28:56AEDT dtscan, reading regex datafile, (how to) organise test imports (given) can't specify directory as resource?
+
+	DeltaPrevious: 
+	TimeQuality: (0.60) aim=.6 val=.6 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T11:29:43AEDT 
+	}}}
+	Block-Elapsed: 33m15s
+
+	ITEM: dtscan, ongoing
+	Start-Time: 2020-12-15T11:36:40AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-15T12:42:02AEDT 
+
+	DeltaPrevious: 6m57s
+	TimeQuality: (0.53) aim=.5 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T12:42:21AEDT 
+	}}}
+	Block-Elapsed: 1h5m41s
+
+	ITEM: dtscan, 'hello-world' test
+	Start-Time: 2020-12-15T12:59:50AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-15T13:37:09AEDT 
+		hello-world test for 'scan' works 
+
+2020-12-15T13:37:36AEDT 
+
+	DeltaPrevious: 17m29s
+	TimeQuality: (0.60) aim=.6 val=.6 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T13:50:31AEDT 
+	}}}
+	Block-Elapsed: 50m41s
+
+	ITEM: dtscan, 
+	Start-Time: 2020-12-15T14:26:26AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-15T15:32:23AEDT 
+		complete (first) quickfilter test
+
+	DeltaPrevious: 35m55s
+	TimeQuality: (0.56) aim=.6 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T15:32:45AEDT 
+	}}}
+	Block-Elapsed: 1h6m19s
+
+	ITEM: dtscan
+	Start-Time: 2020-12-15T16:49:19AEDT
+	{{{ 	
+
+	Evaluation: 
+sorting is unstable? 
+ughhhhhh
+
+	DeltaPrevious: 1h16m34s
+	TimeQuality: (0.46) aim=.4 val=.6 content=.4
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T18:35:55AEDT 
+	}}}
+	Block-Elapsed: 1h46m36s
+
+	ITEM: dtscan, 
+	Start-Time: 2020-12-15T19:01:13AEDT
+	{{{ 	
+
+2020-12-15T19:10:33AEDT dtscan, sort is not unstable - there is no way of determining the origional order of two equal datetimes 
+
+	Evaluation: 2020-12-15T21:07:23AEDT 
+		Continue: 2020-12-15T21:07:27AEDT dtscan, (0.2), test_splitsum(), test_deltas()
+
+	DeltaPrevious: 25m18s
+	TimeQuality: (0.56) aim=.5 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T21:08:01AEDT 
+	}}}
+	Block-Elapsed: 2h6m48s
+
+	ITEM: dtscan, complete initial rudimentary tests
+	Start-Time: 2020-12-15T23:17:19AEDT
+	{{{ 	
+
+commit 
+	Evaluation: 2020-12-16T00:20:55AEDT 
+
+	DeltaPrevious: 2h9m18s
+	TimeQuality: (0.63) aim=.6 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-16T00:20:58AEDT 
+	}}}
+	Block-Elapsed: 1h3m39s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-15)-W(50)-D(Tuesday) ********
+
+
+======== StartDay: (2020-12-14)-W(50)-D(Monday) ========-{{{
+	Daily-Elapsed: 4h51m20s
+	Today-Tasks:
+		autocommit
+		pulse, correct line numbers
+		plotting datetime range
+		uniques
+
+	ITEM: uniques, perl, python
+	Start-Time: 2020-12-14T15:45:01AEDT
+	{{{ 	
+
+perl, $, @, and %:
+	$foo is a scalar variable. It can hold a single value which can be a string, numeric, etc.
+	@foo is an array. Arrays can hold multiple values. You can access these values using an index. For example $foo[0] is the first element of the array and $foo[1] is the second element of the array, etc. (Arrays usually start with zero).
+	%foo is a hash, this is like an array because it can hold more than one value, but hashes are keyed arrays. For example, I have a password hash called %password. This is keyed by the user name and the values are the user's password. 
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-14T16:35:56AEDT 
+	}}}
+	Block-Elapsed: 50m55s
+
+	ITEM: Qnap
+	Start-Time: 2020-12-14T17:24:46AEDT 
+	{{{ 	
+
+LINK: https://forum.qnap.com/viewtopic.php?t=17988
+qnap auto-unlock:
+wget --output-document=res.tmp http://localhost:8080/cgi-bin/authLogin.cgi --post-data='user=admin&pwd=xxxxxx'
+wget --output-document=res.tmp http://localhost:8080/cgi-bin/disk/device_info.cgi?sid=`sed -n -e 's/.*<authSid>\(.*\)<\/authSid>.*/\1/p' res.tmp` --post-data='todo=encrypt_action&OPEN_ENCRYPT_DEV=2&pwd=yyyyyy'
+
+echo "Type your very secret password"
+read -s password
+mkdir /share/CE_CACHEDEV1_DATA
+storage_util --encrypt_pwd pwd=$password | sed 's/Encrypted passwd is://g' | cryptsetup -v luksOpen /dev/mapper/cachedev1 ce_cachedev1
+mount /dev/mapper/ce_cachedev1 /share/CE_CACHEDEV1_DATA -t ext4
+/etc/init.d/init_lvm.sh
+/etc/init.d/init_qpkg.sh start
+/etc/init.d/services.sh start
+
+
+#!/bin/bash
+# Requires: curl perl perl-JSON jq base64
+# pip install yq
+USER="admin"
+PASS="QNAP_admin_passsword"
+HOST="https://mynas.local"
+VPASS="drive_encryption_password"
+# encode login password
+EPASS="$(echo -n $(echo -n "$PASS" | base64) | jq -sRr @uri)"
+# Log on
+result="$(curl --cookie-jar unlock.cookies  --insecure "${HOST}/cgi-bin/authLogin.cgi" -X POST -d "user=${USER}&pwd=${EPASS}")"
+# Extract session id from reqult
+SID=$(echo $result | perl -pi -e 's/.*\Q<authSid><![CDATA[\E([^\]]+).*/$1/g')
+echo SID: $SID
+# Figure out which volumes are encrypted and still locked
+VOLS=$(
+curl \
+     --cookie-jar unlock.cookies \
+         --insecure "$HOST/cgi-bin/disk/disk_manage.cgi?sid=${SID}&store=lvList" \
+         -X POST \
+         -d "func=extra_get" \
+         -d "extra_vol_index=1" \
+         -d "dc=0.7540563754242229" \
+                | xq .QDocRoot.Volume_Index.row \
+                | perl -0777 -e '
+    use JSON; 
+    $j = decode_json(<>); 
+    foreach my $e (@$j) { 
+        print %$e{"vol_no"}." " 
+        if (%$e{"encryptfs_bool"} eq "1" and %$e{"encryptfs_active_bool"} ne "1"); 
+    }')
+# Loop through locked volumes and request unlock using VPASS as key. This could be modified to use file based on volume name. Perl-line above could also easily spit out volume name. 
+for VOL in $VOLS; do
+        curl --cookie-jar unlock.cookies \
+     --insecure "${HOST}/cgi-bin/disk/disk_manage.cgi?sid=${SID}" \
+         -X POST \
+         -d "func=open_encrypt_dev" \
+         -d "volumeID=${VOL}" \
+         -d "keyStr=${VPASS}" \
+         -d "saveKey=no" \
+         -d "count=0.23383354619125796" \
+         -d "scan_iscsi_share=1" 
+done
+
+	Evaluation: 
+	DeltaPrevious: 48m50s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-14T17:40:00AEDT
+	}}}
+	Block-Elapsed: 15m14s
+
+	ITEM: dtscan-0.2
+	Start-Time: 2020-12-14T18:10:02AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-14T19:24:03AEDT 
+time and time
+
+	DeltaPrevious: 30m2s
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-14T19:24:10AEDT 
+	}}}
+	Block-Elapsed: 1h14m8s
+
+	ITEM: dtscan-0.2, modules/classes/functions
+	Start-Time: 2020-12-14T20:35:22AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-14T21:47:20AEDT 
+		time and time and time
+
+	DeltaPrevious: 1h11m12s
+	TimeQuality: (0.59) aim=.6 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-14T21:47:33AEDT 
+	}}}
+	Block-Elapsed: 1h12m11s
+
+	ITEM: 
+	Start-Time: 2020-12-14T22:17:11AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-14T23:11:03AEDT 
+
+Continue: 2020-12-14T23:11:06AEDT dtscan, module/class setup, 
+
+	DeltaPrevious: 29m38s
+	TimeQuality: (0.59) aim=.6 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-14T23:11:22AEDT 
+	}}}
+	Block-Elapsed: 54m11s
+
+	ITEM: autocommit
+	Start-Time: 2020-12-14T23:38:35AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-15T00:02:34AEDT 
+
+	TODO: 2020-12-15T00:01:54AEDT autocommit, commits more than 3 months old - remove all but last commit for each month
+
+	DeltaPrevious: 27m13s
+	TimeQuality: (0.60) aim=.6 val=.6 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-15T00:03:16AEDT 
+	}}}
+	Block-Elapsed: 24m41s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-14)-W(50)-D(Monday) ********
+
+
+======== StartDay: (2020-12-13)-W(49)-D(Sunday) ========-{{{
+	Daily-Elapsed: 3h11m33s
+	Today-Tasks:
+		autocommit
+		plot ~/.pulse-peaks.log
+
+	ITEM: 
+	Start-Time: 2020-12-13T17:55:55AEDT
+	{{{ 	
+
+Bug: 2020-12-13T18:29:53AEDT 'dtscan matches --detail --sortdt' line numbers are those from sorted input, not those 
+
+TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
+
+TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that ScanStream_DateTimeItems is able to return line numbers corresponding to input, not those from filtered stream it processes)
+
+	Evaluation: 2020-12-13T18:33:45AEDT 
+Continue: 2020-12-13T18:33:51AEDT When 'dtscan matches --detail' are all in same format, dtscan_vi only has to sort that same list alphabetically (along with line numbers), (and it has) chronological list of linenumbers for those with datetimes on them
+
+	DeltaPrevious: 
+	TimeQuality: (0.56) aim=.6 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-13T18:35:05AEDT 
+	}}}
+	Block-Elapsed: 39m10s
+
+	ITEM: plot ~/.pulse-peaks.log
+	Start-Time: 2020-12-13T19:05:51AEDT
+	{{{ 	
+2020-12-13T19:19:21AEDT commits
+
+2020-12-13T19:22:34AEDT listing unique datetimes in pulse-peaks file
+#>%		cat ~/.pulse-peaks.log | dtscan count | perl -lane 'print $F[1]'
+
+Ongoing: 2020-12-13T19:29:48AEDT would symlinks not be easier, as a file containing items (in that directory) which are to be link, wrt current directory to $HOME, i.e: 'ln "$mld_src/plot-pulsepeaks-daily.zsh" "$HOME/bin/plot-pulsepeaks-daily"' in $mld_src/_links.sh?
+2020-12-13T19:30:52AEDT 
+
+Ongoing: 2020-12-13T20:09:56AEDT dtscan.datetimescanner when imported from within package, dtscan.dtscan.datetimescanner when imported from outside?
+2020-12-13T20:10:41AEDT 
+
+2020-12-13T20:31:51AEDT A case study, zsh vs python, (and how difficult was each one?) (python has the considerable advantage let us point out, of f------ being python and everything that entails) (see below)
+2020-12-13T20:32:28AEDT 
+Zsh
+{{{
+_plot_dir_output="$mld_out_local/schedule-plot-pulse-peaks"
+_path_pulsepeaks_log="$HOME/.pulse-peaks.log"
+
+_Plot_PulsePeaks_Daily() { 
+	#	func_name: (z,sh)
+	local func_name=""
+	if [[ -n "${ZSH_VERSION:-}" ]]; then 
+		func_name=${funcstack[1]:-}
+	elif [[ -n "${BASH_VERSION:-}" ]]; then
+		func_name="${FUNCNAME[0]:-}"
+	else
+		printf "%s\n" "warning, func_name unset, non zsh/bash shell" > /dev/stderr
+	fi
+	local func_printdebug=1
+	#	func_help: (z,sh)
+	local func_about=""
+	local func_help="""$func_name, $func_about
+"""
+	if echo "${1:-}" | perl -wne '/^\s*-h|--help\s*$/ or exit 1'; then
+		echo "$func_help"
+		return 2
+	fi
+
+#	validate command 'dtscan', file _path_pulsepeaks_log
+	if ! command -v dtscan > /dev/null; then
+		echoerr "$func_name, error, invalid cmd dtscan"
+		exit 2
+	fi
+	if [ ! -f "$_path_pulsepeaks_log" ]; then
+		echoerr "$func_name, not found, path_pulsepeaks_log=($_path_pulsepeaks_log)"
+		exit 2
+	fi
+
+	local plot_item_str="D-IR"
+
+	#	List of unique days in pulse-peaks file
+	local uniquelist_days=( $( cat -v "$_path_pulsepeaks_log" | dtscan count | perl -lane 'print $F[1]' ) )
+
+	if [ $func_printdebug -eq 1 ]; then
+		echoerr "$func_name, len(uniquelist_days)=(${#uniquelist_days[@]})"
+		echoerr "plot_item_str=($plot_item_str)"
+	fi
+
+	if [ ! -d "$_plot_dir_output" ]; then
+		mkdir "$_plot_dir_output"
+	fi
+
+	local loop_day_data=""
+	local loop_day_values=""
+	local loop_day_datetimes=""
+	for loop_day in "${uniquelist_days[@]}"; do
+		loop_day_data=$( cat -v "$_path_pulsepeaks_log"  | perl -wne "/^$loop_day/ and print" | perl -wne "/\t$plot_item_str\t/ and print" | sort )
+		IFS_temp=$IFS
+		IFS=$'\n'
+		loop_day_datetimes=( $( printf "%s\n" "$loop_day_data" | perl -lane 'print $F[0]' ) )
+		loop_day_values=( $( printf "%s\n" "$loop_day_data" | perl -lane 'print $F[3]' ) )
+		IFS=$IFS_temp
+		if [ $func_printdebug -eq 1 ]; then
+			echoerr "len(loop_day_data)=($( echo $loop_day_data | wc -l ))"
+			echoerr "loop_day_datetimes=($loop_day_datetimes)"
+			echoerr "loop_day_values=($loop_day_values)"
+		fi
+	done
+
+}
+
+_Plot_PulsePeaks_Daily "$@"
+
+
+}}}
+Python
+{{{
+import sys
+import os
+import logging
+import re
+import decimal
+import dateutil.parser
+from decimal import Decimal
+from dtscan.dtscan.datetimescanner import DateTimeScanner
+
+_log = logging.getLogger('plotpulsespeaks')
+_logging_format="%(funcName)s: %(levelname)s, %(message)s"
+_logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
+logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
+
+_path_output_dir = os.path.join(os.environ.get("mld_out_local"), "schedule-plot-pulse-peaks")
+_path_pulsepeaks_log = os.path.join(os.getenv("HOME"), ".pulse-peaks.log")
+
+plot_item_str = "D-IR"
+
+dtscanner = DateTimeScanner()
+pulsepeaks_firstAndLast = []
+
+#   Get list of days between first and last datetime in file
+with open(_path_pulsepeaks_log, "r") as f:
+    pulsepeaks_firstAndLast = dtscanner.DTRange_GetFirstAndLast(f)
+pulsepeaks_dayrange = dtscanner.DTRange_FromDates(pulsepeaks_firstAndLast[0], pulsepeaks_firstAndLast[1], 'd', False)
+
+_log.debug("pulsepeaks_firstAndLast=(%s)" % str(pulsepeaks_firstAndLast))
+_log.debug("pulsepeaks_dayrange=(%s)" % str(pulsepeaks_dayrange))
+
+_delim = "\t"
+for loop_day in pulsepeaks_dayrange:
+    _log.debug("loop_day=(%s)" % str(loop_day))
+    loop_day_values = []
+    loop_day_datetimes = []
+    loop_day_datetimes_str = []
+    for loop_line in open(_path_pulsepeaks_log, "r"):
+        loop_line_split = loop_line.split(_delim)
+        #   If loop_line_split[0] begins with loop_day, and loop_line_split[1] contains plot_item_str, then
+        regex_loop_day = re.compile("^" + loop_day)
+        if (regex_loop_day.match(loop_line_split[0])) and (loop_line_split[1] == plot_item_str):
+            loop_day_values.append(Decimal(loop_line_split[3]))
+            loop_day_datetimes.append(dateutil.parser.parse(loop_line_split[0]))
+            loop_day_datetimes_str.append(str(dateutil.parser.parse(loop_line_split[0])))
+    _log.debug("loop_day_values=(%s)" % str(loop_day_values))
+    _log.debug("loop_day_datetimes_str=(%s)\n" % str(loop_day_datetimes_str))
+
+
+}}}
+
+	Evaluation: 2020-12-13T20:39:03AEDT 
+		so, any (z,sh) tool longer than, (picking a number for the sake of picking one), ~10 lines, should really be a python tool?
+
+Continue: 2020-12-13T20:38:17AEDT plot datetimes vs qtys to loop_filename
+
+	DeltaPrevious: 30m46s
+	TimeQuality: (0.56) aim=.6 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-13T20:40:29AEDT 
+	}}}
+	Block-Elapsed: 1h34m38s
+
+	ITEM: plot ~/.pulse-peaks.log
+	Start-Time: 2020-12-13T21:03:17AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-13T21:48:00AEDT 
+	DeltaPrevious: 22m48s
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-13T21:48:06AEDT 
+	}}}
+	Block-Elapsed: 44m49s
+
+	ITEM: plot ~/.pulse-peaks.log
+	Start-Time: 2020-12-13T23:06:06AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 1h18m
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-13T23:19:02AEDT 
+	}}}
+	Block-Elapsed: 12m56s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-13)-W(49)-D(Sunday) ********
+
+
+======== StartDay: (2020-12-12)-W(49)-D(Saturday) ========-{{{
+	Daily-Elapsed: 5h57m
+	Today-Tasks:
+		dtscan, tabcompletion
+		dtscan, combine vimh/zsh_history
+
+	ITEM: dtscan, shtab completion
+	Start-Time: 2020-12-12T01:45:40AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-12T02:07:04AEDT 
+
+Bug: 2020-12-12T02:07:37AEDT dtscan, importing shtab in dtscan.__main__ causes tox tests to fail with ModuleNotFound error 
+Bugfix: 2020-12-12T02:08:17AEDT only import shtab inside if __main__ condition
+Ongoing: 2020-12-12T02:08:42AEDT python package install/test dependencies (recall shtab causing dtscan tox tests to fail)
+2020-12-12T02:09:41AEDT 
+
+Continue: 2020-12-12T02:10:00AEDT (what can we do with) zsh-completion script for dtscan
+
+	DeltaPrevious: 
+	TimeQuality: (0.59) aim=.5 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T02:10:17AEDT 
+	}}}
+	Block-Elapsed: 24m37s
+
+	ITEM: dtscan, shtab completion
+	Start-Time: 2020-12-12T02:16:01AEDT
+	{{{ 	
+
+#>% shtab dtscan.__main__._parser --shell=zsh
+{{{
+#compdef dt-scan
+
+# AUTOMATCALLY GENERATED by `shtab`
+
+_shtab_dtscan_options_=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-v,--debug}"[Use debug level logging]"
+  "--dryrun[Do not update any files specified as input\/(output\?)]"
+  "--titles[Include headings for any output column(s)]"
+  "--noassumetz[Do not assume timezone of datetimes missing         timezone information]"
+  "--outputdelim[Output column delimator]:outputdelim:"
+  "(- :)--version[show program\'s version number and exit]"
+)
+
+_shtab_dtscan_commands_() {
+  local _commands=(
+    "combine:Combine     datetimes from multiple files into single stream"
+    "count:As per sum,     and for a given datetime interval (YMWDhms), count instances of datetimes     for each interval in file. Use with --uniques \<col\> to count instances     per unqiue item\>"
+    "datetimes2delta:Find delta between two datetimes, and output in given format"
+    "deltas:Locate     datetimes in text, and output deltas in given format"
+    "matches:Print     table of datetime matches (and optionally their locations within input)"
+    "offset:Add (or     subtract) given delta (s\/YMWDhms) from given datetime"
+    "range:Produce     datetime range from given start\/end points and interval"
+    "scan:Read input,     perform any filtering specified, and output stream result"
+    "search:Locate all     datetime instances in files in a given directory"
+    "seconds2delta:Convert seconds quantity to Dhms"
+    "splits:Locate     datetimes in text, find deltas, convert to splits, and output split table"
+    "splitsum:As per     split, and calculate splits, and for a given interval (YMWDhms) sum     splits. Use with --uniques \<col\> \<sum splits per unique item\>"
+    "string2datetime:Convert string to datetime, and output in given format"
+  )
+
+  _describe 'dt-scan commands' _commands
+}
+
+_shtab_dtscan_combine=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+_shtab_dtscan_count=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-R,--replace}"[If given, replace datetimes in stream with equivelent datetimes         of the strformat specified]:replace:"
+  {-I,--infile}"[File to use as input if given, otherwise use stdin]:infile:"
+  "*"{-f,--scanregexformat}"[Specify custom datetime formats to use as inputs when scanning         text]:scanregexformat:"
+  "--scanregexfile[Specify custom file         containing datetime format regex for which to scan]:scanregexfile:"
+  "--sortalpha[Sort input lines alphanumericly (overrides sortdt)]"
+  "--sortdt[Sort input lines chronologically (with non-datetime lines, at         end, in-order)]"
+  "--sortreverse[Reverse results of input sorting]"
+  "--sortrangedt[Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)]"
+  {-C,--column}"[Limit scan to given column of input (0-indexed)]:column:"
+  {-F,--delim}"[Delimitor to use with -C\|--column and -U\|--uniques]:delim:"
+  {-U,--uniques}"[Run once for each unique item in a given column         (0-indexed)]:uniques:"
+  "--uniquekeys[Include unique values as heading for each set of corresponding         lines]"
+  "--fastinterval[interval to use for fastfilter, 1\=years, 2\=months, 3\=days]:fastinterval:"
+  "--faststart[Start date for fastfilter - exclude lines that do not contain a \%\%Y-\%\%m-\%\%d year\/month\/day strings for a given range]:faststart:"
+  "--fastend[End date for fastfilter]:fastend:"
+  "--fastrange[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going backwards]:fastrange:"
+  "--fastrangefuture[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going forwards]:fastrangefuture:"
+  "--scanstart[Scan based filtering, exclude lines containing older datetimes]:scanstart:"
+  "--scanend[Scan based filtering, exclude line containing younger datetimes]:scanend:"
+  "--scanfull[Do not exclude lines that do not contain datetimes when performing scan based fileting]"
+  "--scaninvert[Invert range for start\/end for scan filtering, that-is only include items older than start, \'younger\' than \'end\']"
+  "--interval[Sum\/combine by interval (ymwdHMS)]:interval:(y m w d H M S)"
+  "--hideinterval[Include string representation]"
+)
+
+_shtab_dtscan_datetimes2delta=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+_shtab_dtscan_deltas=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-R,--replace}"[If given, replace datetimes in stream with equivelent datetimes         of the strformat specified]:replace:"
+  {-I,--infile}"[File to use as input if given, otherwise use stdin]:infile:"
+  "*"{-f,--scanregexformat}"[Specify custom datetime formats to use as inputs when scanning         text]:scanregexformat:"
+  "--scanregexfile[Specify custom file         containing datetime format regex for which to scan]:scanregexfile:"
+  "--sortalpha[Sort input lines alphanumericly (overrides sortdt)]"
+  "--sortdt[Sort input lines chronologically (with non-datetime lines, at         end, in-order)]"
+  "--sortreverse[Reverse results of input sorting]"
+  "--sortrangedt[Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)]"
+  {-C,--column}"[Limit scan to given column of input (0-indexed)]:column:"
+  {-F,--delim}"[Delimitor to use with -C\|--column and -U\|--uniques]:delim:"
+  {-U,--uniques}"[Run once for each unique item in a given column         (0-indexed)]:uniques:"
+  "--uniquekeys[Include unique values as heading for each set of corresponding         lines]"
+  "--fastinterval[interval to use for fastfilter, 1\=years, 2\=months, 3\=days]:fastinterval:"
+  "--faststart[Start date for fastfilter - exclude lines that do not contain a \%\%Y-\%\%m-\%\%d year\/month\/day strings for a given range]:faststart:"
+  "--fastend[End date for fastfilter]:fastend:"
+  "--fastrange[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going backwards]:fastrange:"
+  "--fastrangefuture[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going forwards]:fastrangefuture:"
+  "--scanstart[Scan based filtering, exclude lines containing older datetimes]:scanstart:"
+  "--scanend[Scan based filtering, exclude line containing younger datetimes]:scanend:"
+  "--scanfull[Do not exclude lines that do not contain datetimes when performing scan based fileting]"
+  "--scaninvert[Invert range for start\/end for scan filtering, that-is only include items older than start, \'younger\' than \'end\']"
+)
+
+_shtab_dtscan_matches=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-R,--replace}"[If given, replace datetimes in stream with equivelent datetimes         of the strformat specified]:replace:"
+  {-I,--infile}"[File to use as input if given, otherwise use stdin]:infile:"
+  "*"{-f,--scanregexformat}"[Specify custom datetime formats to use as inputs when scanning         text]:scanregexformat:"
+  "--scanregexfile[Specify custom file         containing datetime format regex for which to scan]:scanregexfile:"
+  "--sortalpha[Sort input lines alphanumericly (overrides sortdt)]"
+  "--sortdt[Sort input lines chronologically (with non-datetime lines, at         end, in-order)]"
+  "--sortreverse[Reverse results of input sorting]"
+  "--sortrangedt[Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)]"
+  {-C,--column}"[Limit scan to given column of input (0-indexed)]:column:"
+  {-F,--delim}"[Delimitor to use with -C\|--column and -U\|--uniques]:delim:"
+  {-U,--uniques}"[Run once for each unique item in a given column         (0-indexed)]:uniques:"
+  "--uniquekeys[Include unique values as heading for each set of corresponding         lines]"
+  "--fastinterval[interval to use for fastfilter, 1\=years, 2\=months, 3\=days]:fastinterval:"
+  "--faststart[Start date for fastfilter - exclude lines that do not contain a \%\%Y-\%\%m-\%\%d year\/month\/day strings for a given range]:faststart:"
+  "--fastend[End date for fastfilter]:fastend:"
+  "--fastrange[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going backwards]:fastrange:"
+  "--fastrangefuture[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going forwards]:fastrangefuture:"
+  "--scanstart[Scan based filtering, exclude lines containing older datetimes]:scanstart:"
+  "--scanend[Scan based filtering, exclude line containing younger datetimes]:scanend:"
+  "--scanfull[Do not exclude lines that do not contain datetimes when performing scan based fileting]"
+  "--scaninvert[Invert range for start\/end for scan filtering, that-is only include items older than start, \'younger\' than \'end\']"
+)
+
+_shtab_dtscan_offset=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+_shtab_dtscan_range=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+_shtab_dtscan_scan=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-R,--replace}"[If given, replace datetimes in stream with equivelent datetimes         of the strformat specified]:replace:"
+  {-I,--infile}"[File to use as input if given, otherwise use stdin]:infile:"
+  "*"{-f,--scanregexformat}"[Specify custom datetime formats to use as inputs when scanning         text]:scanregexformat:"
+  "--scanregexfile[Specify custom file         containing datetime format regex for which to scan]:scanregexfile:"
+  "--sortalpha[Sort input lines alphanumericly (overrides sortdt)]"
+  "--sortdt[Sort input lines chronologically (with non-datetime lines, at         end, in-order)]"
+  "--sortreverse[Reverse results of input sorting]"
+  "--sortrangedt[Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)]"
+  {-C,--column}"[Limit scan to given column of input (0-indexed)]:column:"
+  {-F,--delim}"[Delimitor to use with -C\|--column and -U\|--uniques]:delim:"
+  {-U,--uniques}"[Run once for each unique item in a given column         (0-indexed)]:uniques:"
+  "--uniquekeys[Include unique values as heading for each set of corresponding         lines]"
+  "--fastinterval[interval to use for fastfilter, 1\=years, 2\=months, 3\=days]:fastinterval:"
+  "--faststart[Start date for fastfilter - exclude lines that do not contain a \%\%Y-\%\%m-\%\%d year\/month\/day strings for a given range]:faststart:"
+  "--fastend[End date for fastfilter]:fastend:"
+  "--fastrange[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going backwards]:fastrange:"
+  "--fastrangefuture[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going forwards]:fastrangefuture:"
+  "--scanstart[Scan based filtering, exclude lines containing older datetimes]:scanstart:"
+  "--scanend[Scan based filtering, exclude line containing younger datetimes]:scanend:"
+  "--scanfull[Do not exclude lines that do not contain datetimes when performing scan based fileting]"
+  "--scaninvert[Invert range for start\/end for scan filtering, that-is only include items older than start, \'younger\' than \'end\']"
+)
+
+_shtab_dtscan_search=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+_shtab_dtscan_seconds2delta=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+_shtab_dtscan_splits=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-R,--replace}"[If given, replace datetimes in stream with equivelent datetimes         of the strformat specified]:replace:"
+  {-I,--infile}"[File to use as input if given, otherwise use stdin]:infile:"
+  "*"{-f,--scanregexformat}"[Specify custom datetime formats to use as inputs when scanning         text]:scanregexformat:"
+  "--scanregexfile[Specify custom file         containing datetime format regex for which to scan]:scanregexfile:"
+  "--sortalpha[Sort input lines alphanumericly (overrides sortdt)]"
+  "--sortdt[Sort input lines chronologically (with non-datetime lines, at         end, in-order)]"
+  "--sortreverse[Reverse results of input sorting]"
+  "--sortrangedt[Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)]"
+  {-C,--column}"[Limit scan to given column of input (0-indexed)]:column:"
+  {-F,--delim}"[Delimitor to use with -C\|--column and -U\|--uniques]:delim:"
+  {-U,--uniques}"[Run once for each unique item in a given column         (0-indexed)]:uniques:"
+  "--uniquekeys[Include unique values as heading for each set of corresponding         lines]"
+  "--fastinterval[interval to use for fastfilter, 1\=years, 2\=months, 3\=days]:fastinterval:"
+  "--faststart[Start date for fastfilter - exclude lines that do not contain a \%\%Y-\%\%m-\%\%d year\/month\/day strings for a given range]:faststart:"
+  "--fastend[End date for fastfilter]:fastend:"
+  "--fastrange[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going backwards]:fastrange:"
+  "--fastrangefuture[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going forwards]:fastrangefuture:"
+  "--scanstart[Scan based filtering, exclude lines containing older datetimes]:scanstart:"
+  "--scanend[Scan based filtering, exclude line containing younger datetimes]:scanend:"
+  "--scanfull[Do not exclude lines that do not contain datetimes when performing scan based fileting]"
+  "--scaninvert[Invert range for start\/end for scan filtering, that-is only include items older than start, \'younger\' than \'end\']"
+  {-S,--seconds}"[delta to consider datetimes adjacent]:seconds:"
+)
+
+_shtab_dtscan_splitsum=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+  {-R,--replace}"[If given, replace datetimes in stream with equivelent datetimes         of the strformat specified]:replace:"
+  {-I,--infile}"[File to use as input if given, otherwise use stdin]:infile:"
+  "*"{-f,--scanregexformat}"[Specify custom datetime formats to use as inputs when scanning         text]:scanregexformat:"
+  "--scanregexfile[Specify custom file         containing datetime format regex for which to scan]:scanregexfile:"
+  "--sortalpha[Sort input lines alphanumericly (overrides sortdt)]"
+  "--sortdt[Sort input lines chronologically (with non-datetime lines, at         end, in-order)]"
+  "--sortreverse[Reverse results of input sorting]"
+  "--sortrangedt[Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)]"
+  {-C,--column}"[Limit scan to given column of input (0-indexed)]:column:"
+  {-F,--delim}"[Delimitor to use with -C\|--column and -U\|--uniques]:delim:"
+  {-U,--uniques}"[Run once for each unique item in a given column         (0-indexed)]:uniques:"
+  "--uniquekeys[Include unique values as heading for each set of corresponding         lines]"
+  "--fastinterval[interval to use for fastfilter, 1\=years, 2\=months, 3\=days]:fastinterval:"
+  "--faststart[Start date for fastfilter - exclude lines that do not contain a \%\%Y-\%\%m-\%\%d year\/month\/day strings for a given range]:faststart:"
+  "--fastend[End date for fastfilter]:fastend:"
+  "--fastrange[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going backwards]:fastrange:"
+  "--fastrangefuture[Fastfilter using \%\%y(-\%\%m)(-\%\%d) string for range of \<fastinterval\> beginning at the present, going forwards]:fastrangefuture:"
+  "--scanstart[Scan based filtering, exclude lines containing older datetimes]:scanstart:"
+  "--scanend[Scan based filtering, exclude line containing younger datetimes]:scanend:"
+  "--scanfull[Do not exclude lines that do not contain datetimes when performing scan based fileting]"
+  "--scaninvert[Invert range for start\/end for scan filtering, that-is only include items older than start, \'younger\' than \'end\']"
+  {-S,--seconds}"[delta to consider datetimes adjacent]:seconds:"
+  "--interval[Sum\/combine by interval (ymwdHMS)]:interval:(y m w d H M S)"
+  "--hideinterval[Include string representation]"
+)
+
+_shtab_dtscan_string2datetime=(
+  "(- :)"{-h,--help}"[show this help message and exit]"
+)
+
+typeset -A opt_args
+local context state line curcontext="$curcontext"
+
+_arguments \
+  $_shtab_dtscan_options_ \
+   \
+  ': :_shtab_dtscan_commands_' \
+  '*::args:->args'
+
+case $words[1] in
+  combine) _arguments $_shtab_dtscan_combine ;;
+  count) _arguments $_shtab_dtscan_count ;;
+  datetimes2delta) _arguments $_shtab_dtscan_datetimes2delta ;;
+  deltas) _arguments $_shtab_dtscan_deltas ;;
+  matches) _arguments $_shtab_dtscan_matches ;;
+  offset) _arguments $_shtab_dtscan_offset ;;
+  range) _arguments $_shtab_dtscan_range ;;
+  scan) _arguments $_shtab_dtscan_scan ;;
+  search) _arguments $_shtab_dtscan_search ;;
+  seconds2delta) _arguments $_shtab_dtscan_seconds2delta ;;
+  splits) _arguments $_shtab_dtscan_splits ;;
+  splitsum) _arguments $_shtab_dtscan_splitsum ;;
+  string2datetime) _arguments $_shtab_dtscan_string2datetime ;;
+esac
+
+}}}
+
+	Evaluation: 2020-12-12T02:34:48AEDT 
+		command 'shtab' given parser in terms of package, i.e: dtscan.__main__._parser, and --shell=zsh, produces tab completion file. Which doesn't *appear* to work when placed in completion directory. 
+		Continue: 2020-12-12T02:36:23AEDT (takeawy is) writing zsh completion scripts, from scatch - completion as per dtscan presumedly is a repedative rather than complex?
+		2020-12-12T02:37:05AEDT 
+
+	DeltaPrevious: 5m44s
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T02:37:18AEDT 
+	}}}
+	Block-Elapsed: 21m17s
+
+	ITEM: zsh completion
+	Start-Time: 2020-12-12T13:21:38AEDT
+	{{{ 	
+
+FPATH The search path for function definitions. This path is searched when a function with the -u attribute is referenced and when a command is not found.
+Using autoload
+	save file (with command name as filename) in fpath, i.e: 'meet'
+#>%		autoload -U -z meet
+
+command is now available:
+	#>%		meet
+
+	Evaluation: 
+	DeltaPrevious: 10h44m20s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T13:50:46AEDT 
+	}}}
+	Block-Elapsed: 29m8s
+
+	ITEM: zsh completion
+	Start-Time: 2020-12-12T14:12:47AEDT
+	{{{ 	
+
+mockmd5sum:
+{{{
+#	first line must be compdef statement, with name of command to be completed
+#compdef mockmd5sum
+
+#	LINK: http://bewatermyfriend.org/p/2012/003/
+#	LINK: http://zsh.sourceforge.net/Doc/Release/Completion-System.html
+#	Book: Learning Shell Scripting with Zsh (Ch5, Completion)
+
+#	_arguments, (function), handles option arguments to be formatted and displayed (when following unix convention)
+#	'--' is the end parsing of option delimiter
+#	-S, do not complete options after '--' end parsing delimitor
+
+#	pattern of argument entries:
+#	(optional exclusion list), {options}, [help text]
+#		exclusion list: If given items appear (elsewhere) in the (current) command line, do not show them as completions
+#			eg: '(-L -P)-H[with -R, follow symlinks on the command line]' -> hide -L and -P if -H is used
+#		options: {} braces are excluded if there is only one option?
+#	'*:files:_files' standard helper function for completing filenames ('_files' uses helper function '_path_files')
+#	_call_program -> additional help function, execute system commands
+
+_arguments -S \
+  '(-b --binary)'{-b,--binary}'[read in binary mode]' \
+  '(-c --check)'{-c,--check}'[read MD5 sums from the FILEs and check them]' \
+  '(-t --text)'{-t,--text}'[read in text mode]' \
+  '--status[no output, status code shows success]' \
+  '(-w --warn)'{-w,--warn}'[warn about improperly formatted checksum lines]' \
+  '--help[display help and exit]' \
+  '--version[output version information and exit]' \
+  '*:files:_files'
+
+#>% 	echo $functions[_mockmd5sum]
+#>>		_arguments -S '(-b --binary)'{-b,--binary}'[read in binary mode]' '(-c --check)'{-c,--check}'[read MD5 sums from the FILEs and check them]' '(-t --text)'{-t,--text}'[read in text mode]' '--status[no output, status code shows success]' '(-w --warn)'{-w,--warn}'[warn about improperly formatted checksum lines]' '--help[display help and exit]' '--version[output version information and exit]' '*:files:_files'
+
+#>%		mockmd5sum<C-x>, h 		dump zsh completion content
+#>>		tags in context :completion::complete:mockmd5sum::
+#>>		    argument-rest options  (_arguments _mockmd5sum)
+#>>		tags in context :completion::complete:mockmd5sum:argument-rest:
+#>>		    globbed-files  (_files _arguments _mockmd5sum)
+
+
+#	Example, 'elm'
+#>%		#compdef elm
+#>%		
+#>%		_arguments -s \
+#>%		  '::recipient:_email_addresses' \
+#>%		  '-a[use the arrow pointer regardless]' \
+#>%		  '-A+[attach file]:file attachment:_files' \
+#>%		  '-c[check the given aliases only]:*:alias' \
+#>%		  '-d+[set debug level]:debug level' \
+#>%		  '-f+[specify mailbox to load]:mailbox: _mailboxes' \
+#>%		  '-h[display help]' \
+#>%		  '-i+[specify file to include in message]:include file:_files' \
+#>%		  '-m[turn off menu, using more of the screen]' \
+#>%		  '-s+[specify a subject]:subject:' \
+#>%		  "-t[don't use termcap/terminfo ti/te entries]" \
+#>%		  '-V[enable sendmail voyeur mode]' \
+#>%		  '-v[display elm version]' \
+#>%		  '-w[write .elm/elmrc]' \
+#>%		  '-z[start only if new messages]'
+
+#	How completion situation is handeled
+#>%		elm -A <tab>
+#	The shell starts and somewhere in your `.zshrc' file you are calling "autoload -Uz compinit; compinit". Now, compsys is online.
+#	While compinit is running it will find the `_elm' file in one directory of `$fpath'.
+#	Compinit will read the first like of that file, find out that it's a completion for a command called "elm" and make a note of that in a mapping for later.
+#	Then compinit will call `autoload' for the "_elm" file, so its code is loaded from the file when it is referenced for the first time.
+#	At the prompt, you typed "elm -A " and pressed the tab key, which will set the completion system in motion.
+#	Compsys recognises, that for the current cursor position the word in command position is "elm".
+#	It'll look up which completion function is in charge for that command in the mapping it made during startup. It'll find that that's "_elm".
+#	That function gets called and (when it is run for the first time) zsh automatically loads its code from the "_elm" file in `$fpath'.
+#	The `_arguments' function analyses the situation and figures out, that it needs to handle an argument to the "-A" option of the command, which it delegates to the `_files' function - as specified in the option's optspec.
+#	The result is that you are being presented with a list of files, which is useful for elm's "-A" option.
+
+
+}}}
+
+debugging completions: trace commands
+#>%		set -x
+(disable with 'set +x')
+
+	Evaluation: 2020-12-12T15:01:46AEDT 
+		for dtscan completion -> simple arguments should be basic (enough), subparsers with their own commands (however) involve a recursively structured completion script
+
+LINK: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org
+{{{
+Intro
+The official documentation for writing zsh completion functions is difficult to understand, and doesn’t give many examples. At the time of writing this document I was able to find a few other tutorials on the web, however those tutorials only explain a small portion of the capabilities of the completion system. This document aims to cover areas not explained elsewhere, with examples, so that you can learn how to write more advanced completion functions. I do not go into all the details, but will give enough information and examples to get you up and running. If you need more details you can look it up for yourself in the official documentation.
+
+Please make any scripts that you create publicly available for others (e.g. by forking this repo and making a pull request). Also if you have any more information to add or improvements to make to this tutorial, please do.
+
+Getting started
+Telling zsh which function to use for completing a command
+Completion functions for commands are stored in files with names beginning with an underscore _, and these files should be placed in a directory listed in the $fpath variable. You can add a directory to $fpath by adding a line like this to your ~/.zshrc file:
+
+fpath=(~/newdir $fpath)
+The first line of a completion function file can look something like this:
+
+#compdef foobar
+This tells zsh that the file contains code for completing the foobar command. This is the format that you will use most often for the first line, but you can also use the same file for completing several different functions if you want. See here for more details.
+
+You can also use the compdef command directly (e.g. in your ~/.zshrc file) to tell zsh which function to use for completing a command like this:
+
+> compdef _function foobar
+or to use the same completions for several commands:
+
+> compdef _function foobar goocar hoodar
+or if you want to supply arguments:
+
+> compdef '_function arg1 arg2' foobar
+See here for more details.
+
+Completing generic gnu commands
+Many gnu commands have a standardized way of listing option descriptions (when the –help option is used). For these commands you can use the _gnu_generic function for automatically creating completions, like this:
+
+> compdef _gnu_generic foobar
+or to use _gnu_generic with several different commands:
+
+> compdef _gnu_generic foobar goocar hoodar
+This line can be placed in your ~/.zshrc file.
+
+Copying completions from another command
+If you want a command, say cmd1, to have the same completions as another, say cmd2, which has already had completions defined for it, you can do this:
+
+> compdef cmd1=cmd2
+This can be useful for example if you have created an alias for a command to help you remember it.
+
+Writing your own completion functions
+A good way to get started is to look at some already defined completion functions. On my linux installation these are found in /usr/share/zsh/functions/Completion/Unix and /usr/share/zsh/functions/Completion/Linux and a few other subdirs.
+
+You will notice that the _arguments function is used a lot in these files. This is a utility function that makes it easy to write simple completion functions. The _arguments function is a wrapper around the compadd builtin function. The compadd builtin is the core function used to add completion words to the command line, and control its behaviour. However, most of the time you will not need to use compadd, since there are many utility functions such as _arguments and _describe which are easier to use.
+
+For very basic completions the _describe function should be adequate
+
+Utility functions
+Here is a list of some of the utility functions that may be of use. The full list of utility functions, with full explanations, is available here. Examples of how to use these functions are given in the next section.
+
+main utility functions for overall completion
+_alternative	Can be used to generate completion candidates from other utility functions or shell code.
+_arguments	Used to specify how to complete individual options & arguments for a command with unix style options.
+_describe	Used for creating simple completions consisting of words with descriptions (but no actions). Easier to use than _arguments
+_gnu_generic	Can be used to complete options for commands that understand the `–help’ option.
+_regex_arguments	Creates a function for matching commandline arguments with regular expressions, and then performing actions/completions.
+functions for performing complex completions of single words
+_values	Used for completing arbitrary keywords (values) and their arguments, or comma separated lists of such combinations.
+_combination	Used to complete combinations of values, for example pairs of hostnames and usernames.
+_multi_parts	Used for completing multiple parts of words separately where each part is separated by some char, e.g. for completing partial filepaths: /u/i/sy -> /usr/include/sys
+_sep_parts	Like _multi_parts but allows different separators at different parts of the completion.
+_sequence	Used as a wrapper around another completion function to complete a delimited list of matches generated by that other function.
+functions for completing specific types of objects
+_path_files	Used to complete filepaths. Take several options to control behaviour.
+_files	Calls _path_files with all options except -g and -/. These options depend on file-patterns style setting.
+_net_interfaces	Used for completing network interface names
+_users	Used for completing user names
+_groups	Used for completing group names
+_options	Used for completing the names of shell options.
+_parameters	Used for completing the names of shell parameters/variables (can restrict to those matching a pattern).
+functions for handling cached completions
+If you have a very large number of completions you can save them in a cache file so that the completions load quickly.
+
+_cache_invalid	indicates whether the completions cache corresponding to a given cache identifier needs rebuilding
+_retrieve_cache	retrieves completion information from a cache file
+_store_cache	store completions corresponding to a given cache identifier in a cache file
+other functions
+_message	Used for displaying help messages in places where no completions can be generated.
+_regex_words	Can be used to generate arguments for the _regex_arguments command. This is easier than writing the arguments manually.
+_guard	Can be used in the ACTION of specifications for _arguments and similar functions to check the word being completed.
+Actions
+Many of the utility functions such as _arguments, _regex_arguments, _alternative and _values may include an action at the end of an option/argument specification. This action indicates how to complete the corresponding argument. The actions can take one of the following forms:
+
+( )	Argument is required but no matches are generated for it.
+(ITEM1 ITEM2)	List of possible matches
+((ITEM1\:’DESC1’ ITEM2\:’DESC2’))	List of possible matches, with descriptions. Make sure to use different quotes than those around the whole specification.
+->STRING	Set $state to STRING and continue ($state can be checked in a case statement after the utility function call)
+FUNCTION	Name of a function to call for generating matches or performing some other action, e.g. _files or _message
+{EVAL-STRING}	Evaluate string as shell code to generate matches. This can be used to call a utility function with arguments, e.g. _values or _describe
+=ACTION	Inserts a dummy word into completion command line without changing the point at which completion takes place.
+Not all action types are available for all utility functions that use them. For example the ->STRING type is not available in the _regex_arguments or _alternative functions.
+
+Writing simple completion functions using _describe
+The _describe function can be used for simple completions where the order and position of the options/arguments is not important. You just need to create an array parameter to hold the options & their descriptions, and then pass the parameter name as an argument to _describe. The following example creates completion candidates c and d, with the descriptions (note this should be put in a file called _cmd in some directory listed in $fpath).
+
+#compdef cmd
+local -a subcmds
+subcmds=('c:description for c command' 'd:description for d command')
+_describe 'command' subcmds
+You can use several different lists separated by a double hyphen as follows but note that this mixes the matches under and single heading and is not intended to be used with different types of completion candidates:
+
+local -a subcmds topics
+subcmds=('c:description for c command' 'd:description for d command')
+topics=('e:description for e help topic' 'f:description for f help topic')
+_describe 'command' subcmds -- topics
+If two candidates have the same description, _describe collects them together on the same row and ensures that descriptions are aligned in neatly in columns. The _describe function can be used in an ACTION as part of a specification for _alternative, _arguments or _regex_arguments. In this case you will have to put it in braces with its arguments, e.g. ‘TAG:DESCRIPTION:{_describe ‘values’ options}’
+
+Writing completion functions using _alternative
+Like _describe, this function performs simple completions where the order and position of options/arguments is not important. However, unlike _describe, instead of fixed matches further functions may be called to generate the completion candidates. Furthermore, _alternative allows a mix of different types of completion candidates to be mixed.
+
+As arguments it takes a list of specifications each in the form ‘TAG:DESCRIPTION:ACTION’ where TAG is a special tag that identifies the type of completion matches, DESCRIPTION is used as a heading to describe the group of completion candidates collectively, and ACTION is one of the action types listed previously (apart from the ->STRING and =ACTION forms). For example:
+
+_alternative 'arguments:custom arg:(a b c)' 'files:filename:_files'
+The first specification adds completion candidates a, b & c, and the second specification calls the _files function for completing filepaths.
+
+We could split the specifications over several lines with \ and add descriptions to each of the custom args like this:
+
+_alternative \
+  'args:custom arg:((a\:"description a" b\:"description b" c\:"description c"))' \
+  'files:filename:_files'
+If we want to pass arguments to _files they can simply be included, like this:
+
+_alternative \
+  'args:custom arg:((a\:"description a" b\:"description b" c\:"description c"))'\
+  'files:filename:_files -/'
+To use parameter expansion to create our list of completions we must use double quotes to quote the specifications, e.g:
+
+_alternative \
+  "dirs:user directory:($userdirs)" \
+  "pids:process ID:($(ps -A o pid=))"
+In this case the first specification adds the words stored in the $userdirs variable, and the second specification evaluates ‘ps -A o pid=’ to get a list of pids to use as completion candidates. In practice, we would make used of the existing _pids function for this.
+
+We can use other utility functions such as _values in the ACTION to perform more complex completions, e.g:
+
+_alternative \
+  "directories:user directory:($userdirs)" \
+  'options:comma-separated opt: _values -s , letter a b c'
+this will complete the items in $userdirs, as well as a comma separated list containing a, b &/or c. Note the use of the initial space before _values. This is needed because _values doesn’t understand standard compadd options for descriptions.
+
+As with _describe, the _alternative function can itself be used in an ACTION as part of a specification for _arguments or _regex_arguments.
+
+Writing completion functions using _arguments
+With a single call to the _arguments function you can create fairly sophisticated completion functions. It is intended to handle typical commands that take a variety of options along with some normal arguments. Like the _alternative function, _arguments takes a list of specification strings as arguments. These specification strings specify options and any corresponding option arguments (e.g. -f filename), or command arguments.
+
+Basic option specifications take the form ‘-OPT[DESCRIPTION]’, e.g. like this:
+
+_arguments '-s[sort output]' '--l[long output]' '-l[long output]'
+Arguments for the option can be specified after the option description in this form ‘-OPT[DESCRIPTION]:MESSAGE:ACTION’, where MESSAGE is a message to display and ACTION can be any of the forms mentioned in the ACTIONS section above. For example:
+
+_arguments '-f[input file]:filename:_files' 
+Command argument specifications take the form ‘N:MESSAGE:ACTION’ where N indicates that it is the Nth command argument, and MESSAGE & ACTION are as before. If the N is omitted then it just means the next command argument (after any that have already been specified). If a double colon is used at the start (after N) then the argument is optional. For example:
+
+_arguments '-s[sort output]' '1:first arg:_net_interfaces' '::optional arg:_files' ':next arg:(a b c)'
+here the first arg is a network interface, the next optional arg is a file name, the last arg can be either a, b or c, and the -s option may be completed at any position.
+
+The _arguments function allows the full set of ACTION forms listed in the ACTION section above. This means that you can use actions for selecting case statement branches like this:
+
+_arguments '-m[music file]:filename:->files' '-f[flags]:flag:->flags'
+case "$state" in
+    files)
+        local -a music_files
+        music_files=( Music/**/*.{mp3,wav,flac,ogg} )
+        _multi_parts / music_files
+        ;;
+    flags)
+        _values -s , 'flags' a b c d e
+        ;;
+esac
+In this case paths to music files are completed stepwise descending down directories using the _multi_parts function, and the flags are completed as a comma separated list using the _values function.
+
+I have just given you the basics of _arguments specifications here, you can also specify mutually exclusive options, repeated options & arguments, options beginning with + instead of -, etc. For more details see the official documentation. Also have a look at the tutorials mentioned at the end of this document, and the completion functions in the src directory.
+
+Writing completion functions using _regex_arguments and _regex_words
+If you have a complex command line specification with several different possible argument sequences then the _regex_arguments function may be what you need. It typically works well where you have a series of keywords followed by a variable number of arguments.
+
+_regex_arguments creates a completion function whose name is given by the first argument. Hence you need to first call _regex_arguments to create the completion function, and then call that function, e.g. like this:
+
+_regex_arguments _cmd OTHER_ARGS..
+_cmd "$@"
+The OTHER_ARGS should be sequences of specifications for matching & completing words on the command line. These sequences can be separated by ‘|’ to represent alternative sequences of words. You can use bracketing to arbitrary depth to specify alternate subsequences, but the brackets must be backslashed like this \( \) or quoted like this ‘(’ ‘)’.
+
+For example:
+
+_regex_arguments _cmd SEQ1 '|' SEQ2 \( SEQ2a '|' SEQ2b \)
+_cmd "$@"
+This specifies a command line matching either SEQ1, or SEQ2 followed by SEQ2a or SEQ2b. You are describing the form arguments to the command take in the form of a regular expression grammar.
+
+Each specification in a sequence must contain a / PATTERN/ part at the start followed by an optional ‘:TAG:DESCRIPTION:ACTION’ part.
+
+Each PATTERN is a regular expression to match a word on the command line. These patterns are processed sequentially until we reach a pattern that doesn’t match at which point any corresponding ACTION is performed to obtain completions for that word. Note that there needs to be a pattern to match the initial command itself. See below for further explanation about PATTERNs.
+
+The ‘:TAG:DESCRIPTION:ACTION’ part is interpreted in the same way as for the _alternative function specifications, except that it has an extra : at the start, and now all of the possible ACTION formats listed previously are allowed.
+
+Here is an example:
+
+_regex_arguments _cmd /$'[^\0]##\0'/ \( /$'word1(a|b|c)\0'/ ':word:first word:(word1a word1b word1c)' '|'\
+   /$'word11(a|b|c)\0'/ ':word:first word:(word11a word11b word11c)' \( /$'word2(a|b|c)\0'/ ':word:second word:(word2a word2b word2c)'\
+   '|' /$'word22(a|b|c)\0'/ ':word:second word:(word22a word22b word22c)' \) \)
+_cmd "$@"
+in this case the first word can be word1 or word11 followed by an a, b or c, and if the first word contains 11 then a second word is allowed which can be word2 followed by and a, b, or c, or a filename.
+
+If this sounds too complicated a much simpler alternative is to use the _regex_words function for creating specifications for _regex_arguments.
+
+Patterns
+You may notice that the / PATTERN/ specs in the previous example don’t look like normal regular expressions. Often a string parameter in the form $’foo\0’ is used. This is so that the \0 in the string is interpreted correctly as a null char which is used to separate words in the internal representation. If you don’t include the \0 at the end of the pattern you may get problems matching the next word. If you need to use the contents of a variable in a pattern, you can double quote it so that it gets expanded and then put a string parameter containing a null char afterwards, like this: “$somevar”$’\0’
+
+The regular expression syntax for patterns seems to be a bit different from normal regular expressions, and I can’t find documentation anywhere. However I have managed to work out what the following special chars are for:
+
+*	wildcard - any number of chars
+?	wildcard - single char
+#	zero or more of the previous char (like * in a normal regular expression)
+##	one or more of the previous char (like + in a normal regular expression)
+_regex_words
+The _regex_words function makes it much easier to create specifications for _regex_arguments. The results of calling _regex_words can be stored in a variable which can then be used instead of a specification for _regex_arguments.
+
+To create a specification using _regex_words you supply it with a tag followed by a description followed by a list of specifications for individual words. These specifications take the form ‘WORD:DESCRIPTION:SPEC’ where WORD is the word to be completed, DESCRIPTION is a description for it, and SPEC can be another variable created by _regex_words specifying words that come after the current word or blank if there are no further words. For example:
+
+_regex_words firstword 'The first word' 'word1a:a word:' 'word1b:b word:' 'word1c:c word'
+the results of this function call will be stored in the $reply array, and so we should store it in another array before $reply gets changed again, like this:
+
+local -a firstword
+_regex_words word 'The first word' 'word1a:a word:' 'word1b:b word:' 'word1c:c word'
+firstword="$reply[@]"
+we could then use it with _regex_arguments like this:
+
+_regex_arguments _cmd /$'[^\0]##\0'/ "$firstword[@]"
+_cmd "$@"
+Note that I have added an extra pattern for the initial command word itself.
+
+Here is a more complex example where we call _regex_words for different words on the command line
+
+local -a firstword firstword2 secondword secondword2
+_regex_words word1 'The second word' 'woo:tang clan' 'hoo:not me'
+secondword=("$reply[@]")
+_regex_words word2 'Another second word' 'yee:thou' 'haa:very funny!'
+secondword2=("$reply[@]")
+_regex_words commands 'The first word' 'foo:do foo' 'man:yeah man' 'chu:at chu'
+firstword=("$reply[@]")
+_regex_words word4 'Another first word' 'boo:scare somebody:$secondword' 'ga:baby noise:$secondword'\
+ 'loo:go to the toilet:$secondword2'
+firstword2=("$reply[@]")
+
+_regex_arguments _hello /$'[^\0]##\0'/ "${firstword[@]}" "${firstword2[@]}"
+_hello "$@"
+In this case the first word can be one of “foo”, “man”, “chu”, “boo”, “ga” or “loo”. If the first word is “boo” or “ga” then the second word can be “woo” or “hoo”, and if the first word is “loo” then the second word can be “yee” or “haa”, in the other cases there is no second word.
+
+For a good example of the usage of _regex_words have a look at the _ip function.
+
+complex completions with _values, _sep_parts, & _multi_parts
+The _values, _sep_parts & _multi_parts functions can be used either on their own, or as ACTIONs in specifications for _alternative, _arguments or _regex_arguments. The following examples may be instructive. See the official documentation for more info.
+
+Space separated list of mp3 files:
+
+_values 'mp3 files' ~/*.mp3
+Comma separated list of session id numbers:
+
+_values -s , 'session id' "${(uonzf)$(ps -A o sid=)}"
+Completes foo@news:woo, or foo@news:laa, or bar@news:woo, etc:
+
+_sep_parts '(foo bar)' @ '(news ftp)' : '(woo laa)'
+Complete some MAC addresses one octet at a time:
+
+_multi_parts : '(00:11:22:33:44:55 00:23:34:45:56:67 00:23:45:56:67:78)'
+Adding completion words directly using compadd
+For more fine grained control you can use the builtin compadd function to add completion words directly. This function has many different options for controlling how completions are displayed and how text on the command line can be altered when words are completed. Read the official documentation for full details. Here I just give a few simple examples.
+
+Add some words to the list of possible completions:
+
+compadd foo bar blah
+As above but also display an explanation:
+
+compadd -X 'Some completions' foo bar blah
+As above but automatically insert a prefix of “what_” before the completed word:
+
+compadd -P what_ foo bar blah
+As above but automatically insert a suffix of “_todo” after the completed word:
+
+compadd -S _todo foo bar blah
+As above but automatically remove the “_todo” suffix if a blank char is typed after the suffix:
+
+compadd -P _todo -q foo bar blah
+Add words in array $wordsarray to the list of possible completions
+
+compadd -a wordsarray
+Testing & debugging
+To reload a completion function:
+
+> unfunction _func
+> autoload -U _func
+The following functions can be called to obtain useful information. If the default keybindings don’t work you can try pressing Alt+x and then enter the command name.
+
+Function	Default keybinding	Description
+_complete_help	Ctrl+x h	displays information about context names, tags, and completion functions used when completing at the current cursor position
+_complete_help	Alt+2 Ctrl+x h	as above but displays even more information
+_complete_debug	Ctrl+x ?	performs ordinary completion, but captures in a temporary file a trace of the shell commands executed by the completion system
+Gotchas (things to watch out for)
+Remember to include a #compdef line at the beginning of the file containing the completion function.
+
+Take care to use the correct type of quoting for specifications to _arguments or _regex_arguments: use double quotes if there is a parameter that needs to be expanded in the specification, single quotes otherwise, and make sure to use different quotes around item descriptions.
+
+Check that you have the correct number of :’s in the correct places for specifications for _arguments, _alternative, _regex_arguments, etc.
+
+Remember to include an initial pattern to match the command word when using _regex_arguments (it does not need a matching action).
+
+Remember to put a null char $’\0’ at the end of any PATTERN argument for _regex_arguments
+}}}
+
+LINK: https://unix.stackexchange.com/questions/606298/debugging-zsh-completion-method
+debugging completion (to file)
+{{{
+Add this to the beginning of your function to get an execution trace:
+
+setopt local_options xtrace
+The trace is extremely verbose so you may prefer to have it in a file rather than on the terminal. To do that, put the code in an auxiliary function and redirect that function's stderr.
+
+#compdef c
+
+function _c_do_complete {
+  _files -W $PROJECT/repos -/
+  _files -W $PROJECT/helm -/
+  _files -W ~/Code -/
+}
+
+function _c {
+  setopt local_options xtrace
+  _c_do_complete 2>|~/_c.trace
+}
+
+_c "$@"
+You have $PROJECT in the completion code but $PROJECTS in the function (which is actually a script, which would do nothing since cd alone in a script is pointless.) Other than that, your code looks sensible to me.
+}}}
+
+	DeltaPrevious: 22m1s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T15:06:32AEDT 
+	}}}
+	Block-Elapsed: 53m45s
+
+	ITEM: dtscan, tab-completion
+	Start-Time: 2020-12-12T15:25:47AEDT
+	{{{ 	
+zsh default fpath directories
+	/usr/local/share/zsh/site-functions
+	/usr/share/zsh/site-functions
+	/usr/share/zsh/5.7.1/functions
+
+change program name s/dt-scan/dtscan/
+
+	Evaluation: 2020-12-12T16:01:42AEDT 
+tell me its' not the most beautiful thing in the history of things, maybe ever
+{{{
+#>% dtscan s
+dt-scan commands
+scan             -- Read input,     perform any filtering specified, and output stream result
+search           -- Locate all     datetime instances in files in a given directory
+seconds2delta    -- Convert seconds quantity to Dhms
+splits           -- Locate     datetimes in text, find deltas, convert to splits, and output split table
+splitsum         -- As per     split, and calculate splits, and for a given interval (YMWDhms) sum     splits. Use with --uniques <col> <sum
+string2datetime  -- Convert string to datetime, and output in given format
+
+#>% dtscan scan -
+option
+--column           -C  -- Limit scan to given column of input (0-indexed)
+--delim            -F  -- Delimitor to use with -C|--column and -U|--uniques
+--fastend              -- End date for fastfilter
+--fastinterval         -- interval to use for fastfilter, 1=years, 2=months, 3=days
+--fastrange            -- Fastfilter using %%y(-%%m)(-%%d) string for range of <fastinterval> beginning at the present, going backwards
+--fastrangefuture      -- Fastfilter using %%y(-%%m)(-%%d) string for range of <fastinterval> beginning at the present, going forwards
+--faststart            -- Start date for fastfilter - exclude lines that do not contain a %%Y-%%m-%%d year/month/day strings for a given range
+--help             -h  -- show this help message and exit
+--infile           -I  -- File to use as input if given, otherwise use stdin
+--replace          -R  -- If given, replace datetimes in stream with equivelent datetimes         of the strformat specified
+--scanend              -- Scan based filtering, exclude line containing younger datetimes
+--scanfull             -- Do not exclude lines that do not contain datetimes when performing scan based fileting
+--scaninvert           -- Invert range for start/end for scan filtering, that-is only include items older than start, 'younger' than 'end'
+--scanregexfile        -- Specify custom file         containing datetime format regex for which to scan
+--scanregexformat  -f  -- Specify custom datetime formats to use as inputs when scanning         text
+--scanstart            -- Scan based filtering, exclude lines containing older datetimes
+--sortalpha            -- Sort input lines alphanumericly (overrides sortdt)
+--sortdt               -- Sort input lines chronologically (with non-datetime lines, at         end, in-order)
+--sortrangedt          -- Sort input lines chronologically, (grouping         lines without datetimes to the preceding line with datetime)
+--sortreverse          -- Reverse results of input sorting
+--uniquekeys           -- Include unique values as heading for each set of corresponding         lines
+--uniques          -U  -- Run once for each unique item in a given column         (0-indexed)
+}}}
+
+	DeltaPrevious: 19m15s
+	TimeQuality: (0.58) aim=.5 val=.8 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T16:04:03AEDT 
+	}}}
+	Block-Elapsed: 38m16s
+
+	ITEM: 
+	Start-Time: 2020-12-12T16:39:51AEDT
+	{{{ 	
+
+2020-12-12T16:53:22AEDT count lines in all decrypted schedule files (remove the 'wc -l' for all lines)
+	cd $mld_logs_schedule; find -name "Schedule.calc.*.vimgpg" -print0 | sort -z -h  | xargs -0 -n1 gpg --decrypt 2> /dev/null | wc -l
+
+this being one of many, many presumed reasons why one might want to know xargs
+
+
+	Evaluation: 
+	DeltaPrevious: 35m48s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T17:02:40AEDT
+	}}}
+	Block-Elapsed: 22m49s
+
+	ITEM: dtscan
+	Start-Time: 2020-12-12T18:21:14AEDT
+	{{{ 	
+
+2020-12-12T19:22:06AEDT number of files permitted by OS 
+ulimit -n
+
+2020-12-12T19:22:59AEDT set limit to 2048 open files:
+ulimit 2048 
+
+	Evaluation: 2020-12-12T19:36:42AEDT 
+Continue: 2020-12-12T19:36:46AEDT dtscan, implement '--dhms' arg flag
+Continue: 2020-12-12T19:37:13AEDT dtscan, install script (should) setup bash and/or zsh tab-completion, and increase maximum open files limit 'ulimit 2048'
+
+Continue: 2020-12-12T19:40:27AEDT dtscan, combine vimh/zsh_history
+
+Continue: 2020-12-12T19:41:52AEDT dtscan, update tests (output now has/should-have unique items headings, newline seperators between streams)
+
+	DeltaPrevious: 1h18m34s
+	TimeQuality: (0.59) aim=.6 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T19:38:08AEDT 
+	}}}
+	Block-Elapsed: 1h16m54s
+
+	ITEM: dtscan, dhms by default, add arg --nodhms
+	Start-Time: 2020-12-12T20:59:37AEDT
+	{{{ 	
+
+commit
+	Evaluation: 2020-12-12T22:28:04AEDT 
+		use dhms by default, implemented flag --nodhms (use seconds)
+
+	DeltaPrevious: 1h21m29s
+	TimeQuality: (0.52) aim=.6 val=.6 content=.4
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-12T22:29:51AEDT 
+	}}}
+	Block-Elapsed: 1h30m14s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-12)-W(49)-D(Saturday) ********
+
+======== StartDay: (2020-12-11)-W(49)-D(Friday) ========-{{{
+	Daily-Elapsed: 5h59m46s
+	Today-Tasks:
+		dtscan_vi, vim plugin, scan buffer with dtscan, open results in <seperate window>
+		dtscan, vimh, uniques-by-count between datetime range
+		dtscan, plot-by-interval deltas, splits
+		dtscan, tabcompletion
+		report-schedule-today
+		Python Cookbook 3rd Edition, Ch10, Packages
+		vimh, zsh_history (combine)
+		snek, complete example on entrypoints, (shtab) argparse tabcomplete 
+
+	ITEM: snek, cleanup
+	Start-Time: 2020-12-11T03:18:00AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-11T03:56:27AEDT
+Continue: 2020-12-11T03:56:40AEDT snek (is) docopt based, tab completion for snek? 
+
+	DeltaPrevious: 
+	TimeQuality: (0.63) aim=.6 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T03:57:29AEDT 
+	}}}
+	Block-Elapsed: 39m29s
+
+	ITEM: snek, shtab tabcompletion
+	Start-Time: 2020-12-11T14:08:00AEDT
+	{{{ 	
+
+2020-12-11T14:46:16AEDT generating tab-complete script for package through python, when we can't get <> to work via cli,
+addition to script:
+#>%		import shtab
+#>%		print(shtab.complete(parser, shell="zsh"))
+
+2020-12-11T14:49:17AEDT zsh completion script is shorter/concice-er than equivelent bash script
+
+	Evaluation: 2020-12-11T14:51:44AEDT 
+that's tab completion for 'snek', (albiet) broken tab completion for snek, 
+
+	DeltaPrevious: 10h10m31s
+	TimeQuality: (0.53) aim=.5 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T14:52:20AEDT 
+	}}}
+	Block-Elapsed: 44m20s
+
+	ITEM: greeter, shtab (working) example
+	Start-Time: 2020-12-11T15:14:05AEDT
+	{{{ 	
+
+Ongoing: 2020-12-11T15:20:40AEDT (need to be able to) manually debug a completion script, (or just) bypass libraries like shtab/argcomplete, and complete the (basics of a) tabcompletion script for a given cli application manually
+2020-12-11T15:21:40AEDT 
+
+	Evaluation: 2020-12-11T15:44:51AEDT 
+		'greeter' single script (plus setup.py), installable python cli utility, with working tab-completion via shtab
+
+	DeltaPrevious: 21m45s
+	TimeQuality: (0.63) aim=.6 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T15:45:42AEDT 
+	}}}
+	Block-Elapsed: 31m37s
+
+	ITEM: pycli_clickSetuptools
+	Start-Time: 2020-12-11T16:35:47AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-11T16:59:09AEDT 
+		this approach gives us a command, but attempting to use it results in package-not-found error
+Continue: 2020-12-11T16:59:51AEDT Python Cookbook 3rd Edition, Ch10, Packages, how packages work, standard/best practice for 'I want to run this'
+
+	DeltaPrevious: 50m5s
+	TimeQuality: (0.50) aim=.5 val=.5 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T17:00:33AEDT 
+	}}}
+	Block-Elapsed: 24m46s
+
+	ITEM: VM (Lyrna), zsh with vi-mode
+	Start-Time: 2020-12-11T17:06:26AEDT
+	{{{ 	
+
+Install zsh:
+#>%		sudo apt install zsh
+
+Zsh as default shell:
+#>%		sudo usermod -s /bin/zsh lyrna-admin
+
+2020-12-11T17:48:57AEDT Config files ~/.zshrc, ~/.vimrc taken from ~/_mld/_config
+
+	Evaluation: 2020-12-11T17:49:20AEDT 
+VM is ssh-able with only password
+Windows/Ubuntu are both practically unsable (at least vim is, which is the same thing) without capslock as esc
+
+	DeltaPrevious: 5m53s
+	TimeQuality: (0.60) aim=.6 val=.6 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T17:50:24AEDT 
+	}}}
+	Block-Elapsed: 43m58s
+
+	ITEM: python, sys.path, locally installed python packages, grep (-B|-A)
+	Start-Time: 2020-12-11T18:15:37AEDT
+	{{{ 	
+
+python, 'sys.path', where python looks for modules
+LINK: https://bic-berkeley.github.io/psych-214-fall-2016/sys_path.html#sys-path
+#>% 	python -c 'import sys; import pprint; pprint.pprint(sys.path)'
+#>>		['',
+#>>		 '/Users/mldavis/pybin',
+#>>		 '/Users/mldavis/.pyenv/versions/3.9.0/lib/python39.zip',
+#>>		 '/Users/mldavis/.pyenv/versions/3.9.0/lib/python3.9',
+#>>		 '/Users/mldavis/.pyenv/versions/3.9.0/lib/python3.9/lib-dynload',
+#>>		 '/Users/mldavis/.local/lib/python3.9/site-packages',
+#>>		 '/Users/mldavis/.pyenv/versions/3.9.0/lib/python3.9/site-packages',
+#>>		 '/Users/mldavis/Dropbox/_mld/_src/dtscan',
+#>>		 '/Users/mldavis/Dropbox/_mld/_src/pycli_snek/snek',
+#>>		 '/Users/mldavis/Dropbox/_mld/_src/pycli_snek/cute_snek']
+
+(more concice)
+#>% python -c 'import sys; print("\n".join(sys.path))'
+
+List 'locallly' installed pip packages (those installed via python setup.py <with/without?> develop)
+#>% 	pip freeze | grep -A 1 Editable
+# Editable Git install with no remote (cute-snek==0.0.0)
+-e /Users/mldavis/Dropbox/_mld/_src/pycli_snek/cute_snek
+--
+# Editable Git install with no remote (snek==0.0.0)
+-e /Users/mldavis/Dropbox/_mld/_src/pycli_snek/snek
+
+grep, lines before/after match
+	grep -B <num> 	lines before match
+	grep -A <num> 	lines after match
+
+	Evaluation: 2020-12-11T18:38:10AEDT 
+
+	DeltaPrevious: 25m13s
+	TimeQuality: (0.59) aim=.5 val=.6 content=.7
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T18:39:12AEDT 
+	}}}
+	Block-Elapsed: 23m35s
+
+	ITEM: git, transfer folder between repos
+	Start-Time: 2020-12-11T19:51:23AEDT
+	{{{ 	
+TODO: 2020-12-11T19:51:26AEDT pycli_snek, pycli_greeter -> move (along with git history) to cmcat_python
+
+Move <>
+LINK: https://gist.github.com/trongthanh/2779392
+{{{
+# source: http://st-on-it.blogspot.com/2010/01/how-to-move-folders-between-git.html
+# First of all you need to have a clean clone of the source repository so we didn't screw the things up.
+
+git clone git://server.com/my-repo1.git
+
+# After that you need to do some preparations on the source repository, nuking all the entries except the folder you need to move. Use the following command
+
+git filter-branch --subdirectory-filter your_dir -- -- all
+
+# This will nuke all the other entries and their history, creating a clean git repository that contains only data and history from the directory you need. If you need to move several folders, you have to collect them in a single directory using the git mv command.
+
+# You also might need to move all your content into some directory so it didn't conflict with the new repository when you merge it. Use commands like that
+
+mkdir new_directory/
+git mv my_stuff new_directory/
+
+# Once you've done commit your changes, but don't push!
+
+git commit -m "Collected the data I need to move"
+
+# This is all about the source repository preparations.
+# Now go to your destination repository
+
+cd ../my-repo2/
+
+# And here is the trick. You need to connect your source repository as a remote using a local reference.
+
+git remote add repo1 ../my-repo1/
+
+# After that simply fetch the remote source, create a branch and merge it with the destination repository in usual way
+
+git fetch repo1
+git branch repo1 remotes/repo1/master
+
+git merge repo1 --allow-unrelated-histories
+
+# This is pretty much it, all your code and history were moved from one repository to another. All you need is to clean up a bit and push the changes to the server
+
+git remote rm repo1
+git branch -d repo1
+
+git push origin master
+
+# That's all. After that you can nuke the temporary source repository.
+}}}
+
+2020-12-11T20:15:36AEDT step 1) definitely make a copy of the repo, because that next command will kill anything not part of the specified Dropbox, ... and 
+Ongoing: 2020-12-11T20:16:03AEDT would have been f----- had we skipped making an external repo? This is the kind of thing which Git-in-Dropbox presumedly offers some limited protection, 
+2020-12-11T20:16:59AEDT needed '--allow-unrelated-histories' to allow merge in addition to above instructions
+
+	Evaluation: 2020-12-11T20:29:20AEDT 
+		git is a f------ clusterf--- 
+
+	DeltaPrevious: 1h12m11s
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T20:29:44AEDT 
+	}}}
+	Block-Elapsed: 38m21s
+
+	ITEM: dtscan, package layout
+	Start-Time: 2020-12-11T20:47:58AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-11T21:24:22AEDT 
+trying to get f------ package to run when installed -> create directory 'dtscan/dtscan' and place source files in that. 
+And add 'packages = ['dtscan', 'tests']' to 'setup.py'
+
+Ongoing: 2020-12-11T21:33:15AEDT Where-apon once again we run-into the problems of trying to keep a python project organised, without a proper working knowledge of how python projects are organised
+
+2020-12-11T21:34:17AEDT dtscan (and tests) now works with the link to ~/pybin deleted (thrus proving programatic symlinks both not required and bad)
+
+Ongoing: 2020-12-11T21:38:17AEDT git, ignore vim swap files?
+2020-12-11T21:38:29AEDT 
+
+2020-12-11T21:43:03AEDT commit 
+
+TODO: 2020-12-11T21:43:09AEDT python, <book>, ch10, about packages
+
+	DeltaPrevious: 18m14s
+	TimeQuality: (0.59) aim=.6 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T21:43:33AEDT 
+	}}}
+	Block-Elapsed: 55m35s
+
+	ITEM: find, xargs
+	Start-Time: 2020-12-11T22:08:14AEDT
+	{{{ 	
+
+Ongoing: 2020-12-11T22:32:01AEDT a warning, about being unable to ignore posibility of newline in filename (see below)
+LINK: http://mywiki.wooledge.org/ParsingLs
+
+LINK: https://superuser.com/questions/169051/whats-the-difference-between-c-and-d-for-unix-mac-os-x-terminal
+{{{
+Ctrl+D (^D) means end of file. It only works at the beginning of a line (I'm simplifying a little), and has no effect if the program isn't reading input from the terminal. In your experiment, ^D told the shell that you weren't going to type any more commands, so it exited; then the terminal exited because its subprogram had terminated.
+
+Ctrl+C (^C) means “interrupt”, i.e., stop what you're doing. Technically, pressing ^C sends the INT signal, which by default terminates an application, but which in many programs means go back to the top level (e.g., in a shell, stop typing a command line and go back to a pristine prompt).
+
+If a program doesn't respond to ^C, you can try Ctrl+\ (^\). This sends the QUIT signal, which by default terminates an application, and which not so many programs intercept.
+
+Another key that sends a signal is Ctrl+Z (^Z). It sends the TSTP signal, which pauses the program running in the foreground. (TSTP is short for “terminal stop”; it's similar to STOP but TSTP can be ignored whereas STOP cannot.) From the shell, you can resume that program's execution with the fg command (resume in the foreground) or the bg command (resume in the background).
+
+All of these keys can be changed with the stty command. Some programs, particularly full-screen programs that have key bindings, disable them.
+}}}
+
+	Evaluation: 2020-12-11T22:49:51AEDT 
+		time and time
+
+	DeltaPrevious: 24m41s
+	TimeQuality: (0.59) aim=.6 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T22:50:05AEDT 
+	}}}
+	Block-Elapsed: 41m51s
+
+	ITEM: dtscan, fix test
+	Start-Time: 2020-12-11T22:55:57AEDT
+	{{{ 	
+Bug: 2020-12-11T22:59:33AEDT dtscan, tests run when called as scripts, however pytest fails 
+Bugfix: 2020-12-11T23:04:24AEDT dtscan, broken tests, do not include __init__.py in directory test (should it be tests?) (if one wants to use) pytest
+
+	Evaluation: 2020-12-11T23:06:22AEDT 
+	DeltaPrevious: 5m52s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T23:12:11AEDT 
+	}}}
+	Block-Elapsed: 16m14s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-11)-W(49)-D(Friday) ********
+
+======== StartDay: (2020-12-10)-W(49)-D(Thursday) ========-{{{
+	Daily-Elapsed: 5h31m37s
+	Today-Tasks:
+		mld_vim_(.*) vars, (should only be one) - (which points to the script which defines the remainder?)
+		dtscan, epochs, 
+			default range [1000000000, 3000000000]=[2001-09-09T01:46:40, 2065-01-24T05:20:00]
+			extended range [100000000, 9999999999]=[1973-03-03T09:46:40, 2286-09-21T17:46:39]
+			(optionally, exclude values gt current epoch)
+		dtscan (analyse) viminfo
+		dtscan (alias), combine zsh_history, vimh, 
+		plot ~/.pulse-peaks.log
+		PutText, ARM
+		snek (python entry points)
+		python, zsh (tabcomplete)
+
+	ITEM: python, tabcompletion
+	Start-Time: 2020-12-10T16:13:56AEDT
+	{{{ 	
+
+Notes - tool to find .md files in a given directory 
+LINK: https://github.com/kylebebak/notes
+
+python Tab completion projects
+LINK: https://github.com/iterative/shtab
+LINK: https://github.com/kislyuk/argcomplete
+LINK: https://pypi.org/project/pyzshcomplete/
+
+zsh has $fpath
+/usr/local/share/zsh/site-functions /usr/local/Cellar/zsh/5.8_1/share/zsh/functions /Users/mldavis/.mac-zsh-completions-master/completions
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-10T16:44:39AEDT 
+	}}}
+	Block-Elapsed: 30m43s
+
+	ITEM: python, tabcompletion
+	Start-Time: 2020-12-10T17:07:13AEDT
+	{{{ 	
+Installed bash_completions -> add given lines to ~/.zprofile, and that crashes it
+
+Install zsh_completions, config instructions are given by homebrew:
+{{{
+To activate these completions, add the following to your .zshrc:
+
+  if type brew &>/dev/null; then
+    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+    autoload -Uz compinit
+    compinit
+  fi
+
+You may also need to force rebuild `zcompdump`:
+
+  rm -f ~/.zcompdump; compinit
+
+Additionally, if you receive "zsh compinit: insecure directories" warnings when attempting
+to load these completions, you may need to run this:
+
+  chmod go-w '/usr/local/share'
+}}}
+
+	Evaluation: 2020-12-10T18:27:54AEDT 
+		This hasn't been completed yet for a reason, apparently?
+Continue: 2020-12-10T18:28:11AEDT zsh completion (before) python-in-zsh completion
+
+	DeltaPrevious: 22m34s
+	TimeQuality: (0.53) aim=.5 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-10T18:28:30AEDT 
+	}}}
+	Block-Elapsed: 1h21m17s
+
+	ITEM: zsh, tabcompletion
+	Start-Time: 2020-12-10T19:30:48AEDT
+	{{{ 	
+2020-12-10T19:43:02AEDT using book (kindle) 'Learning Shell Scripting with Zsh', Chapter 5, Completions
+
+Note: 2020-12-10T19:53:12AEDT ls <tab> vs ls -<tab>, difference between list-of-options, and list of files-in-pwd
+2020-12-10T19:53:38AEDT 
+
+2020-12-10T19:59:41AEDT Can I get a praise the lawrdy aye-men?
+#>> mldavis@Minerva:~/.pyenv/shims
+#>% echoerr_replacenone
+external command
+echo                           echoerr
+builtin command
+echo                 echotc               echoti
+shell function
+echoerr              echoerr_replaceall   echoerr_replacenone
+
+Ongoing: 2020-12-10T20:09:58AEDT qindex is no longer sourced by zprofile -> 1) $( typeset ) is so much cleaner, 2) what breaks now?
+2020-12-10T20:11:43AEDT 
+
+TODO: 2020-12-10T20:16:41AEDT zsh completion, (specifically if for anything for vi), seperate files from folders in tabcompletion
+
+2020-12-10T20:18:23AEDT where is the manual? (see below) here?
+LINK: http://zsh.sourceforge.net/Doc/Release/Completion-System.html
+LINK: https://www.csse.uwa.edu.au/programming/linux/zsh-doc/zsh_23.html
+
+manpages for zsh completion system
+#>%		man zshcompsys 
+#>%		man zshcompwid
+
+Note: 2020-12-10T20:25:43AEDT zsh has (see below) a ~~decent~~ large set of manpages
+#>%		man zsh<tab>
+
+Ongoing: 2020-12-10T20:32:42AEDT zsh, tab completions, $fpath vs $FPATH?
+2020-12-10T20:32:59AEDT 
+
+2020-12-10T20:47:24AEDT Example completion file, from:
+/usr/local/Cellar/zsh/5.8_1/share/zsh/functions/_md5sum
+{{{
+#compdef md5sum gmd5sum b2sum gb2sum sha1sum gsha1sum sha224sum gsha224sum sha256sum gsha256sum sha384sum gsha384sum sha512sum gsha512sum
+
+# This function covers the various digest utilities (which are all essentially
+# the same program) from GNU Coreutils. It does NOT cover GNU `cksum` and `sum`,
+# nor the various BSD digest utilities like `md5` and `sha1` — see `_cksum` for
+# all of those. See `_shasum` for the `shasum` Perl script.
+#
+# @todo Support BusyBox?
+
+local type ign
+local -a args
+
+case $service in
+  *md5*) type=MD5 ;;
+  *b2*)  type=BLAKE2 ;;
+  *sha*) type=SHA${service//[^0-9]/} ;;
+esac
+
+# General options
+(( $#words > 2 )) && ign='!'
+args=(
+  '(: -)--help[display help information]'
+  '(: -)--version[display version information]'
+)
+# Summing options
+args=( ${ign}${^args}
+  + sum
+  '(chk)--tag[create BSD-style checksums]'
+  '(chk -b -t --binary --text)'{-b,--binary}'[read in binary mode]'
+  '(chk -b -t --binary --text)'{-t,--text}'[read in text mode]'
+  '(chk -z --zero)'{-z,--zero}'[end each output line with NUL and disable filename escaping]'
+)
+# This is the only option that differs amongst all of these tools
+[[ $service == *b2* ]] && args+=(
+  '(chk -l --length)'{-l+,--length=}'[specify digest length]:digest length (bits, multiples of 8)'
+)
+# Verification options
+args+=(
+  + chk
+  '(sum -c --check)'{-c,--check}"[verify $type checksums from input files]"
+  "(sum)--ignore-missing[don't fail or report status for missing files]"
+  "(sum)--quiet[don't print OK for each verified file]"
+  '(sum -w --warn)--status[suppress all output]'
+  '(sum)--strict[exit non-zero for improperly formatted checksum lines]'
+  '(sum -w --status --warn)'{-w,--warn}'[warn about each improperly formatted checksum line]'
+)
+# Operands
+args+=( '*: :_files' )
+
+_arguments -s -S : $args
+
+}}}
+
+	Evaluation: 2020-12-10T21:07:30AEDT 
+#>%		pathcomplete -<tab> 
+
+#>%		python -m pathcomplete -<tab>
+Nothing
+
+Continue: 2020-12-10T21:51:10AEDT python (installing packages and) entry points, (see below), 'snek' 
+LINK: https://amir.rachum.com/blog/2017/07/28/python-entry-points/
+
+2020-12-10T21:52:14AEDT tab-completion in zsh is tied to a command name. Rather than try and make it work for 'python -m dtscan', instead we consider how to make 'python -m dtscan' available as 'dtscan' (would an alias work?), and register dtscan.__main__ with shtab. Use an alias and count on the fact they have the same name? Or, return to dtscan once 'snek' is 1) installed as a package, and 2) has working tab completion, (derived from argparse?), running from the word 'snek'
+2020-12-10T21:54:32AEDT 
+
+time and time and time (but it doesn't matter because moar D-IR goes a long way)
+
+shtab: 
+LINK: https://github.com/iterative/shtab
+
+	DeltaPrevious: 1h2m18s
+	TimeQuality: (0.70) aim=.7 val=.7 content=.7
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-10T21:54:52AEDT 
+	}}}
+	Block-Elapsed: 2h24m4s
+
+	ITEM: 
+	Start-Time: 2020-12-10T22:55:19AEDT
+	{{{ 	
+snek - Python Entry Points
+LINK: https://amir.rachum.com/blog/2017/07/28/python-entry-points/
+
+Ongoing: 2020-12-10T23:02:19AEDT 'git grep -l' doesn't examine parent directories
+
+Ongoing: 2020-12-10T23:07:24AEDT (newly renamed) reader-tasklogTaskBlocks will read a (decrypted) tasklog and output info about taskblocks (to stdout), but isn't able to say 'read all tasklogs' - that being mostly the point
+2020-12-10T23:08:24AEDT 
+
+python per-user site directory, 
+#>%		python -m site --user-site
+
+python global site-packages directory (where 'python setup.py develop' installed package executable script end up)
+#>%		python -c 'import site; print(site.getsitepackages()[0])'
+
+LINK: https://stackoverflow.com/questions/19048732/python-setup-py-develop-vs-install
+{{{
+#>%		python setup.py install 
+is used to install (typically third party) packages that you're not going to develop/modify/debug yourself.
+
+For your own stuff, you want to first install your package and then be able to frequently edit the code without having to re-install the package every time — and that is exactly what 
+#>%		python setup.py develop 
+does: it installs the package (typically just a source folder) in a way that allows you to conveniently edit your code after it’s installed to the (virtual) environment, and have the changes take effect immediately.
+
+Note that it is highly recommended to use 
+#>%		pip install . 
+(install) and 
+#>%		pip install -e . 
+(developer install) 
+to install packages, as invoking setup.py directly will do the wrong things for many dependencies, such as pull prereleases and incompatible package versions, or make the package hard to uninstall with pip.
+
+}}}
+
+2020-12-10T23:46:54AEDT Add pyenv bin directory to PATH ...
+2020-12-10T23:47:10AEDT What does your PATH look like?
+/usr/local/MacGPG2/bin
+/Users/mldavis/.pyenv/shims
+/usr/local/opt/make/libexec/gnubin
+/usr/local/opt/grep/libexec/gnubin
+/usr/local/opt/gnu-which/libexec/gnubin
+/usr/local/opt/gnu-tar/libexec/gnubin
+/usr/local/opt/gnu-sed/libexec/gnubin
+/usr/local/opt/gnu-indent/libexec/gnubin
+/usr/local/opt/gawk/libexec/gnubin
+/usr/local/opt/findutils/libexec/gnubin
+/usr/local/opt/ed/libexec/gnubin
+/usr/local/opt/coreutils/libexec/gnubin
+/usr/local/bin
+/usr/bin
+/bin
+/usr/sbin
+/sbin
+/Applications/VMware Fusion.app/Contents/Public
+/opt/X11/bin
+/Library/Apple/usr/bin
+/Users/mldavis/.pyenv/versions/3.9.0/bin
+/Users/mldavis/bin
+/usr/local/opt/fzf/bin
+
+Is there a (numerical) limit? (to how many lines one can have in PATH?
+
+	Evaluation: 2020-12-11T00:09:37AEDT 
+
+Continue: 2020-12-11T00:09:41AEDT python, 'snek' example, 'Snek Infrastructure Overhaul' - making all sneks dynamically loaded
+
+	DeltaPrevious: 1h27s
+	TimeQuality: (0.63) aim=.6 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-11T00:10:52AEDT 
+	}}}
+	Block-Elapsed: 1h15m33s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-10)-W(49)-D(Thursday) ********
+
+======== StartDay: (2020-12-09)-W(49)-D(Wednesday) ========-{{{
+	Daily-Elapsed: 3h31m38s
+	Today-Tasks:
+		ssh-setup, Parcae
+		dtscan, write multiple streams each to file in output dir (if given)
+		vim, iTerm, restore window/tab title on quit
+		autocommit(s)
+		schedule, report 'today'
+		cmcat_python, zip()
+		shell, (transparently) read/write zipped text file
+		dtscan, 
+			output format,
+			replace instances
+			combine files
+		dtscan, sum-by-interval
+
+	ITEM: dtscan, count-by-interval
+	Start-Time: 2020-12-09T17:36:42AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-09T19:11:08AEDT 
+		actually getting down to it, turning a completed feature from test_methods into one from test_cli is generally straighfoward, the clusterf------ nature of argparse (and the project containing it) notwithstanding, (if by notwithstanding, one means, showing the lie thereof)
+
+2020-12-09T19:12:48AEDT commit
+
+	DeltaPrevious: 
+	TimeQuality: (0.55) aim=.4 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-09T19:20:15AEDT 
+	}}}
+	Block-Elapsed: 1h43m33s
+
+	ITEM: dtscan, sum-by-interval
+	Start-Time: 2020-12-09T19:33:16AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-09T20:02:17AEDT 
+laid out Interface_SumSplit(), DTRange_SumSplits(), 
+Continue: 2020-12-09T20:02:42AEDT implement DTRange_SumSplit(), return answer-as-stream to responsible test_cli method
+
+	DeltaPrevious: 13m1s
+	TimeQuality: (0.63) aim=.6 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-09T20:03:36AEDT 
+	}}}
+	Block-Elapsed: 30m20s
+
+	ITEM: dtscan, sum-by-interval
+	Start-Time: 2020-12-09T22:11:30AEDT
+	{{{ 	
+2020-12-09T22:34:20AEDT How to 'transpose' a list in python -> something I question whether one might have ever have figured out ... fortunately, looking it up is just a matter of knowing the right question. I f------ swear google is getting dumber though - does anyone else do a better job yet?
+#>%		list_var = list(zip(*list_var)) 
+
+Ongoing: 2020-12-09T22:53:38AEDT python, if statement of the form 'if (a < b) and (a > c)' as 'if (c < a < b)'?
+2020-12-09T22:54:35AEDT 
+
+2020-12-09T23:09:00AEDT and that (appears) to be it?
+
+TODO: 2020-12-09T23:09:07AEDT dtscan, actually verify 'check' matches 'test' data -> this being an exercise in learning python test, thrus far mostly we have been presuming that any date calculuation that isn't 'error' is correct, (so) verify the function verfication data -> wolframalpha is the obvious reference
+2020-12-09T23:10:36AEDT 
+
+	Evaluation: 2020-12-09T23:17:26AEDT 
+	test, commit
+
+	DeltaPrevious: 2h7m54s
+	TimeQuality: (0.66) aim=.7 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-09T23:29:15AEDT 
+	}}}
+	Block-Elapsed: 1h17m45s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-09)-W(49)-D(Wednesday) ********
+
+======== StartDay: (2020-12-08)-W(49)-D(Tuesday) ========-{{{
+	Daily-Elapsed: 5h31m29s
+	Today-Tasks:
+		worklogs, 1) get list of all files (globbing), 2) get Elapsed/TimeQuality for each taskblock
+		cmcat_python, zip()
+
+	ITEM: dtscan, cleanup, design of 'count', 'splitsum'
+	Start-Time: 2020-12-08T11:33:58AEDT
+	{{{ 	
+2020-12-08T11:55:39AEDT For _log.debug() to work, (need to have) import dtscan.__main__
+
+Python hashing (as a security measure, against worst-case-dictonary-insertion attacks, (see below)
+LINK: https://www.semicolonworld.com/question/54191/hash-function-in-python-3-3-returns-different-results-between-sessions
+LINK: http://ocert.org/advisories/ocert-2011-003.html
+
+	Evaluation: 2020-12-08T12:21:12AEDT 
+
+	DeltaPrevious: 
+	TimeQuality: (0.53) aim=.5 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-08T12:21:26AEDT 
+	}}}
+	Block-Elapsed: 47m28s
+
+	ITEM: dtscan, count-by-range
+	Start-Time: 2020-12-08T12:30:26AEDT
+	{{{ 	
+
+TODO: 2020-12-08T13:04:42AEDT dtscan, function, take partial datetime, eg: '2020-03' and produce earlierst and latest posible datetimes which are still part of partial datetime, i.e: '2020-03-01T00:00:00, 2020-03-31T23:59:59'
+2020-12-08T13:06:06AEDT 
+
+Ongoing: 2020-12-08T13:06:41AEDT dtscan, when counting by range, return both count and (optionally) representation of interval - either partial datetime, i.e: '2020-03' for a monthly range, or both start and end of interval '2020-03-01T00:00:00, 2020-03-31T23:59:59'?
+2020-12-08T13:07:34AEDT 
+
+TODO: 2020-12-08T13:20:14AEDT dtscan, scan, if dividing by 'unique' items, attach (to list of streams) title, or 'key' (the unique item), (can streams be given names?), or (use filename given each stream is a tempfile - need to use any possible string include paths/invalid filename chars?) -> have class variable uniques_keys, containing titles of results of most recent invocation of uniques?
+2020-12-08T13:25:05AEDT 
+
+	Evaluation: 2020-12-08T13:27:55AEDT 
+		ughhhhhhhhhhhhhhhhh
+
+	DeltaPrevious: 9m
+	TimeQuality: (0.52) aim=.4 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-08T13:28:17AEDT 
+	}}}
+	Block-Elapsed: 57m51s
+
+	ITEM: dtscan, count-by-range
+	Start-Time: 2020-12-08T15:02:15AEDT
+	{{{ 	
+
+2020-12-08T15:41:33AEDT 
+Inverting a list-of-lists in python (using zip)
+#>%		list_input= [[1, 2, 3], [4, 5, 6]]
+#>%		list_output = list(zip(*list_input)) 
+#>%		print("list_input=(%s)" % str(list_input))
+#>%		print("list_output=(%s)" % str(list_output))
+list_input=([[1, 2, 3], [4, 5, 6]])
+list_output=([(1, 4), (2, 5), (3, 6)])
+
+2020-12-08T16:13:45AEDT Get the next interval
+#>%		intervalEnd = None
+#>%		if (arg_interval == "y"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(years=1)
+#>%		elif (arg_interval == "m"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(months=1)
+#>%		elif (arg_interval == "w"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(weeks=1)
+#>%		elif (arg_interval == "d"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(days=1)
+#>%		elif (arg_interval == "H"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(hours=1)
+#>%		elif (arg_interval == "M"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(minutes=1)
+#>%		elif (arg_interval == "S"):
+#>%			intervalEnd = scanmatch_datetimes_sorted[-1] + relativedelta(seconds=1)
+
+	Evaluation: 2020-12-08T16:28:45AEDT 
+		done DTRange_CountBy(), and tests.
+
+Continue: 2020-12-08T16:29:02AEDT dtscan, DTRange_SumSplitsBy()
+Continue: 2020-12-08T16:29:46AEDT dtscan, Convert_RangeStartEnd2Partial(), Convert_Partial2RangeStartEnd()
+2020-12-08T16:29:55AEDT 
+
+2020-12-08T16:34:16AEDT exclude items from output which have count = 0
+
+Ongoing: 2020-12-08T16:45:44AEDT Absolutely f------ beyond this ... (see below), check_list is a list of lists beforehand, aftewards it is a list of tuples, hence the rather inelegent loop conversion done imediately after -> (presumedly) unpacking a list turns it into a tuple?
+#>%		check_list = list(zip(*check_list))
+#>%		for loop_i in range(len(check_list)):
+#>%			check_list[loop_i] = list(check_list[loop_i])
+2020-12-08T16:49:02AEDT 
+
+2020-12-08T16:52:53AEDT *now* (we are) done with DTRange_CountBy() and tests?
+
+	DeltaPrevious: 1h33m58s
+	TimeQuality: (0.59) aim=.6 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-08T16:53:34AEDT 
+	}}}
+	Block-Elapsed: 1h51m19s
+
+	ITEM: vim, jedi python completion
+	Start-Time: 2020-12-08T19:28:15AEDT 
+	{{{ 	
+Download plugin:
+#>%		git clone --recursive https://github.com/davidhalter/jedi-vim.git ~/.vim/bundle/jedi-vim
+
+Add to vimrc:
+Plugin 'davidhalter/jedi-vim'
+(And remove it again, what does this do and vim doesn't like it anyway?)
+
+Supertab, installing with vim8+ plugins
+#>%		mkdir -p ~/.vim/pack/plugins/start
+#>%		git clone --depth=1 git@github.com:ervandew/supertab.git ~/.vim/pack/plugins/start/supertab
+
+(Someone), (settings for) consistent tab behaviour across vim plugins
+LINK: https://stackoverflow.com/questions/15643234/remapping-tab-completions-in-vim
+#>%		let g:SuperTabDefaultCompletionType = 'context'
+#>%		let g:SuperTabContextTextOmniPrecedence = ['&omnifunc','&completefunc']
+#>%		let g:SuperTabRetainCompletionType=2
+#>%		inoremap <expr><Enter>  pumvisible() ? "\<C-Y>" : "\<Enter>"
+#>%		inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+insert litteral tab with supertab with 
+<C-v><tab>
+supposedly with, but doesn't appear to work?
+<C-tab>
+
+snipmate (see below), 
+LINK: https://github.com/garbas/vim-snipmate
+for expanding 
+for<...>
+into 
+for (i = 0; i < count; i++) {
+    /* code */
+}
+and alike
+
+Commands, Jedi completion:
+	Completion <C-Space>
+	Goto assignment <leader>g (typical goto function)
+	Goto definition <leader>d (follow identifier as far as possible, includes imports and statements)
+	Goto (typing) stub <leader>s
+	Show Documentation/Pydoc K (shows a popup with assignments)
+	Renaming <leader>r
+	Usages <leader>n (shows all the usages of a name)
+	Open module, e.g. :Pyimport os (opens the os module)
+
+(Someone) comparison of tab completion plugins for vim
+youcompleteme: unfriendly to install, but works nice if you manage to get it working. However python3 is not supported.
+jedi-vim: coolest name, but breaks your undo history.
+python-mode does a lot more the autocomplete: folding, syntax checking, highlighting. Personally I prefer scripts that do 1 thing well, as they are easier to manage (and replace). Differently from the two other options, it uses rope instead of jedi for autocompletion.
+
+	Evaluation: 2020-12-08T19:49:03AEDT 
+		Bug: 2020-12-08T19:49:07AEDT 'vimh' if run with <invalid/temp> directory as working directory, error(s) related to 'unable to get pwd?' 
+		2020-12-08T19:50:15AEDT 
+
+		smart-completion in vim -> those last few hard keystrokes being the bane of ones existance ... I mean does it work? (By which one means) are the invariable bugs worth it?
+
+2020-12-08T19:59:04AEDT <C-space> is used by jedi-completion, that is a shortcut (iTerm hotkey window) I am going to miss
+2020-12-08T19:59:37AEDT 
+
+	DeltaPrevious: 2h34m41s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-08T19:59:41AEDT 
+	}}}
+	Block-Elapsed: 31m26s
+
+	ITEM: dtscan, test split, deltas
+	Start-Time: 2020-12-08T20:01:00AEDT 
+	{{{ 	
+
+	Evaluation: 2020-12-08T20:42:01AEDT 
+Ongoing: 2020-12-08T20:42:04AEDT dtscan, (why does) 'deltas' have (among others) '-S' seconds argument -> something applicable (only) to splits?
+2020-12-08T20:43:19AEDT 
+
+Continue: 2020-12-08T20:47:08AEDT dtscan, arguments/tests for unique-count-by-interval, split-sum-by-interval
+
+	DeltaPrevious: 1m19s
+	TimeQuality: (0.52) aim=.4 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-08T20:48:25AEDT 
+	}}}
+	Block-Elapsed: 47m25s
+
+	ITEM: 
+	Start-Time: 2020-12-08T23:46:23AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 2h57m58s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-09T00:22:23AEDT
+	}}}
+	Block-Elapsed: 36m
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-08)-W(49)-D(Tuesday) ********
+
+======== StartDay: (2020-12-07)-W(49)-D(Monday) ========-{{{
+	Daily-Elapsed: 6h41m9s
+	Today-Tasks:
+		pulse, log 'daily'
+		cmcli: find, xargs
+		cmcat_python, tab-completion
+		dtscan, 
+			output only datetimes list,
+			combine vimh, zsh_history, (vimh?)
+		tasklog (using python labels-from-file regex grabber) (tasklog reader)
+		qwd/zwd, replace path_str with (largest substring from) exports
+		dtscan, combine/divide list by interval (rangesplit)
+		dtscan, sum-by-interval
+		autocommit(s)
+		dtscan, intervals
+		pulse, log 'peaks'
+
+	ITEM: python packages, cleanup
+	Start-Time: 2020-12-07T00:09:33AEDT
+	{{{ 	
+python __init__.py about/function:
+LINK: https://stackoverflow.com/questions/448271/what-is-init-py-for
+Python defines two types of packages, regular packages and namespace packages. Regular packages are traditional packages as they existed in Python 3.2 and earlier. A regular package is typically implemented as a directory containing an __init__.py file. When a regular package is imported, this __init__.py file is implicitly executed, and the objects it defines are bound to names in the package’s namespace. The __init__.py file can contain the same Python code that any other module can contain, and Python will add some additional attributes to the module when it is imported.
+
+2020-12-07T00:16:00AEDT commit
+
+Note: 2020-12-07T00:40:41AEDT (see below) verification of 'echoerr' being implemented as (see below)
+#>% 	echoerr "abc|$HOME|abc"
+echoerr():
+#>%		printf "%s\n" "$@" | perl -pe "s|$HOME|~|" > /dev/stderr
+2020-12-07T00:41:48AEDT 
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: (0.42) aim=.3 val=.4 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-07T00:45:29AEDT 
+	}}}
+	Block-Elapsed: 35m56s
+
+	ITEM: dtscan, cleanup
+	Start-Time: 2020-12-07T02:33:07AEDT
+	{{{ 	
+	Evaluation: 2020-12-07T02:53:53AEDT 
+	Bugfix: 2020-12-07T03:02:36AEDT vimh_split -> $F in perl oneliner should be \$F
+
+Note: 2020-12-07T03:03:47AEDT (as per stackoverflow) no easy way for an executed script to set parent environment working-directory
+2020-12-07T03:04:14AEDT 
+
+	DeltaPrevious: 1h47m38s
+	TimeQuality: (0.53) aim=.5 val=.5 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-07T03:30:32AEDT 
+	}}}
+	Block-Elapsed: 57m25s
+
+	ITEM: pulse, log 'peaks'
+	Start-Time: 2020-12-07T14:07:52AEDT 
+	{{{ 	
+
+python datetime with local timezone
+#>%		from dateutil.tz import tzlocal
+#>%		datetime.datetime.now(tzlocal()).strftime("%Y-%m-%dT%H:%M:%S%Z")
+
+Ongoing: 2020-12-07T14:49:04AEDT /tmp is full of directories '_TaskLog_SetupFile_AddGrabLabels.$(date +%s)'
+
+	Evaluation: 2020-12-07T14:49:35AEDT 
+		log file is ~/tmp/pulse-peaks.log
+
+TODO: 2020-12-07T14:50:59AEDT dtscan, convert (various) datetime formats (in input) to specified format (replaced, inplaced in text) -> /tmp/pulse.log contains epochs (the sort of thing one might want to) (covert to iso datetimes)
+2020-12-07T14:53:13AEDT 
+
+Delivered: 2020-12-07T15:18:21AEDT pulse, log 'peaks'
+
+	DeltaPrevious: 10h37m20s
+	TimeQuality: (0.56) aim=.6 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-07T14:53:26AEDT 
+	}}}
+	Block-Elapsed: 45m34s
+
+	ITEM: tox (setup for) dtscan
+	Start-Time: 2020-12-07T15:18:11AEDT
+	{{{ 	
+2020-12-07T15:19:42AEDT sumsplit -> how to tell if 'uniques' was specified, (optionally) include uniques as headings
+
+2020-12-07T15:28:05AEDT Pulse, output (cleanup)
+
+	Evaluation: 2020-12-07T16:28:49AEDT 
+		install, useage - Tox
+
+	DeltaPrevious: 24m45s
+	TimeQuality: (0.56) aim=.5 val=.7 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-07T16:40:09AEDT 
+	}}}
+	Block-Elapsed: 1h21m58s
+
+	ITEM: dtscan, intervals, 
+	Start-Time: 2020-12-07T18:11:57AEDT 
+	{{{ 	
+Ongoing: 2020-12-07T18:40:38AEDT negative numbers '-' as arguments (dtscan, python argparse)
+
+TODO: 2020-12-07T19:14:57AEDT dtscan, unify use of ymwdHMS (there are instances of YMWDhms)
+2020-12-07T19:15:23AEDT 
+
+2020-12-07T19:18:44AEDT pandas datetime ranges frequency strings, <other>
+LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html
+
+	Evaluation: 2020-12-07T19:38:27AEDT 
+Continue: 2020-12-07T19:38:30AEDT dtscan, intervals, cli arguments for 'range', implement range FromDateTimeAndDelta, implement test_cli for range, 
+
+Continue: 2020-12-07T19:41:22AEDT dtscan, uniques - sum-by-interval, count-by-interval
+Continue: 2020-12-07T19:42:10AEDT dtscan, 'scan', along with '--uniques' (dividing input by unique item in a given column), '--rangesplit', if given, divide input stream into multiple streams, (with) one per range item in input, where range items are calculated for a given interval, between the first and last (chronologically) datetimes in input. Split by interval <before/after?> split by unique? -> before? 
+Continue: 2020-12-07T19:45:39AEDT dtscan_vi plugin, scan buffer, list linenums (sort by datetime chronologically) (the long awaited replacement for DTS_Navigate) (or open in new pane?)
+2020-12-07T19:46:24AEDT 
+
+2020-12-07T19:54:52AEDT commits
+
+	DeltaPrevious: 1h31m48s
+	TimeQuality: (0.53) aim=.5 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-07T19:54:56AEDT 
+	}}}
+	Block-Elapsed: 1h42m59s
+
+	ITEM: dtscan, sum (splits), count (instances), 
+	Start-Time: 2020-12-07T21:23:41AEDT
+	{{{ 	
+TODO: 2020-12-07T21:55:03AEDT dtscan, test_methods/test/_cli -> assign timezone <AEST/AEDT?>
+2020-12-07T21:55:30AEDT 
+
+	Evaluation: 2020-12-07T22:24:22AEDT 
+		to write DTRange_GetFirstAndLast(), not much time, to write (final, new) tester function, not much time, trying to test work with an existing tester function -> f------ f--- me...
+
+time and time and time and time and time
+
+	DeltaPrevious: 1h28m45s
+	TimeQuality: (0.46) aim=.4 val=.6 content=.4
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-07T22:40:58AEDT 
+	}}}
+	Block-Elapsed: 1h17m17s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-07)-W(49)-D(Monday) ********
+
+======== StartDay: (2020-12-06)-W(48)-D(Sunday) ========-{{{
+	Daily-Elapsed: 2h19m57s
+	Today-Tasks:
+		autocommit
+		dtscan, combine/divide list by interval
+		dtscan, sum-by-interval
+		dtscan, intervals
+		pulse, log 'peaks'
+
+	ITEM: 
+	Start-Time: 2020-12-06T19:23:01AEDT
+	{{{ 	
+	Evaluation: 2020-12-06T20:04:23AEDT 
+		Continue: 2020-12-06T20:04:27AEDT (review of) python package layout/naming rules, imports, (specifically with regards to tests) <- name of directory containing package, vs name of source file of package, source file within package directory
+		Continue: 2020-12-06T20:04:50AEDT python tests, (running all), (running with each common test framework)
+
+	DeltaPrevious: 
+	TimeQuality: (0.40) aim=.4 val=.4 content=.4
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-06T20:05:14AEDT 
+	}}}
+	Block-Elapsed: 42m13s
+
+	ITEM: python, packaging and imports
+	Start-Time: 2020-12-06T21:15:40AEDT
+	{{{ 	
+Ongoing: 2020-12-06T21:16:13AEDT test/check data in <project>/tests/data/ vs <project>/data/
+2020-12-06T21:16:39AEDT 
+
+    #   Directory of package toplevel
+    path_dir_dtscan = os.path.dirname(dtscan.__file__)
+
+Ongoing: 2020-12-06T21:34:56AEDT dealing with the 'these files are the same' problem vis-a-vis vimh and files being renamed (consider rename of both git and non-git file)
+2020-12-06T21:35:22AEDT 
+
+Note: 2020-12-06T21:38:19AEDT (so apparently) I have been an egregious offender of the 80 character limit (as f----- if) for lines in python
+
+	Evaluation: 2020-12-06T21:39:05AEDT 
+Continue: 2020-12-06T21:39:08AEDT making all dtscan tests run with a single command from pacakge toplevel, (that being) how package tests should be setup
+
+	DeltaPrevious: 40m17s
+	TimeQuality: (0.46) aim=.4 val=.5 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-06T21:40:00AEDT 
+	}}}
+	Block-Elapsed: 54m29s
+
+	ITEM: python, unittest vs pytest 
+	Start-Time: 2020-12-06T22:04:53AEDT
+	{{{ 	
+
+2020-12-06T22:35:48AEDT accessing testdata via manifests file 
+LINK: https://blog.methodsconsultants.com/posts/pytesting-your-python-package/
+{{{
+Adding extra/test data to the package
+In this example, it is not necessary to add a data file to test our functions with, although some packages may need to contain data to use for tests or examples. If this is the case for your package, you will also need to write a MANIFEST.in file at the top level of the project, and put the data files in their own directory under the package directory containing the __init__.py file. The structure would look like this:
+
+pybank/
+|
+|__ pybank/
+|     |
+|     |__ data/
+|     |     |__ example_data.csv
+|     |
+|     |__ bank.py
+|     |__ __init__.py
+|
+|__ tests/
+|     |__ test_mypackage.py
+|
+|__ setup.py
+|
+|__ MANIFEST.in
+For each data file, include a line in MANIFEST.in that gives the path to the file you want to include. In this example, we would add this:
+
+include pybank/data/example_data.csv
+All of the files listed in MANIFEST.in will be included with the package when installed.
+}}}
+
+Continue: 2020-12-06T22:37:02AEDT about 'setup.py' file(s)
+
+Is running ones tests in parallel important?
+LINK: https://pypi.org/project/pytest-parallel/
+
+pytest is (supposedly better),
+unittest is built into python
+nose2 (gets a mention and no more)
+
+Continue: 2020-12-06T22:46:37AEDT (there must be a) book on python testing? (or other more complete reference)
+
+2020-12-06T22:47:03AEDT macos dock stacks -> (like with recent) sort by most recently opened?
+2020-12-06T22:47:21AEDT 
+
+Continue: 2020-12-06T22:51:11AEDT python running tests for package not in ~/pybin
+
+	Evaluation: 
+	DeltaPrevious: 24m53s
+	TimeQuality: (0.60) aim=.6 val=.6 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-06T22:48:08AEDT 
+	}}}
+	Block-Elapsed: 43m15s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-06)-W(48)-D(Sunday) ********
+
+======== StartDay: (2020-12-04)-W(48)-D(Friday) ========-{{{
+	Daily-Elapsed: 4h30m22s
+	Today-Tasks:
+		python, running (all) package tests, 
+		python, layout of package tests
+
+	ITEM: 
+	Start-Time: 2020-12-04T00:57:06AEDT
+	{{{ 	
+
+Ongoing: 2020-12-04T01:08:53AEDT dtscan, sorting datetimes, with multiple items per line (either) use (chronologically) earliest/last datetime on line, or (position/order) first / last /n-th on line
+
+Ongoing: 2020-12-04T01:12:54AEDT _util_positions2linesnums(self, match_positions) (not the first) lesson in why dictionaries (with their *labeled* categories) might be better practice
+2020-12-04T01:13:41AEDT 
+
+LINK: https://www.semicolonworld.com/question/43461/sorting-a-python-list-by-two-fields
+
+2020-12-04T01:15:18AEDT how to sort a list by multiple fields - use the property of python sorts being stable, (and) sort first by the first field and then by the second
+2020-12-04T01:17:35AEDT 
+#>%		employees.sort(key = lambda x:x[0])
+#>%		employees.sort(key = lambda x:x[1])
+Answers on sorting by multiple fields (1 and 2)
+#>%		def keyfunc(x):
+#>%		    return tuple(x[1],x[2])
+#>%		list1 = sorted(csv1, key=keyfunc)
+Or
+#>%		list1 = sorted(csv1, key=operator.itemgetter(2))
+#>%		list1 = sorted(list1, key=operator.itemgetter(1))
+or
+#>%		import operator
+#>%		list1 = sorted(csv1, key=operator.itemgetter(1, 2))
+
+	Evaluation: 2020-12-04T01:23:25AEDT 
+2020-12-04T01:27:10AEDT 
+
+TODO: 2020-12-04T01:50:42AEDT dtscan, sortdt, test cases for earliest->latest and the reverse, with multiple datetimes on each line, 
+2020-12-04T01:51:42AEDT 
+
+Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes/lines with same value?
+
+TODO: 2020-12-04T02:01:26AEDT cmcat_python, 'operator' (as in lists), other list sorting / manipulating functions, map(), <ect>
+2020-12-04T02:02:13AEDT 
+
+	DeltaPrevious: 
+	TimeQuality: (0.66) aim=.7 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-04T02:02:17AEDT 
+	}}}
+	Block-Elapsed: 1h5m11s
+
+	ITEM: 
+	Start-Time: 2020-12-04T22:02:25AEDT
+	{{{ 	
+2020-12-04T22:25:37AEDT commits
+
+TODO: 2020-12-04T22:28:04AEDT dtscan, sort line-range wise
+2020-12-04T22:28:22AEDT 
+
+	Evaluation: 2020-12-04T22:50:13AEDT 
+		TODO: 2020-12-04T22:50:16AEDT dtscan/test-methods.py -> names of (various) functions incorrect, tests broken, what has been removed, what has been renamed?
+
+	DeltaPrevious: 20h8s
+	TimeQuality: (0.46) aim=.4 val=.5 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-04T22:51:01AEDT 
+	}}}
+	Block-Elapsed: 48m36s
+
+	ITEM: 
+	Start-Time: 2020-12-04T23:38:30AEDT
+	{{{ 	
+
+2020-12-04T23:52:09AEDT run python (test what) builtin tests (see below)
+#>%		python -m test
+
+Note: 2020-12-05T00:05:03AEDT (broken 'test-methods.py') is why replace should be done git-wide
+Note: 2020-12-05T00:07:27AEDT being able to do replacements git-wide is why there should be one git-repo per project?
+2020-12-05T00:07:53AEDT 
+
+2020-12-05T00:10:57AEDT broken tests (because functions renamed)
+ScanStream_FilterLines
+runtest_FastFilter
+
+Ongoing: 2020-12-05T01:47:57AEDT env -> is too long, (see) mld_unix_(.*) 
+
+2020-12-05T01:56:47AEDT using perl as a filter (see below) -> not -p (which prints the entire line), -l for newline between matches, 
+#>%		perl -F'\t' -lne 'print $F[0]'
+2020-12-05T01:58:56AEDT or, -a for split-by-whitespace
+#>%		perl -lane 'print $F[0]'
+
+Bug: 2020-12-05T02:07:50AEDT dtscan, filter-by-column delimitor '-F', as in 'cat ~/.vimh | python -m dtscan splits -F "\t" -C 0 --fastrange 1 --seconds 300' doesn't work? command absent -F doesn't results in negative splits (from datetimes as filenames), but specifying column delimitor breaks this 
+2020-12-05T02:10:48AEDT 
+
+	Evaluation: 2020-12-05T02:12:22AEDT 
+time and time and time?
+
+Bug: 2020-12-05T02:14:33AEDT dtscan, --splitdt results in stream not seekable exception
+2020-12-05T02:15:01AEDT 
+
+	DeltaPrevious: 47m29s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-05T02:15:05AEDT 
+	}}}
+	Block-Elapsed: 2h36m35s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-04)-W(48)-D(Friday) ********
+
+======== StartDay: (2020-12-03)-W(48)-D(Thursday) ========-{{{
+	Daily-Elapsed: 1h9m11s
+	Today-Tasks:
+		cmcat_python, (links)
+https://realpython.com/list-comprehension-python/
+https://realpython.com/python-sort/
+https://realpython.com/any-python/
+https://realpython.com/python-map-function/
+https://realpython.com/effective-python-environment/
+https://realpython.com/python-traceback/
+https://realpython.com/python-data-structures/
+https://realpython.com/working-with-files-in-python/
+
+	ITEM: cmcat_python, examples
+	Start-Time: 2020-12-03T21:44:48AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-03T22:22:01AEDT 
+	}}}
+	Block-Elapsed: 37m13s
+
+	ITEM: cmcat_python, examples
+	Start-Time: 2020-12-03T22:32:16AEDT
+	{{{ 	
+
+TODO: 2020-12-03T22:46:52AEDT cmcat_python, dictionary itteration
+LINK: https://realpython.com/iterate-through-dictionary-python/
+
+	Evaluation: 2020-12-03T23:02:29AEDT 
+realpython 'tutorials' list
+https://realpython.com/list-comprehension-python/
+https://realpython.com/python-sort/
+https://realpython.com/any-python/
+https://realpython.com/python-map-function/
+https://realpython.com/effective-python-environment/
+https://realpython.com/python-traceback/
+https://realpython.com/python-data-structures/
+https://realpython.com/working-with-files-in-python/
+
+	DeltaPrevious: 10m15s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-03T23:04:14AEDT 
+	}}}
+	Block-Elapsed: 31m58s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-03)-W(48)-D(Thursday) ********
+
+======== StartDay: (2020-12-02)-W(48)-D(Wednesday) ========-{{{
+	Daily-Elapsed: 6h43m42s
+	Today-Tasks:
+		dtscan, combine/divide list by range
+		dtscan, sum-by-interval
+		dtscan, ranges
+		dtscan, combine
+		autocommit
+
+	ITEM: dtscan, uniques
+	Start-Time: 2020-12-02T00:17:42AEDT
+	{{{ 	
+
+Continue: 2020-12-02T01:02:57AEDT for each loop_key, create a stream comprised of lines in loop_linenums_list -> a list of streams is a valid thing to return (albiet if not one that the callee is prepared to handle?)
+
+	Evaluation: 2020-12-02T01:06:11AEDT 
+		uniques - a demonstration of the power of the python dictionary
+
+Note: 2020-12-02T01:06:40AEDT use of python [ <> ] notation, (and), sorted, lambda -> the tools meant for manipulating dict/lists concicely, (and therefore those that make questions like 'unique items in a column, sorted by occurance count' easier to answer)
+2020-12-02T01:08:18AEDT 
+
+goalkicker examples on dicts might be boring as s... -> but *not* knowing this stuff (and confidently) is <practically a holdup>
+... woodsmoke?
+
+	DeltaPrevious: 
+	TimeQuality: (0.70) aim=.7 val=.7 content=.7
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T01:09:48AEDT 
+	}}}
+	Block-Elapsed: 52m6s
+
+	ITEM: dtscan, _Interface_Uniques
+	Start-Time: 2020-12-02T01:44:24AEDT
+	{{{ 	
+
+Note: 2020-12-02T02:13:04AEDT don't 'cat $file | grep $filter > $file' in a single line -> this step needs a temp file to work, (how this breaks is beyond the scope of this sentence)
+2020-12-02T02:14:28AEDT 
+
+TODO: 2020-12-02T02:15:48AEDT vimh, reduce to real files (optional step in vimh) (which should be one not two scripts in /bin), replace paths-to-symlinks (find one, replace them all) with origional path (realpath?)
+2020-12-02T02:16:56AEDT 
+
+	Evaluation: 2020-12-02T02:18:11AEDT 
+Delivered: 2020-12-02T02:18:21AEDT vimh -F <search>
+
+	DeltaPrevious: 34m36s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T02:20:25AEDT
+	}}}
+	Block-Elapsed: 36m1s
+
+	ITEM: dtscan, _Interface_Uniques
+	Start-Time: 2020-12-02T02:32:02AEDT
+	{{{ 	
+
+Continue: 2020-12-02T03:19:17AEDT dtscan, process stream-of-streams as output from Interface_Scan
+
+	Evaluation: 2020-12-02T03:20:21AEDT 
+Continue: 2020-12-02T03:24:23AEDT commits
+
+	DeltaPrevious: 11m37s
+	TimeQuality: (0.63) aim=.6 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T03:20:31AEDT 
+	}}}
+	Block-Elapsed: 48m29s
+
+	ITEM: dtscan, commit
+	Start-Time: 2020-12-02T03:40:15AEDT 
+	{{{ 	
+	Evaluation: 2020-12-02T03:53:05AEDT
+	commit
+	DeltaPrevious: 19m44s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T03:53:13AEDT 
+	}}}
+	Block-Elapsed: 12m58s
+
+	ITEM: dtscan, scan list-of-streams
+	Start-Time: 2020-12-02T12:55:39AEDT
+	{{{ 	
+2020-12-02T13:14:59AEDT commits
+
+	Evaluation: 2020-12-02T13:45:46AEDT 
+are we sure 'list of streams' is such an elegent solution?
+
+	DeltaPrevious: 9h2m26s
+	TimeQuality: (0.56) aim=.6 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T13:46:22AEDT 
+	}}}
+	Block-Elapsed: 50m43s
+
+	ITEM: dtscan, cleanup
+	Start-Time: 2020-12-02T14:43:38AEDT
+	{{{ 	
+	Evaluation: 
+	DeltaPrevious: 57m16s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T15:05:30AEDT 
+	}}}
+	Block-Elapsed: 21m52s
+
+	ITEM: 
+	Start-Time: 2020-12-02T15:20:05AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 14m35s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T15:55:05AEDT
+	}}}
+	Block-Elapsed: 35m
+
+	ITEM: 
+	Start-Time: 2020-12-02T16:42:14AEDT
+	{{{ 	
+2020-12-02T16:55:59AEDT cleanup
+
+	Evaluation: 
+	DeltaPrevious: 47m9s
+	TimeQuality: aim= val= content=
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T17:28:14AEDT
+	}}}
+	Block-Elapsed: 46m
+
+	ITEM: dtscan, sortalpha, sortdt
+	Start-Time: 2020-12-02T20:46:06AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-02T21:33:44AEDT 
+
+    Continue: 2020-12-02T21:26:21AEDT dtscan, implement 'sortdt' - read lines, sort lines chronologically, write to new stream, and return it
+
+	DeltaPrevious: 3h17m52s
+	TimeQuality: (0.49) aim=.4 val=.6 content=.5
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T21:37:01AEDT 
+	}}}
+	Block-Elapsed: 50m55s
+
+	ITEM: dtscan, sortdt
+	Start-Time: 2020-12-02T22:04:34AEDT
+	{{{ 	
+
+>>> from operator import itemgetter
+>>> L=[[0, 1, 'f'], [4, 2, 't'], [9, 4, 'afsd']]
+>>> sorted(L, key=itemgetter(2))
+[[9, 4, 'afsd'], [0, 1, 'f'], [4, 2, 't']]
+
+	Evaluation: 2020-12-02T22:52:20AEDT 
+Continue: 2020-12-02T22:52:23AEDT dtscan, --sortdt - sort lines by datetime values
+Continue: 2020-12-02T22:52:48AEDT cmcat_python, zip(), sort(), lambda, <ect> -> sort collection of data by one category, (and) sort list-of-lists-of-lists by value in lowest level
+
+	DeltaPrevious: 27m33s
+	TimeQuality: (0.46) aim=.4 val=.6 content=.4
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T22:54:12AEDT 
+	}}}
+	Block-Elapsed: 49m38s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-02)-W(48)-D(Wednesday) ********
+
+======== StartDay: (2020-12-01)-W(48)-D(Tuesday) ========-{{{
+	Daily-Elapsed: 
+	Today-Tasks:
+		dtscan, combine/divide list by range
+		dtscan, sum-by-interval
+		dtscan, ranges
+		dtscan, combine
+		dtscan, unique-by-column
+		autocommit
+
+	ITEM: Fix tasklog open
+	Start-Time: 2020-12-01T17:07:08AEDT 
+	{{{ 	
+
+	Evaluation: 2020-12-01T17:54:36AEDT
+errors due to unbound variables,
+fails to add grablabels from previous files
+dead-buried-and-cremated DateFunc_(.*) functions (had to be) added, 
+
+Ongoing: 2020-12-01T17:55:57AEDT assessment of TasklogOpen -> f...... kill it with fire and re-write (creation of new tasklog for each month, opening of current tasklog given a month-offset, and combining of grab-labels from previous months)
+
+	DeltaPrevious: 
+	TimeQuality: (0.48) aim=.4 val=.7 content=.4
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-01T17:57:02AEDT 
+	}}}
+	Block-Elapsed: 49m54s
+
+	ITEM: vim, set iterm title
+	Start-Time: 2020-12-01T19:22:07AEDT
+	{{{ 	
+
+	2020-12-01T19:39:41AEDT renaming tabs in iTerm2,
+	for non-tmux windows, 
+		echo -ne "\033]0;new name\007"
+	for tmux windows
+		tmux rename-window 'new name'
+
+Ongoing: 2020-12-01T19:43:49AEDT how long, do you want to suppose, until (you) ditch the practice of prefixing every url with 'LINK'
+2020-12-01T19:44:13AEDT 
+
+Delivered: 2020-12-01T19:44:20AEDT (huge qol?) iTerm2 (tmux and naitive windows) set tab title to vim filename
+2020-12-01T19:46:07AEDT 
+
+Ongoing: 2020-12-01T19:46:14AEDT can duplicate lines in schedule (just) be assumed to be duplicates?
+2020-12-01T19:46:47AEDT 
+
+Bug: 2020-12-01T19:47:09AEDT vim doesn't reset window title when <closing/leaving>
+
+	Evaluation: 
+	DeltaPrevious: 1h25m5s
+	TimeQuality: (0.50) aim=.3 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-01T19:50:50AEDT 
+	}}}
+	Block-Elapsed: 28m43s
+
+	ITEM: 
+	Start-Time: 2020-12-01T20:14:45AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 23m55s
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 
+	}}}
+	Block-Elapsed: 
+
+	ITEM: 
+	Start-Time: 2020-12-01T23:19:39AEDT
+	{{{ 	
+
+	Evaluation: 2020-12-01T23:59:49AEDT 
+		Continue: 2020-12-02T00:00:10AEDT _Interface_Uniques
+
+	DeltaPrevious: 
+	TimeQuality: (0.66) aim=.7 val=.7 content=.6
+	Qindex: {{{  }}}
+	Time-Done: 2020-12-02T00:00:31AEDT 
+	}}}
+	Block-Elapsed: 40m52s
+
+	Daily-Tasks: {{{
+	}}}
+}}}-******** EndOfDay: (2020-12-01)-W(48)-D(Tuesday) ********
+
+#------CurrentPrevious-FoldMarker-END------}}}1
+
