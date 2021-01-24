@@ -73,15 +73,29 @@ class DTConvert(object):
 
     def Update_Vars(self, _args):
     #   {{{
-        self._IFS = _args.IFS
-        self._OFS = _args.OFS
-        self._warn_substitute = _args.warnings
-        self._printdebug_func_outputs = _args.debug
-        self._printdebug_func_inputs = _args.debug
-        self._printdebug_func_includeConvert = _args.debug
-        self._assume_local_Tz = not _args.noassumetz
-        self._warn_LocalTz = _args.warnings
-        self._printdebug_warn_strict_parse = _args.warnings
+        #self._IFS = _args.IFS
+        #self._OFS = _args.OFS
+        #self._warn_substitute = _args.warnings
+        #self._printdebug_func_outputs = _args.debug
+        #self._printdebug_func_inputs = _args.debug
+        #self._printdebug_func_includeConvert = _args.debug
+        #self._assume_local_Tz = not _args.noassumetz
+        #self._warn_LocalTz = _args.warnings
+        #self._printdebug_warn_strict_parse = _args.warnings
+        return self._Update_Vars(_args.noassumetz, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+    #   }}}
+
+    def _Update_Vars(self, arg_noassumetz, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    #   {{{
+        self._IFS = arg_IFS
+        self._OFS = arg_OFS
+        self._warn_substitute = arg_warnings
+        self._warn_LocalTz = arg_warnings
+        self._printdebug_warn_strict_parse = arg_warnings
+        self._printdebug_func_outputs = arg_debug
+        self._printdebug_func_inputs = arg_debug
+        self._printdebug_func_includeConvert = arg_debug
+        self._assume_local_Tz = not arg_noassumetz
     #   }}}
 
     #   About: given two python datetimes, calculate the difference between them using dateutil.relativedelta, and return as 'YMWDhms' string

@@ -64,13 +64,27 @@ class DTRange(object):
     _warn_substitute = True
 
     def Interface_Range(self, _args):
-        result_range = self.DTRange_FromDates(_args.qfstart, _args.qfend, _args.qfinterval)
+        return self._Interface_Range(_args.qfstart, _args.qfend, _args.qfinterval)
+
+    def _Interface_Range(self, arg_qfstart, arg_qfend, arg_qfinterval):
+        #result_range = self.DTRange_FromDates(_args.qfstart, _args.qfend, _args.qfinterval)
+        result_range = self.DTRange_FromDates(arg_qfstart, arg_qfend, arg_qfinterval)
         return result_range
 
     def Update_Vars(self, _args):
-        self._warn_substitute = _args.warnings
-        self._printdebug_func_outputs = _args.debug
-        self._printdebug_func_inputs = _args.debug
+    #   {{{
+        #self._warn_substitute = _args.warnings
+        #self._printdebug_func_outputs = _args.debug
+        #self._printdebug_func_inputs = _args.debug
+        return self._Update_Vars(_args.warnings, _args.debug)
+    #   }}}
+
+    def _Update_Vars(self, arg_warnings, arg_debug):
+    #   {{{
+        self._warn_substitute = arg_warnings
+        self._printdebug_func_outputs = arg_debug
+        self._printdebug_func_inputs = arg_debug
+    #   }}}
 
     #   About: Given an integer, and an interval [ymwdHMS], subtract given number of intervals from current datetime
     def _DTRange_Date_From_Integer(self, arg_datetime, arg_interval):
