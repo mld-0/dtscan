@@ -45,6 +45,11 @@ def _SetupParser_cliscan_Main(arg_parser):
     arg_parser.add_argument('--nodhms', action='store_true', default=False, help="Use seconds (instead of dHMS)")
 #   }}}
 
+def _SetupParser_clirange_Main(arg_parser):
+    arg_parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
+    arg_parser.add_argument('-v', '--debug', action='store_true', default=False, help="Use debug level logging")
+    arg_parser.add_argument('-w', '--warnings', default=False, action='store_true', help="Include warnings")
+
 def _SetupParser_cliscan_Scan(arg_parser):
 #   {{{
     arg_parser.add_argument('-C', '--col', nargs=1, default=None, type=int, help="Limit scan to given column (0-indexed)")
@@ -94,7 +99,7 @@ def _SetupParser_cliscan_SplitSum(arg_parser):
 #   }}}
 
 def cliscan():
-    #   {{{
+#   {{{
     dtscanner = DTScanner()
     _Parsers_AssignFunc_cliscan(dtscanner)
     _args = _parser_cliscan.parse_args()
@@ -106,6 +111,7 @@ def cliscan():
 
     result_stream = None
     try:
+        dtscanner.Update_Vars(_args)
         result_stream = _args.func(_args)
     except Exception as e:
         _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
@@ -123,17 +129,7 @@ def cliscan():
         loop_line = loop_line.rstrip()
         print(loop_line)
 
-    ##   shtab
-    #   {{{
-    #try:
-    #    if args.print_zsh_completion:
-    #        print(shtab.complete(parser, shell="zsh"))
-    #        sys.exit(0)
-    #except Exception as e:
-    #    pass
-    #   }}}
-
-    #   }}}
+#   }}}
 
 
 def _Parsers_AssignFunc_clirange(arg_dtrange):
@@ -147,6 +143,7 @@ def _SetupParser_clirange_range(arg_parser):
 
 
 def clirange():
+#   {{{
     dtrange = DTRange()
     _Parsers_AssignFunc_clirange(dtrange)
     _args = _parser_clirange.parse_args()
@@ -156,6 +153,7 @@ def clirange():
         sys.exit(2)
     result_list = None
     try:
+        dtrange.Update_Vars(_args)
         result_list = _args.func(_args)
     except Exception as e:
         _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
@@ -171,12 +169,15 @@ def clirange():
         #   remove trailing newline:
         loop_line = loop_line.rstrip()
         print(loop_line)
+#   }}}
 
 
 #   Ongoing: 2020-12-23T18:50:29AEDT Do we need subparser(s) for dtrange?
 _parser_clirange = argparse.ArgumentParser(prog=self_name_dtrange, formatter_class = argparse.ArgumentDefaultsHelpFormatter)
 _subparsers_clirange = _parser_clirange.add_subparsers(dest="subparsers")
 _subparser_clirange_range = _subparsers_clirange.add_parser('range', description="")
+
+_SetupParser_clirange_Main(_parser_clirange)
 _SetupParser_clirange_range(_subparser_clirange_range)
 
 

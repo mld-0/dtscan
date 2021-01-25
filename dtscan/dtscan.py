@@ -205,29 +205,29 @@ class DTScanner(object):
     #   Common 'scan' arguments are: arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug) <- (note that) when used these are placed at the end of args list in said order.
 
     def Interface_Scan(self, _args):
-        return self._Interface_Scan(_args.infile, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt, _args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Interface_Scan(_args.infile, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
 
     def Interface_Matches(self, _args):
-        return self._Interface_Matches(_args.infile, _args.pos, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt, _args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Interface_Matches(_args.infile, _args.pos, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
 
     def Interface_Count(self, _args):
-        return self._Interface_Count(_args.infile, _args.interval, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt, _args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Interface_Count(_args.infile, _args.interval, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
 
     def Interface_Splits(self, _args):
-        return self._Interface_Splits(_args.infile, _args.splitlen, _args.nodhms, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt, _args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Interface_Splits(_args.infile, _args.splitlen, _args.nodhms, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
 
     def Interface_SplitSum(self, _args):
-        return self._Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt, _args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
 
     def Interface_Deltas(self, _args):
-        return self._Interface_Deltas(_args.infile, _args.nodhms, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt, _args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Interface_Deltas(_args.infile, _args.nodhms, _args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
 
     #   About: Replace datetime instances with those of arg_outfmt
     def Scan_ReplaceDTs(self, arg_infile, arg_outfmt):
-        _log.error("unimplemented")
-        return arg_infile
+        raise Exception("ReplaceDTs unimplemented")
 
-    def _Interface_Scan(self, arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    #def _Interface_Scan(self, arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Interface_Scan(self, arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
         self._sorted_match_positions = None
         self._sorted_match_datetimes = None
@@ -242,7 +242,7 @@ class DTScanner(object):
             self._input_linenum_map.append(loop_i + 1)
         _infile.seek(0)
 
-        self._Update_Vars(arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        #self._Update_Vars(arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
 
         #self.Update_Vars(_args)
         #self.dtrange.Update_Vars(_args)
@@ -264,14 +264,14 @@ class DTScanner(object):
         return _infile
     #   }}}
 
-    def _Interface_Matches(self, arg_infile, arg_pos, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Interface_Matches(self, arg_infile, arg_pos, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
     #def Interface_Matches(self, _args):
     #	TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
     #   TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
     #   TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that ScanStream_DateTimeItems is able to return line numbers corresponding to input, not those from filtered stream it processes)
         #_input_file = self.Interface_Scan(_args)
-        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt)
 
         scanmatch_output_stream_list = []
         scanmatch_output_stream = None
@@ -311,11 +311,11 @@ class DTScanner(object):
         return scanmatch_output_stream
     #   }}}
 
-    def _Interface_Count(self, arg_infile, arg_interval, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Interface_Count(self, arg_infile, arg_interval, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
     #def Interface_Count(self, _args):
         #_input_file = self.Interface_Scan(_args)
-        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt)
 
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
@@ -329,11 +329,11 @@ class DTScanner(object):
         return count_results_stream
     #   }}}
 
-    def _Interface_Splits(self, arg_infile, arg_splitlen, arg_nodhms, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Interface_Splits(self, arg_infile, arg_splitlen, arg_nodhms, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
     #def Interface_Splits(self, _args):
         #_input_file = self.Interface_Scan(_args)
-        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt)
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         result_splits_elapsed, result_splits = self.Split_DeltasList(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen)
@@ -350,12 +350,12 @@ class DTScanner(object):
         return scanmatch_splits_stream
     #   }}}
 
-    def _Interface_Deltas(self, arg_infile, arg_nodhms, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Interface_Deltas(self, arg_infile, arg_nodhms, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
     #def Interface_Deltas(self, _args):
     #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed) 
         #_input_file = self.Interface_Scan(_args)
-        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt)
         scanmatch_deltas_stream = None
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
@@ -368,7 +368,7 @@ class DTScanner(object):
         return scanmatch_deltas_stream
     #   }}}
 
-    def _Interface_SplitSum(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Interface_SplitSum(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
         #   list of streams from scan,
         #   for each stream, 
@@ -386,7 +386,7 @@ class DTScanner(object):
         #_input_file.close()
         #return loop_splits_sum_stream
 
-        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        _input_file = self._Interface_Scan(arg_infile, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt)
 
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list

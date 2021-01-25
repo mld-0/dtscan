@@ -125,7 +125,7 @@ class Test_CliScan(unittest.TestCase):
         _Parsers_AssignFunc_cliscan(self.dtscan_instance)
         if (len(self._arg_debug) > 0):
             args_list.insert(0, self._arg_debug)
-        args = _parser_cliscan.parse_args(args_list)
+        _args = _parser_cliscan.parse_args(args_list)
         _test_result = None
         #if (args.debug):
         #    #logging.basicConfig(level=logging.DEBUG)
@@ -134,12 +134,13 @@ class Test_CliScan(unittest.TestCase):
         #    self.dtscan_instance._printdebug_func_outputs = True
         #    if (_flag_printargs):
         #        self.dtscan_instance._PrintArgs(args, _parser_cliscan)
-        if not hasattr(args, 'func'):
+        if not hasattr(_args, 'func'):
             raise Exception("No subparser command given\n")
         try:
-            _test_result = args.func(args)
+            self.dtscan_instance.Update_Vars(_args)
+            _test_result = _args.func(_args)
         except Exception as e:
-            _log.error("%s\n%s, %s, for 'args.func(args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(args.func.__name__)))
+            _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
         #   Verify that _test_result is a list containing TextIOWrapper instances
         #   {{{
         self.assertTrue(isinstance(_test_result, io.TextIOWrapper), "Expect TextIOWrapper_test_result=(%s)" % str(type(_test_result)))

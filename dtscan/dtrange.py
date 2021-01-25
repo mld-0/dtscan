@@ -4,6 +4,7 @@
 #   vim: set foldlevel=2 foldcolumn=3: 
 #   }}}1
 #   {{{3
+import dateutil
 import operator
 import shutil
 import logging
@@ -76,6 +77,7 @@ class DTRange(object):
         #self._warn_substitute = _args.warnings
         #self._printdebug_func_outputs = _args.debug
         #self._printdebug_func_inputs = _args.debug
+        _log.debug("_args=(%s)" % str(_args))
         return self._Update_Vars(_args.warnings, _args.debug)
     #   }}}
 
