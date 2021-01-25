@@ -44,8 +44,8 @@ class Test_CliScan(unittest.TestCase):
     _printdebug_tests_intermediate = True
     _printdebug_tests_leading = "\n"
     #   }}}
-    _pkg_testdata = "data.test_input"
-    _pkg_checkdata = "data.test_check"
+    _pkg_testdata = "tests.data.test_input"
+    _pkg_checkdata = "tests.data.test_check"
 
     dtscan_instance = DTScanner()
     dtscan_instance._assume_LocalTz = True
