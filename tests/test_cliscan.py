@@ -137,7 +137,8 @@ class Test_CliScan(unittest.TestCase):
         if not hasattr(_args, 'func'):
             raise Exception("No subparser command given\n")
         try:
-            self.dtscan_instance.Update_Vars(_args)
+            self.dtscan_instance.Update_Vars_Parameters(_args)
+            self.dtscan_instance.Update_Vars_Scan(_args)
             _test_result = _args.func(_args)
         except Exception as e:
             _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))

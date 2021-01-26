@@ -21,7 +21,7 @@ _logging_format="%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
-#   these functions must call 'self.Update_Vars(_args)'
+#   these functions must call 'self.Update_Vars_Parameters(_args)'
 def _Parsers_AssignFunc_cliscan(arg_dtscanner):
 #   {{{
     _subparser_cliscan_scan.set_defaults(func = arg_dtscanner.Interface_Scan)
@@ -111,7 +111,8 @@ def cliscan():
 
     result_stream = None
     try:
-        dtscanner.Update_Vars(_args)
+        dtscanner.Update_Vars_Parameters(_args)
+        dtscanner.Update_Vars_Scan(_args)
         result_stream = _args.func(_args)
     except Exception as e:
         _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
@@ -153,7 +154,7 @@ def clirange():
         sys.exit(2)
     result_list = None
     try:
-        dtrange.Update_Vars(_args)
+        dtrange.Update_Vars_Parameters(_args)
         result_list = _args.func(_args)
     except Exception as e:
         _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))

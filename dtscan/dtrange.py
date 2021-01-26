@@ -72,16 +72,16 @@ class DTRange(object):
         result_range = self.DTRange_FromDates(arg_qfstart, arg_qfend, arg_qfinterval)
         return result_range
 
-    def Update_Vars(self, _args):
+    def Update_Vars_Parameters(self, _args):
     #   {{{
         #self._warn_substitute = _args.warnings
         #self._printdebug_func_outputs = _args.debug
         #self._printdebug_func_inputs = _args.debug
         _log.debug("_args=(%s)" % str(_args))
-        return self._Update_Vars(_args.warnings, _args.debug)
+        return self._Update_Vars_Parameters(_args.warnings, _args.debug)
     #   }}}
 
-    def _Update_Vars(self, arg_warnings, arg_debug):
+    def _Update_Vars_Parameters(self, arg_warnings, arg_debug):
     #   {{{
         self._warn_substitute = arg_warnings
         self._printdebug_func_outputs = arg_debug
@@ -89,29 +89,31 @@ class DTRange(object):
     #   }}}
 
     #   About: Given an integer, and an interval [ymwdHMS], subtract given number of intervals from current datetime
-    def _DTRange_Date_From_Integer(self, arg_datetime, arg_interval):
+    def _DTRange_Date_From_Integer(self, arg_datetime_offset, arg_interval):
     #   {{{
         date_now = datetime.now()
-        arg_datetime =  -1 * arg_datetime
+        arg_datetime_offset =  -1 * arg_datetime_offset
         offset_list = [0] * 7
         if (arg_interval == 'y'):
-            offset_list[0] = arg_datetime
+            offset_list[0] = arg_datetime_offset
         elif (arg_interval == 'm'):
-            offset_list[1] = arg_datetime
+            offset_list[1] = arg_datetime_offset
         elif (arg_interval == 'w'):
-            offset_list[2] = arg_datetime
+            offset_list[2] = arg_datetime_offset
         elif (arg_interval == 'd'):
-            offset_list[3] = arg_datetime
+            offset_list[3] = arg_datetime_offset
         elif (arg_interval == 'H'):
-            offset_list[4] = arg_datetime
+            offset_list[4] = arg_datetime_offset
         elif (arg_interval == 'M'):
-            offset_list[5] = arg_datetime
+            offset_list[5] = arg_datetime_offset
         elif (arg_interval == 'S'):
-            offset_list[6] = arg_datetime
+            offset_list[6] = arg_datetime_offset
         else:
-            raise Exception("Invalid arg_interval=(%s), must be one of [ymwdHMS]" % str(arg_interval))
+            #raise Exception("Invalid arg_interval=(%s), must be one of [ymwdHMS]" % str(arg_interval))
+            offset_list[3] = arg_datetime_offset
+            _log.warning("Use default 'd' arg_interval=(%s)" % str(arg_interval))
         #if (self._printdebug_func_inputs):
-        #    _log.debug("arg_datetime=(%s)" % str(arg_datetime))
+        #    _log.debug("arg_datetime_offset=(%s)" % str(arg_datetime_offset))
         #    _log.debug("offset_list=(%s)" % str(offset_list))
         arg_datetime = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
         return arg_datetime
@@ -254,7 +256,10 @@ class DTRange(object):
             intervalEnd = arg_datetimes_sorted[-1] + relativedelta(seconds=1)
         #   }}}
         if (intervalEnd is None):
-            raise Exception("intervalEnd is None")
+            #raise Exception("intervalEnd is None")
+            intervalEnd = arg_datetimes_sorted[-1] + relativedelta(days=1)
+            _log.warning("use default 'd' intervalEnd=(%s)" % str(intervalEnd))
+
         firstAndLast = [ arg_datetimes_sorted[0], intervalEnd ]
         if (arg_datetimes_sorted[0] > intervalEnd):
             raise Exception("arg_datetimes_sorted[0] > intervalEnd")

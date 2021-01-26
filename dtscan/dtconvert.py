@@ -71,7 +71,7 @@ class DTConvert(object):
     _IFS = ""
     _OFS = ""
 
-    def Update_Vars(self, _args):
+    def Update_Vars_Parameters(self, _args):
     #   {{{
         #self._IFS = _args.IFS
         #self._OFS = _args.OFS
@@ -82,10 +82,10 @@ class DTConvert(object):
         #self._assume_local_Tz = not _args.noassumetz
         #self._warn_LocalTz = _args.warnings
         #self._printdebug_warn_strict_parse = _args.warnings
-        return self._Update_Vars(_args.noassumetz, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+        return self._Update_Vars_Parameters(_args.noassumetz, _args.IFS, _args.OFS, _args.warnings, _args.debug)
     #   }}}
 
-    def _Update_Vars(self, arg_noassumetz, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    def _Update_Vars_Parameters(self, arg_noassumetz, arg_IFS, arg_OFS, arg_warnings, arg_debug):
     #   {{{
         self._IFS = arg_IFS
         self._OFS = arg_OFS
