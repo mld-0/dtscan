@@ -86,7 +86,7 @@ class DTScanner(object):
     #_scan_regexfile_second = [ 'dtscan.dtscan', 'dt-regex-items.txt' ]
     _scan_regexlist = []
 
-    #   variables: _scan_(.*), filled by Interface_Scan(), if not None, used by ScanStream_DateTimeItems to limit search location of datetimes
+    #   variables: _scan_(.*), filled by ParserInterface_Scan(), if not None, used by ScanStream_DateTimeItems to limit search location of datetimes
     _scan_column = None
 
     #   TODO: 2020-12-14T23:06:44AEDT Allow specifying of custom regex format/file-containing formats
@@ -107,8 +107,8 @@ class DTScanner(object):
     _sorted_match_output_datetimes = None
     _sorted_match_datetimes = None
 
-    #   TODO: 2021-01-29T22:06:35AEDT That these variables should be set before call to (method that calls) Interface_Scan needs to be better documented
-    #   _scan_(.*) variables, used during call to _Interface_Scan()
+    #   TODO: 2021-01-29T22:06:35AEDT That these variables should be set before call to (method that calls) ParserInterface_Scan needs to be better documented
+    #   _scan_(.*) variables, used during call to Interface_Scan()
     _scan_sortdt = None
     _scan_qfstart = None
     _scan_qfend = None
@@ -138,7 +138,7 @@ class DTScanner(object):
     #   }}}
 
     def __init__(self):
-        self._Read_RegexList()
+        self.Read_RegexList()
 
     #   Destructor, delete _path_temp_dir if it exists
     def __del__(self):
@@ -149,7 +149,7 @@ class DTScanner(object):
             shutil.rmtree(self._path_temp_dir)
     #   }}}
 
-    def _Interface_ScanDir_Matches(self, arg_dir):
+    def _ScanDir_ScanFileMatches(self, arg_dir):
         """Get list of lines from files in dir containing datetimes within 'Scan' range, and corresponding filenames and linenums"""
         results_filepaths = []
         results_linenums = []
@@ -175,7 +175,7 @@ class DTScanner(object):
                 continue
 
             f = open(loop_file, 'r')
-            loop_results_matches = self._Interface_Matches(f, True, False)
+            loop_results_matches = self.Interface_Matches(f, True)
             _log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
             f.close()
 
@@ -198,16 +198,41 @@ class DTScanner(object):
 
         return [ results_datetimes, results_filepaths, results_linenums, results_linecontents ]
 
-    def _Interface_ScanDir_MatchToString(arg_datetimes, arg_filepaths, arg_linenums, arg_linecontents, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
-        _delim = "\t"
-        pass
-        #   Continue: 2021-01-29T23:51:52AEDT return as string, filepath, linenum, (content or datetime), using _delim, and flag_include_(.*) args
+
+    def Interface_ScanDir_ScanFileMatches(self, arg_dir, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
+        results_datetimes, results_filepaths, results_linenums, results_linecontents = self._ScanDir_ScanFileMatches(arg_dir)
+        results_list = []
+
+        for loop_datetime, loop_filepath, loop_linenum, loop_linecontents in zip(results_datetimes, results_filepaths, results_linenums, results_linecontents):
+            loop_result = self._Interface_ScanDir_FormatMatch(loop_datetime, loop_filepath, loop_linenum, loop_linecontents, flag_include_path, flag_include_linenum, flag_include_contents)
+            results_list.append(loop_result)
+
+        return results_list
+
+
+    def ParserInterface_ScanDir_Matches(self, _args):
+        results_list = self.Interface_ScanDir_ScanFileMatches(_args.dir)
+        result_list_stream = self._util_ListOfListsAsStream(results_list)
+        return result_list_stream
+
+
+    def _Interface_ScanDir_FormatMatch(self, arg_datetime, arg_filepath, arg_linenum, arg_linecontent, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
+        result_list = []
+        if (flag_include_path):
+            result_list.append(arg_filepath)
+        if (flag_include_linenum):
+            result_list.append(arg_linenum)
+
+        result_list.append(arg_datetime)
+
+        if (flag_include_contents):
+            result_list.append(arg_linecontent)
+
+        return result_list
 
 
 
-    def Update_Vars_Scan(self, _args):
-        return self._Update_Vars_Scan(_args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
-
+    #   TODO: 2021-01-30T22:42:52AEDT differentiate/unifiy ParserUpdate_Vars_Scan/
     def _Update_Vars_Scan(self, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
     #   {{{
         self._scan_sortdt = arg_sortdt
@@ -218,68 +243,8 @@ class DTScanner(object):
         self._scan_rfend = arg_rfend
         self._scan_outfmt = arg_outfmt
     #   }}}
-
-    #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
-    #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
-    def _Read_RegexList(self, arg_regexfile=None):
-    #   {{{
-        """Read resource self._scan_regexfile, list of regex-as-strings to append to list self._scan_regexlist"""
-        self._scan_regexlist = []
-
-        try:
-            #_scan_regexlist_stream = importlib.resources.open_text(*self._scan_regexfile)
-            #import pkgutil
-            #_scan_regexlist_stream = pkgutil.get_data(*self._scan_regexfile)
-            #_log.debug("_scan_regexlist_stream=(%s)" % str(_scan_regexlist_stream))
-
-            from importlib import resources
-            #for loop_line in _scan_regexlist_stream:
-
-            with resources.open_text(*self._scan_regexfile) as fid:
-                regexdata_str = fid.readlines()
-
-            for loop_line in regexdata_str:
-                loop_regex_item = re.compile(loop_line.strip())
-                self._scan_regexlist.append(loop_regex_item)
-            #_scan_regexlist_stream.close()
-        except Exception as e:
-            #_log.warning("%s, %s, failed to read dt-regex-items.txt" % (type(e), str(e)))
-            #pass
-            raise Exception("%s, %s, failed to read <dtregexitems.txt>" % (type(e), str(e)))
-        #try:
-        #    _scan_regexlist_stream = importlib.resources.open_text(*self._scan_regexfile_second)
-        #    for loop_line in _scan_regexlist_stream:
-        #        loop_regex_item = re.compile(loop_line.strip())
-        #        self._scan_regexlist.append(loop_regex_item)
-        #    _scan_regexlist_stream.close()
-        #except Exception as e:
-        #    _log.warning("%s, %s, failed to read dt-regex-items.txt" % (type(e), str(e)))
-        #    pass
-
-        if (arg_regexfile is not None):
-            try:
-                f = open(arg_regexfile, "r")
-                for loop_line in f:
-                    loop_regex_item = re.compile(loop_line.strip())
-                    self._scan_regexlist.append(loop_regex_item)
-                f.close()
-            except Exception as e:
-                raise Exception("%s, %s, failed to read arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
-                #_log.error("%s, %s, failed to read arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
-
-        if (len(self._scan_regexlist) == 0):
-            raise Exception("Failed to read _scan_regexlist")
-            #_log.error("Failed to read _scan_regexlist")
-            #sys.exit(2)
-
-        if (self._printdebug_func_outputs):
-            _log.debug("_scan_regexlist=(%s)" % str(self._scan_regexlist))
-    #   }}}
-
-    #   About: Update class variables from _args
-    def Update_Vars_Parameters(self, _args):
-        return self._Update_Vars_Parameters(_args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
-
+    def ParserUpdate_Vars_Scan(self, _args):
+        return self._Update_Vars_Scan(_args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
     def _Update_Vars_Parameters(self, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
     #   {{{
         self._IFS = arg_IFS
@@ -297,34 +262,58 @@ class DTScanner(object):
         else:
             self._scan_column = arg_col
     #   }}}
+    def ParserUpdate_Vars_Paramaters(self, _args):
+        return self._Update_Vars_Parameters(_args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
 
-    #   TODO: 2021-01-24T21:23:13AEDT neated arguments-for/usage-of Interface_Scan(), being the first step of most function present in DTScanner
+    def _Resource_ReadFile_RegexFile(self, f):
+    #   {{{
+        try:
+            if (isinstance(f, str)):
+                f = open(f, "r")
+            for loop_line in f:
+                loop_regex_item = re.compile(loop_line.strip())
+                self._scan_regexlist.append(loop_regex_item)
+            f.close()
+        except Exception as e:
+            raise Exception("%s, %s, failed to read arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
+    #   }}}
+
+    def _Resource_GetStream_RegexFile(self):
+    #   {{{
+        try:
+            from importlib import resources
+            fid = resources.open_text(*self._scan_regexfile)
+            return fid
+        except Exception as e:
+            raise Exception("%s, %s, failed to get resource _scan_regexfile stream" % (type(e), str(e)))
+    #   }}}
+
+    #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
+    #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
+    def Read_RegexList(self, arg_regexfile=None):
+    #   {{{
+        """Read resource self._scan_regexfile, list of regex-as-strings to append to list self._scan_regexlist, (as well as arg_regexfile if given)"""
+        self._scan_regexlist = []
+        fid = self._Resource_GetStream_RegexFile()
+        self._Resource_ReadFile_RegexFile(fid)
+        if (arg_regexfile is not None):
+            self._Resource_ReadFile_RegexFile(arg_regexfile)
+        if (len(self._scan_regexlist) == 0):
+            raise Exception("Failed to read any elements to _scan_regexlist")
+        if (self._printdebug_func_outputs):
+            _log.debug("_scan_regexlist=(%s)" % str(self._scan_regexlist))
+    #   }}}
+
+
+    #   TODO: 2021-01-24T21:23:13AEDT neated arguments-for/usage-of ParserInterface_Scan(), being the first step of most function present in DTScanner
 
     #   Common 'scan' arguments are: arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug) <- (note that) when used these are placed at the end of args list in said order.
-
-    def Interface_Scan(self, _args):
-        return self._Interface_Scan(_args.infile)
-
-    def Interface_Matches(self, _args):
-        return self._Interface_Matches(_args.infile, _args.pos)
-
-    def Interface_Count(self, _args):
-        return self._Interface_Count(_args.infile, _args.interval)
-
-    def Interface_Splits(self, _args):
-        return self._Interface_Splits(_args.infile, _args.splitlen, _args.nodhms)
-
-    def Interface_SplitSum(self, _args):
-        return self._Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen)
-
-    def Interface_Deltas(self, _args):
-        return self._Interface_Deltas(_args.infile, _args.nodhms)
 
     #   About: Replace datetime instances with those of arg_outfmt
     def Scan_ReplaceDTs(self, arg_infile, arg_outfmt):
         raise Exception("ReplaceDTs unimplemented")
 
-    def _Interface_Scan(self, arg_infile):
+    def Interface_Scan(self, arg_infile):
     #   {{{
         """Read stream, and optionally (as per self._scan_(.*) vars) sort, quickfilter (filter dates without parsing), rangefilter (filter dates with parsing), and/or replace with given format (unimplemented)"""
         self._sorted_match_positions = None
@@ -342,9 +331,9 @@ class DTScanner(object):
 
         #self._Update_Vars_Parameters(arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug)
 
-        #self.Update_Vars_Parameters(_args)
-        #self.dtrange.Update_Vars_Parameters(_args)
-        #self.dtconvert.Update_Vars_Parameters(_args)
+        #self.ParserUpdate_Vars_Paramaters(_args)
+        #self.dtrange.ParserUpdate_Vars_Paramaters(_args)
+        #self.dtconvert.ParserUpdate_Vars_Paramaters(_args)
 
         if (self._scan_sortdt):
             _infile = self.Scan_SortChrono(_infile)
@@ -357,14 +346,18 @@ class DTScanner(object):
         return _infile
     #   }}}
 
+    def ParserInterface_Scan(self, _args):
+        return self.Interface_Scan(_args.infile)
+
+
     #	TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
     #   TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
     #   TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that ScanStream_DateTimeItems is able to return line numbers corresponding to input, not those from filtered stream it processes)
-    def _Interface_Matches(self, arg_infile, arg_pos, arg_output_as_Stream=True):
+    def Interface_Matches(self, arg_infile, arg_pos):
     #   {{{
         """Scan input, get list of matches, and output, optionally with position of said matches. Output either as stream, or list of matches (and positions). Output columns: {0,1,2,3,4,5,6} = {match, """
-        #_input_file = self.Interface_Scan(_args)
-        _input_file = self._Interface_Scan(arg_infile)
+        #_input_file = self.ParserInterface_Scan(_args)
+        _input_file = self.Interface_Scan(arg_infile)
 
         scanmatch_output_stream_list = []
         scanmatch_output_stream = None
@@ -380,44 +373,40 @@ class DTScanner(object):
             results_list = self.ScanStream_DateTimeItems(_input_file)
             scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
 
-        #_args.infile.close()
         arg_infile.close()
         _input_file.close()
 
         if not (arg_pos):
-            if not (arg_output_as_Stream):
-                return scanmatch_output_text
-            scanmatch_output_stream = self._util_ListAsStream(scanmatch_output_text)
+            return scanmatch_output_text
         else:
-            _delim = "\t"
-            scanmatch_outputTextAndPosition = []
+            return self._Interface_Matches_AddPositions(scanmatch_output_text, scanmatch_positions)
 
-            if (len(scanmatch_output_text) != len(scanmatch_positions)):
-                raise Exception("mismatch, len(scanmatch_output_text)=(%i), len(scanmatch_positions)=(%i)" % (len(scanmatch_output_text), len(scanmatch_positions)))
-
-            #for loop_output_text, loop_position in zip(scanmatch_output_text, scanmatch_positions):
-            #    loop_list_item = loop_output_text + _delim
-            #    for loop_position_item in loop_position:
-            #        loop_list_item += str(loop_position_item) + _delim
-            #    scanmatch_outputTextAndPosition.append(loop_list_item[0:-1])
-
-            for loop_output_text, loop_position in zip(scanmatch_output_text, scanmatch_positions):
-                loop_list_item = loop_output_text + _delim
-                for loop_position_item in loop_position:
-                    loop_list_item += str(loop_position_item) + _delim
-                scanmatch_outputTextAndPosition.append(loop_list_item[0:-1])
-
-            if not (arg_output_as_Stream):
-                return [ x.split('\t') for x in scanmatch_outputTextAndPosition ]
-            scanmatch_output_stream = self._util_ListAsStream(scanmatch_outputTextAndPosition)
-
-        return scanmatch_output_stream
     #   }}}
 
-    def _Interface_Count(self, arg_infile, arg_interval, arg_output_as_Stream=True):
+    def _Interface_Matches_AddPositions(self, scanmatch_output_text, scanmatch_positions):
+    #   {{{
+        """Given lists scanmatch_output_text, scanmatch_positions, produce and return scanmatch_outputTextAndPosition, which has elements for each match: {}"""
+        scanmatch_outputTextAndPosition = []
+        if (len(scanmatch_output_text) != len(scanmatch_positions)):
+            raise Exception("mismatch, len(scanmatch_output_text)=(%i), len(scanmatch_positions)=(%i)" % (len(scanmatch_output_text), len(scanmatch_positions)))
+        for loop_output_text, loop_position in zip(scanmatch_output_text, scanmatch_positions):
+            loop_list_item = [ loop_output_text ]
+            for loop_position_item in loop_position:
+                loop_list_item.append(loop_position_item)
+            scanmatch_outputTextAndPosition.append(loop_list_item)
+        return scanmatch_outputTextAndPosition
+    #   }}}
+
+
+    def ParserInterface_Matches(self, _args):
+        scanmatch_outputTextAndPosition = self.Interface_Matches(_args.infile, _args.pos)
+        scanmatch_output_stream = self._util_ListOfListsAsStream(scanmatch_outputTextAndPosition)
+        return scanmatch_output_stream
+
+    def Interface_Count(self, arg_infile, arg_interval):
     #   {{{
         """Scan, and Count datetime instances by interval."""
-        _input_file = self._Interface_Scan(arg_infile)
+        _input_file = self.Interface_Scan(arg_infile)
 
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
@@ -425,21 +414,22 @@ class DTScanner(object):
 
         count_results = self.dtrange.DTRange_CountBy(scanmatch_datetimes, arg_interval)
 
-        #count_results = self.dtrange.DTRange_CountBy(_input_file, _args.interval)
         count_results = list(zip(*count_results))
-        count_results_stream = self._util_ListOfListsAsStream(count_results)
-        if not (arg_output_as_Stream):
-            return count_results
-        return count_results_stream
+        return count_results
     #   }}}
 
+    def ParserInterface_Count(self, _args):
+        count_results = self.Interface_Count(_args.infile, _args.interval)
+        count_results_stream = self._util_ListOfListsAsStream(count_results)
+        return count_results_stream
+
     #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
-    #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in Interface_Splits
+    #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in ParserInterface_Splits
     #   TODO: 2021-01-29T22:03:21AEDT return List from _Interface Methods -> Interface methods perform conversion to stream
-    def _Interface_Splits(self, arg_infile, arg_splitlen, arg_nodhms, arg_output_as_Stream=True):
+    def Interface_Splits(self, arg_infile, arg_splitlen, arg_nodhms):
     #   {{{
         """Scan, Identify deltas, and sum adjacent deltas of length < arg_splitlen."""
-        _input_file = self._Interface_Scan(arg_infile)
+        _input_file = self.Interface_Scan(arg_infile)
 
         if (arg_splitlen is None):
             arg_splitlen = self._splitlen_default
@@ -457,37 +447,40 @@ class DTScanner(object):
             loop_output = self.dtconvert.Convert_SplitListItem2String(loop_split, arg_nodhms)
             result_output.append(loop_output)
         _input_file.close()
-        if not (arg_output_as_Stream):
-            return result_output
-        scanmatch_splits_stream = self._util_ListAsStream(result_output)
-        return scanmatch_splits_stream
+        return result_output
     #   }}}
 
+    def ParserInterface_Splits(self, _args):
+        result_output = self.Interface_Splits(_args.infile, _args.splitlen, _args.nodhms)
+        scanmatch_splits_stream = self._util_ListAsStream(result_output)
+        return scanmatch_splits_stream
+
+
     #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed) 
-    def _Interface_Deltas(self, arg_infile, arg_nodhms, arg_output_as_Stream=True):
+    def Interface_Deltas(self, arg_infile, arg_nodhms):
     #   {{{
         """Scan, Identify deltas, and output."""
-        #_input_file = self.Interface_Scan(_args)
-        _input_file = self._Interface_Scan(arg_infile)
+        _input_file = self.Interface_Scan(arg_infile)
         scanmatch_deltas_stream = None
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         _input_file.close()
         if (arg_nodhms):
-            if not (arg_output_as_Stream):
-                return scanmatch_delta_s
-            scanmatch_deltas_stream = self._util_ListAsStream(scanmatch_delta_s)
+            return scanmatch_delta_s
         else:
             scanmatch_delta_dhms = [ self.dtconvert.Convert_seconds2Dhms(x) for x in scanmatch_delta_s ] 
-            if not (arg_output_as_Stream):
-                return scanmatch_delta_dhms
-            scanmatch_deltas_stream = self._util_ListAsStream(scanmatch_delta_dhms)
-        return scanmatch_deltas_stream
+            return scanmatch_delta_dhms
     #   }}}
+
+    def ParserInterface_Deltas(self, _args):
+        scanmatch_deltas = self.Interface_Deltas(_args.infile, _args.nodhms)
+        scanmatch_deltas_stream = self._util_ListAsStream(scanmatch_deltas)
+        return scanmatch_deltas_stream
+
 
     #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
     #   TODO: 2021-01-25T21:05:23AEDT arg_nodhms should be a class option
-    def _Interface_SplitSum(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_output_as_Stream=True):
+    def Interface_SplitSum(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_output_as_Stream=True):
     #   {{{
         """Scan, Identify adjacent deltas of length < arg_splitlen, and sum results by arg_interval"""
         #   list of streams from scan,
@@ -495,7 +488,7 @@ class DTScanner(object):
         #       if stream belongs to 'unique', label result with column item
         #       sum matches for each given range interval (or entire stream if none given)
         #   result is a sum, for each unique item, for each interval in range
-        _input_file = self._Interface_Scan(arg_infile)
+        _input_file = self.Interface_Scan(arg_infile)
 
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
@@ -513,6 +506,9 @@ class DTScanner(object):
         return splits_sum_stream
 
     #   }}}
+
+    def ParserInterface_SplitSum(self, _args):
+        return self.Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen)
 
     #   TODO: 2020-12-23T19:17:35AEDT 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
     #   TODO: 2020-11-25T16:14:04AEDT code to write stream to temp file -> used (duplicatate) by both FilterDateTimes_FastFilter() and FilterDateTimes_ScanStream(), place in dedicated function
@@ -1266,15 +1262,20 @@ class DTScanner(object):
 
     def _util_ListOfListsAsStream(self, arg_list):
     #   {{{
+        """Combine list-of-lists into string, one line per output list, and inner list items delimited by _delim, unless inner 'list' is actually string"""
     #   TODO: 2020-12-09T19:47:36AEDT use delim from <>?
         result_string = ""
         _delim= "\t"
         if (arg_list is None):
             return None
         for loop_list in arg_list:
-            for loop_item in loop_list:
-                result_string += str(loop_item) + _delim
-            result_string = result_string[0:-1] + "\n"
+            if not isinstance(loop_list, str):
+                for loop_item in loop_list:
+                    result_string += str(loop_item) + _delim
+                result_string = result_string[0:-1] + "\n"
+            else:
+                result_string += loop_list + "\n"
+
         result_stream = io.StringIO(result_string)
         return self._util_MakeStreamSeekable(result_stream, True)
     #   }}}

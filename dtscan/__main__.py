@@ -21,15 +21,15 @@ _logging_format="%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
-#   these functions must call 'self.Update_Vars_Parameters(_args)'
+#   these functions must call 'self.ParserUpdate_Vars_Paramaters(_args)'
 def _Parsers_AssignFunc_cliscan(arg_dtscanner):
 #   {{{
-    _subparser_cliscan_scan.set_defaults(func = arg_dtscanner.Interface_Scan)
-    _subparser_cliscan_matches.set_defaults(func = arg_dtscanner.Interface_Matches)
-    _subparser_cliscan_count.set_defaults(func = arg_dtscanner.Interface_Count)
-    _subparser_cliscan_deltas.set_defaults(func = arg_dtscanner.Interface_Deltas)
-    _subparser_cliscan_splits.set_defaults(func = arg_dtscanner.Interface_Splits)
-    _subparser_cliscan_splitsum.set_defaults(func = arg_dtscanner.Interface_SplitSum)
+    _subparser_cliscan_scan.set_defaults(func = arg_dtscanner.ParserInterface_Scan)
+    _subparser_cliscan_matches.set_defaults(func = arg_dtscanner.ParserInterface_Matches)
+    _subparser_cliscan_count.set_defaults(func = arg_dtscanner.ParserInterface_Count)
+    _subparser_cliscan_deltas.set_defaults(func = arg_dtscanner.ParserInterface_Deltas)
+    _subparser_cliscan_splits.set_defaults(func = arg_dtscanner.ParserInterface_Splits)
+    _subparser_cliscan_splitsum.set_defaults(func = arg_dtscanner.ParserInterface_SplitSum)
 #   }}}
 
 def _SetupParser_cliscan_Main(arg_parser):
@@ -111,8 +111,8 @@ def cliscan():
 
     result_stream = None
     try:
-        dtscanner.Update_Vars_Parameters(_args)
-        dtscanner.Update_Vars_Scan(_args)
+        dtscanner.ParserUpdate_Vars_Paramaters(_args)
+        dtscanner.ParserUpdate_Vars_Scan(_args)
         result_stream = _args.func(_args)
     except Exception as e:
         _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
@@ -134,7 +134,7 @@ def cliscan():
 
 
 def _Parsers_AssignFunc_clirange(arg_dtrange):
-    _subparser_clirange_range.set_defaults(func = arg_dtrange.Interface_Range)
+    _subparser_clirange_range.set_defaults(func = arg_dtrange.ParserInterface_Range)
 
 def _SetupParser_clirange_range(arg_parser):
     arg_parser.add_argument('--qfstart', nargs=1, default=None, type=str, help="Quick-Filter start date")
@@ -154,7 +154,7 @@ def clirange():
         sys.exit(2)
     result_list = None
     try:
-        dtrange.Update_Vars_Parameters(_args)
+        dtrange.ParserUpdate_Vars_Paramaters(_args)
         result_list = _args.func(_args)
     except Exception as e:
         _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))

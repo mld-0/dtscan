@@ -68,9 +68,9 @@ Continues:
 	Continue: 2020-12-02T22:52:23AEDT dtscan, --sortdt - sort lines by datetime values
 	Continue: 2020-12-02T21:26:21AEDT dtscan, implement 'sortdt' - read lines, sort lines chronologically, write to new stream, and return it
 	Continue: 2020-12-02T03:24:23AEDT commits
-	Continue: 2020-12-02T03:19:17AEDT dtscan, process stream-of-streams as output from Interface_Scan
+	Continue: 2020-12-02T03:19:17AEDT dtscan, process stream-of-streams as output from ParserInterface_Scan
 	Continue: 2020-12-02T01:02:57AEDT for each loop_key, create a stream comprised of lines in loop_linenums_list -> a list of streams is a valid thing to return (albiet if not one that the callee is prepared to handle?)
-	Continue: 2020-12-02T00:00:10AEDT _Interface_Uniques
+	Continue: 2020-12-02T00:00:10AEDT Interface_Uniques
 }}}
 
 Deliverables:
@@ -136,8 +136,8 @@ ITEMs:
 	ITEM: dtscan, cleanup, design of 'count', 'splitsum'
 	ITEM: dtscan, cleanup
 	ITEM: dtscan, cleanup
-	ITEM: dtscan, _Interface_Uniques
-	ITEM: dtscan, _Interface_Uniques
+	ITEM: dtscan, Interface_Uniques
+	ITEM: dtscan, Interface_Uniques
 	ITEM: dtscan, 'hello-world' test
 	ITEM: dtscan,
 	ITEM: dtscan,
@@ -2358,7 +2358,7 @@ Continue: 2020-12-11T00:09:41AEDT python, 'snek' example, 'Snek Infrastructure O
 	{{{ 	
 
 	Evaluation: 2020-12-09T20:02:17AEDT 
-laid out Interface_SumSplit(), DTRange_SumSplits(), 
+laid out ParserInterface_SumSplit(), DTRange_SumSplits(), 
 Continue: 2020-12-09T20:02:42AEDT implement DTRange_SumSplit(), return answer-as-stream to responsible test_cli method
 
 	DeltaPrevious: 13m1s
@@ -3048,7 +3048,7 @@ goalkicker examples on dicts might be boring as s... -> but *not* knowing this s
 	}}}
 	Block-Elapsed: 52m6s
 
-	ITEM: dtscan, _Interface_Uniques
+	ITEM: dtscan, Interface_Uniques
 	Start-Time: 2020-12-02T01:44:24AEDT
 	{{{ 	
 
@@ -3068,11 +3068,11 @@ Delivered: 2020-12-02T02:18:21AEDT vimh -F <search>
 	}}}
 	Block-Elapsed: 36m1s
 
-	ITEM: dtscan, _Interface_Uniques
+	ITEM: dtscan, Interface_Uniques
 	Start-Time: 2020-12-02T02:32:02AEDT
 	{{{ 	
 
-Continue: 2020-12-02T03:19:17AEDT dtscan, process stream-of-streams as output from Interface_Scan
+Continue: 2020-12-02T03:19:17AEDT dtscan, process stream-of-streams as output from ParserInterface_Scan
 
 	Evaluation: 2020-12-02T03:20:21AEDT 
 Continue: 2020-12-02T03:24:23AEDT commits
@@ -3260,7 +3260,7 @@ Bug: 2020-12-01T19:47:09AEDT vim doesn't reset window title when <closing/leavin
 	{{{ 	
 
 	Evaluation: 2020-12-01T23:59:49AEDT 
-		Continue: 2020-12-02T00:00:10AEDT _Interface_Uniques
+		Continue: 2020-12-02T00:00:10AEDT Interface_Uniques
 
 	DeltaPrevious: 
 	TimeQuality: (0.66) aim=.7 val=.7 content=.6

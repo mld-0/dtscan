@@ -138,8 +138,8 @@ class Test_CliScan(unittest.TestCase):
         if not hasattr(_args, 'func'):
             raise Exception("No subparser command given\n")
         try:
-            self.dtscan_instance.Update_Vars_Parameters(_args)
-            self.dtscan_instance.Update_Vars_Scan(_args)
+            self.dtscan_instance.ParserUpdate_Vars_Paramaters(_args)
+            self.dtscan_instance.ParserUpdate_Vars_Scan(_args)
             _test_result = _args.func(_args)
         except Exception as e:
             _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
@@ -179,11 +179,18 @@ class Test_CliScan(unittest.TestCase):
         self.assertTrue(os.path.isdir(path_scandir), "Failed to find scandir path=(%s)" % str(path_scandir))
         return path_scandir
 
-    def test_Interface_ScanDir_Matches(self):
+    #def test_Interface_ScanDir_Matches(self):
+    #    path_scandir = self._getPath_ScanDir()
+    #    _log.debug("path_scandir=(%s)" % str(path_scandir))
+    #    results_test = self.dtscan_instance._ScanDir_ScanFileMatches(path_scandir)
+    #    print(results_test)
+
+    def test_Interface_ScanDir_ScanFileMatches(self):
+        import pprint
         path_scandir = self._getPath_ScanDir()
         _log.debug("path_scandir=(%s)" % str(path_scandir))
-        results_test = self.dtscan_instance._Interface_ScanDir_Matches(path_scandir)
-        print(results_test)
+        results_test = self.dtscan_instance.Interface_ScanDir_ScanFileMatches(path_scandir, True, True, True)
+        pprint.pprint(results_test)
 
 #   }}}
 

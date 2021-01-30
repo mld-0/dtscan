@@ -64,15 +64,15 @@ class DTRange(object):
     _printdebug_func_outputs = True
     _warn_substitute = True
 
-    def Interface_Range(self, _args):
-        return self._Interface_Range(_args.qfstart, _args.qfend, _args.qfinterval)
+    def ParserInterface_Range(self, _args):
+        return self.Interface_Range(_args.qfstart, _args.qfend, _args.qfinterval)
 
-    def _Interface_Range(self, arg_qfstart, arg_qfend, arg_qfinterval):
+    def Interface_Range(self, arg_qfstart, arg_qfend, arg_qfinterval):
         #result_range = self.DTRange_FromDates(_args.qfstart, _args.qfend, _args.qfinterval)
         result_range = self.DTRange_FromDates(arg_qfstart, arg_qfend, arg_qfinterval)
         return result_range
 
-    def Update_Vars_Parameters(self, _args):
+    def ParserUpdate_Vars_Paramaters(self, _args):
     #   {{{
         #self._warn_substitute = _args.warnings
         #self._printdebug_func_outputs = _args.debug

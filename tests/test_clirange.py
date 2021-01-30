@@ -54,7 +54,7 @@ class Test_CliRange(unittest.TestCase):
             sys.exit(2)
         result_list = None
         try:
-            self.dtrange.Update_Vars_Parameters(_args)
+            self.dtrange.ParserUpdate_Vars_Paramaters(_args)
             result_list = _args.func(_args)
         except Exception as e:
             _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))

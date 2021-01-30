@@ -71,7 +71,7 @@ class DTConvert(object):
     _IFS = ""
     _OFS = ""
 
-    def Update_Vars_Parameters(self, _args):
+    def ParserUpdate_Vars_Paramaters(self, _args):
     #   {{{
         #self._IFS = _args.IFS
         #self._OFS = _args.OFS

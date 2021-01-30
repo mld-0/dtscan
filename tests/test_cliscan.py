@@ -64,7 +64,7 @@ class Test_CliScan(unittest.TestCase):
     #   Ongoing: 2020-11-29T13:46:41AEDT using filecmp.cmp() for comparison, does not permit traililing newline in checkfile if not present in stream (as the custom line-by-line check from test-methods.py does)
     #   Ongoing: 2020-11-30T22:53:06AEDT This is a comparision of a stream to a file, not of two streams (and the stream must be a file)
     #   Ongoing: 2020-12-02T13:44:53AEDT require that stream_test is either a stream, or a list of streams of length 1 -> (or, stream-test/path_check are lists of the same length)
-        sys.stderr.write("path_check=(%s)\n" % str(path_check))
+        sys.stderr.write("path_check:\n%s\n" % str(path_check))
         flag_print_diff = False
         flag_print_actualResults = True
         func_caller = inspect.stack()[1][3]
@@ -82,7 +82,7 @@ class Test_CliScan(unittest.TestCase):
         self._util_assertExists(path_check)
         result_compare = None
         path_stream_test = os.path.realpath(stream_test.name)
-        sys.stderr.write("path_stream_test=(%s)\n" % str(path_stream_test))
+        sys.stderr.write("path_stream_test\n%s\n" % str(path_stream_test))
         count_lines_test = 0
         count_lines_check = 0
         with open(path_check, "r") as f:
@@ -137,8 +137,8 @@ class Test_CliScan(unittest.TestCase):
         if not hasattr(_args, 'func'):
             raise Exception("No subparser command given\n")
         try:
-            self.dtscan_instance.Update_Vars_Parameters(_args)
-            self.dtscan_instance.Update_Vars_Scan(_args)
+            self.dtscan_instance.ParserUpdate_Vars_Paramaters(_args)
+            self.dtscan_instance.ParserUpdate_Vars_Scan(_args)
             _test_result = _args.func(_args)
         except Exception as e:
             _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
