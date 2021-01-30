@@ -47,7 +47,8 @@ setup(
     author_email="mld.0@protonmail.com",
     description="Scan for, parse, and analyse datetimes in text",
     long_description=long_descr,
-    packages = ['dtscan', 'tests'],
+    packages = ['dtscan', 'tests', 'tests.data.test_check', 'tests.data.test_input'  ],
+    package_data = { 'dtscan': [ '*.txt' ], 'tests.data.test_check': [ '*.txt' ], 'tests.data.test_input': [ '*.txt', 'scandir/*.txt' ], },
     tests_require=test_depend,
     entry_points={
         'console_scripts': [ 

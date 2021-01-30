@@ -1,0 +1,42 @@
+Required
+The benchmark needs to run for at least 10 seconds.
+All validation must succeed for seeds 0,0,0x66 and 0x3415,0x3415,0x66, buffer size of 2000 bytes total.
+If not using command line arguments to main:
+	% make XCFLAGS="-DPERFORMANCE_RUN=1" REBUILD=1 run1.log
+	% make XCFLAGS="-DVALIDATION_RUN=1" REBUILD=1 run2.log
+If using profile guided optimization, profile must be generated using seeds of 8,8,8, and buffer size of 1200 bytes total.
+    % make XCFLAGS="-DTOTAL_DATA_SIZE=1200 -DPROFILE_RUN=1" REBUILD=1 run3.log
+All source files must be compiled with the same flags.
+All data type sizes must match size in bits such that:
+ee_u8 is an unsigned 8-bit datatype.
+ee_s16 is a signed 16-bit datatype.
+ee_u16 is an unsigned 16-bit datatype.
+ee_s32 is a signed 32-bit datatype.
+ee_u32 is an unsigned 32-bit datatype.
+(2020-04-06)-(2310-42) Back to the future. 
+(2020-04-06)-(2310-09) Notice that we precede the directory path with an r. This technique converts a string into a raw string, which helps to avoid conflicts caused by how some machines read characters, such as backslashes in directory paths on Windows (2020-04-06)-(2310-15) 
+1586178642 The orange band surgeonfish is a deep-bodied, laterally-compressed oval fish, rather over twice as long as it is deep, with a maximum length of 35 cm (14 in), although a more typical length is 25 cm (10 in). Both dorsal and anal fins are long and low, extending as far as the caudal peduncle. The dorsal fin has nine spines and 23 to 25 soft rays while the anal fin has three spines and 22 to 24 soft rays. 1586178609
+1586178623
+The Seven Years' War (1756–1763) was a global conflict, “a struggle for global primacy between Britain and France”, which also had a major impact on the Spanish Empire. 
+In Europe, the conflict arose from issues left unresolved by the War of the Austrian Succession, with Prussia seeking greater dominance. 
+Long standing colonial rivalries between Britain against France and Spain in North America and the Caribbean islands (valuable for sugar) were fought on a grand scale with consequential results. 
+In Europe, the war broke out over territorial disputes between Prussia and Austria, which wanted to regain Silesia after it was captured by Prussia in the previous war. 
+Britain, France and Spain fought both in Europe and overseas with land-based armies and naval forces, while Prussia sought territorial expansion in Europe and consolidation of its power.
+In a realignment of traditional alliances, known as the Diplomatic Revolution of 1756, Prussia became part of a coalition led by Britain, which also included long-time Prussian competitor Hanover. 
+At the same time, Austria ended centuries of conflict by allying with France, along with Saxony, Sweden, and Russia. 
+Spain aligned formally with France in 1762. 
+Spain unsuccessfully attempted to invade Britain's ally Portugal, attacking with their forces facing British troops in Iberia. 
+Smaller German states either joined the Seven Years' War or supplied mercenaries to the parties involved in the conflict.
+Anglo-French conflict over their colonies in North America had begun in 1754 in what became known in North America as the French and Indian War, a nine-year war that ended France's presence as a land power. 
+It was "the most important event to occur in eighteenth-century North America".[12] Spain entered the war in 1761, joining France in the Third Family Compact between the two Bourbon monarchies. 
+The alliance with France was a disaster for Spain, with the loss to Britain of two major ports, Havana in the Caribbean and Manila in the Philippines, returned in the 1763 Treaty of Paris between France, Spain and Great Britain. 
+In Europe the large-scale conflict that drew in most of the European powers was centered on Austria's desire to recover Silesia from Prussia. 
+The Treaty of Hubertusburg ended the war between Saxony, Austria and Prussia, in 1763. 
+Britain began its rise as the world's predominant colonial and naval power. 
+For a time France's supremacy in Europe was halted until after the French Revolution and the emergence of Napoleon Bonaparte. 
+Prussia confirmed its status as a great power, challenging Austria for dominance within the German states, thus altering the European balance of power.
+The tail fin is crescent-shaped, the points growing longer as the fish gets older. The adult fish is greyish-brown; a sharp vertical line usually separates the paler front half of the fish from the darker hind portion. There is a distinctive orange bar, surrounded by a purplish-black margin, immediately behind the top of the gill cover, and blue and orange lines at the bases of the fins. 
+Like all surgeonfish, this species has a pair of scalpel-like scales that project upward from the caudal peduncle. Larger males develop a convex snout which clearly differentiates them from females. Juvenile fish are yellow. 1586178636
+First, we’ll prepare the data set by opening the test file, setting it to read-only, and reading it. We’ll also assign it to a variable, fh (for “file handle”). (2020-04-06)-(2310-23)
+In this tutorial, we’ll use the Fraudulent Email Corpus from Kaggle. It contains thousands of phishing emails sent between 1998 and 2007. They’re pretty entertaining to read. (2020-04-06)-(2310-36)
+2020-10-12T00:29:15AEDT 

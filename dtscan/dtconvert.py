@@ -184,7 +184,7 @@ class DTConvert(object):
     #   {{{
         if (arg_seconds is not int):
             arg_seconds = float(arg_seconds)
-        if (self._printdebug_func_inputs):
+        if (self._printdebug_func_inputs) and (self._printdebug_func_includeConvert):
             _log.debug("arg_seconds=(%s)" % str(arg_seconds))
         scale_vals=( 86400, 3600, 60, 1)
         scale_key=( "D", "h", "m", "s" )
