@@ -35,7 +35,7 @@ def _Parsers_AssignFunc_cliscan(arg_dtscanner):
 def _SetupParser_cliscan_Main(arg_parser):
 #   {{{
     #   TODO: 2020-12-15T13:29:22AEDT give multiple input files?
-    arg_parser.add_argument('-I', '--infile', type=argparse.FileType('r'), default=sys.stdin, help="Input file")
+    arg_parser.add_argument('-I', '--infile', type=argparse.FileType('r', encoding='utf-8', errors='ignore'), default=sys.stdin, help="Input file")
     arg_parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     arg_parser.add_argument('-v', '--debug', action='store_true', default=False, help="Use debug level logging")
     arg_parser.add_argument('-w', '--warnings', default=False, action='store_true', help="Include warnings")

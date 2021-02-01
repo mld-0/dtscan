@@ -33,6 +33,7 @@ import dateutil.relativedelta
 import time
 import tempfile
 import decimal
+import string
 import logging
 from subprocess import Popen, PIPE, STDOUT
 from os.path import expanduser
@@ -313,6 +314,10 @@ class DTScanner(object):
     def Scan_ReplaceDTs(self, arg_infile, arg_outfmt):
         raise Exception("ReplaceDTs unimplemented")
 
+    def _Interface_Scan_RemoveNonPrinting(self, arg_infile):
+        pass
+
+
     def Interface_Scan(self, arg_infile):
     #   {{{
         """Read stream, and optionally (as per self._scan_(.*) vars) sort, quickfilter (filter dates without parsing), rangefilter (filter dates with parsing), and/or replace with given format (unimplemented)"""
@@ -345,6 +350,7 @@ class DTScanner(object):
             _infile = self.Scan_ReplaceDTs(_infile, self._scan_outfmt)
         return _infile
     #   }}}
+
 
     def ParserInterface_Scan(self, _args):
         return self.Interface_Scan(_args.infile)
@@ -1218,11 +1224,17 @@ class DTScanner(object):
         if not (arg_stream.seekable()) or (arg_force):
             if not (os.path.exists(self._path_temp_dir)):
                 os.mkdir(self._path_temp_dir)
+
             if (os.path.exists(_path_tempfile)):
                 raise Exception("_path_tempfile=(%s) exists, (this file is meant to be unique, name contains epoch in ms, if conflicts are encountered - new method of naming tempfiles is needed, (or use sleep() as a standin)" % _path_tempfile)
+
             with open(_path_tempfile, "w") as f:
                 for loop_line in arg_stream:
+                    #   Remove non-printable characters from stream
+                    #loop_line = ''.join(x for x in loop_line if x in string.printable)
+                    #_log.debug("loop_line=(%s)" % str(loop_line))
                     f.write(loop_line)
+
             arg_stream.close()
             arg_stream = open(_path_tempfile, "r")
         #if (self._printdebug_func_outputs):
