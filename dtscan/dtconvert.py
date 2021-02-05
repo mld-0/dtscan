@@ -673,17 +673,14 @@ class DTConvert(object):
         split_datetime_start = self.Convert_DateTime2String(arg_splitlist_item[4])
         split_datetime_end = self.Convert_DateTime2String(arg_splitlist_item[5])
         if not (arg_nodhms):
-            split_elapsed_Dhms = self.Convert_seconds2Dhms(split_elapsed)
-            split_before_Dhms = self.Convert_seconds2Dhms(split_before)
-        else:
-            split_elapsed_Dhms = split_elapsed
-            split_before_Dhms = split_before
+            split_elapsed = self.Convert_seconds2Dhms(split_elapsed)
+            split_before = self.Convert_seconds2Dhms(split_before)
 
         result_str = None
         if (arg_fixed_width):
-            result_str = "%-8s%-6s%16s%26s%26s%16s" % (str(arg_splitlist_item[0]), str(arg_splitlist_item[2]), str(split_elapsed_Dhms), str(split_datetime_start), str(split_datetime_end), str(split_before_Dhms))
+            result_str = "%-8s%-6s%16s%26s%26s%16s" % (str(arg_splitlist_item[0]), str(arg_splitlist_item[2]), str(split_elapsed), str(split_datetime_start), str(split_datetime_end), str(split_before))
         else:
-            result_str = str(arg_splitlist_item[0]) + _delim + str(arg_splitlist_item[2]) + _delim + str(split_elapsed_Dhms) + _delim + str(split_datetime_start) + _delim + str(split_datetime_end) + _delim + str(split_before_Dhms)
+            result_str = str(arg_splitlist_item[0]) + _delim + str(arg_splitlist_item[2]) + _delim + str(split_elapsed) + _delim + str(split_datetime_start) + _delim + str(split_datetime_end) + _delim + str(split_before)
 
         return result_str
     #   }}}
