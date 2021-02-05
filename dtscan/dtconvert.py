@@ -659,7 +659,7 @@ class DTConvert(object):
     #    return result_str
     ##  }}}
 
-    def Convert_SplitListItem2String(self, arg_splitlist_item, arg_nodhms=False):
+    def Convert_SplitListItem2String(self, arg_splitlist_item, arg_nodhms=False, arg_fixed_width=False):
     #   {{{
     #   TODO: 2020-11-30T00:13:20AEDT a split should be an itterable object, storing columns of the split as a dictionary, and this method provided as the 'to-string' 
         #   If splitlist is a list of lists, vs list of scalars 
@@ -678,7 +678,13 @@ class DTConvert(object):
         else:
             split_elapsed_Dhms = split_elapsed
             split_before_Dhms = split_before
-        result_str = "%-8s%-6s%16s%26s%26s%16s" % (str(arg_splitlist_item[0]), str(arg_splitlist_item[2]), split_elapsed_Dhms, str(split_datetime_start), str(split_datetime_end), split_before_Dhms)
+
+        result_str = None
+        if (arg_fixed_width):
+            result_str = "%-8s%-6s%16s%26s%26s%16s" % (str(arg_splitlist_item[0]), str(arg_splitlist_item[2]), str(split_elapsed_Dhms), str(split_datetime_start), str(split_datetime_end), str(split_before_Dhms))
+        else:
+            result_str = str(arg_splitlist_item[0]) + _delim + str(arg_splitlist_item[2]) + _delim + str(split_elapsed_Dhms) + _delim + str(split_datetime_start) + _delim + str(split_datetime_end) + _delim + str(split_before_Dhms)
+
         return result_str
     #   }}}
 
