@@ -26,7 +26,7 @@ import traceback
 #   }}}1
 #   {{{1
 from dtscan.dtconvert import DTConvert
-from dtscan.__main__ import _Parsers_AssignFunc_cliscan, _parser_cliscan
+from dtscan.__main__ import _parser_cliscan 
 
 #   debug logging
 _log = logging.getLogger('dtscan')

@@ -212,9 +212,15 @@ class DTScanner(object):
 
 
     def ParserInterface_ScanDir_Matches(self, _args):
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
         results_list = self.Interface_ScanDir_ScanFileMatches(_args.dir)
         result_list_stream = self._util_ListOfListsAsStream(results_list)
-        return result_list_stream
+        for loop_line in result_list_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        result_list_stream.close()
+        #return result_list_stream
 
 
     def _Interface_ScanDir_FormatMatch(self, arg_datetime, arg_filepath, arg_linenum, arg_linecontent, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
@@ -353,7 +359,13 @@ class DTScanner(object):
 
 
     def ParserInterface_Scan(self, _args):
-        return self.Interface_Scan(_args.infile)
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
+        results_stream = self.Interface_Scan(_args.infile)
+        for loop_line in results_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        results_stream.close()
 
 
     #	TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
@@ -405,9 +417,15 @@ class DTScanner(object):
 
 
     def ParserInterface_Matches(self, _args):
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
         scanmatch_outputTextAndPosition = self.Interface_Matches(_args.infile, _args.pos)
         scanmatch_output_stream = self._util_ListOfListsAsStream(scanmatch_outputTextAndPosition)
-        return scanmatch_output_stream
+        for loop_line in scanmatch_output_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        scanmatch_output_stream.close()
+        #return scanmatch_output_stream
 
     def Interface_Count(self, arg_infile, arg_interval):
     #   {{{
@@ -425,9 +443,15 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_Count(self, _args):
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
         count_results = self.Interface_Count(_args.infile, _args.interval)
         count_results_stream = self._util_ListOfListsAsStream(count_results)
-        return count_results_stream
+        for loop_line in count_results_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        count_results_stream.close()
+        #return count_results_stream
 
     #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
     #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in ParserInterface_Splits
@@ -457,9 +481,15 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_Splits(self, _args):
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
         result_output = self.Interface_Splits(_args.infile, _args.splitlen, _args.nodhms)
         scanmatch_splits_stream = self._util_ListAsStream(result_output)
-        return scanmatch_splits_stream
+        for loop_line in scanmatch_splits_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        scanmatch_splits_stream.close()
+        #return scanmatch_splits_stream
 
 
     #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed) 
@@ -479,14 +509,20 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_Deltas(self, _args):
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
         scanmatch_deltas = self.Interface_Deltas(_args.infile, _args.nodhms)
         scanmatch_deltas_stream = self._util_ListAsStream(scanmatch_deltas)
-        return scanmatch_deltas_stream
+        for loop_line in scanmatch_deltas_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        scanmatch_deltas_stream.close()
+        #return scanmatch_deltas_stream
 
 
     #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
     #   TODO: 2021-01-25T21:05:23AEDT arg_nodhms should be a class option
-    def Interface_SplitSum(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_output_as_Stream=True):
+    def Interface_SplitSum(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen):
     #   {{{
         """Scan, Identify adjacent deltas of length < arg_splitlen, and sum results by arg_interval"""
         #   list of streams from scan,
@@ -505,16 +541,24 @@ class DTScanner(object):
         splits_sum = list(zip(*splits_sum))
         _input_file.close()
 
-        if not (arg_output_as_Stream):
-            return splits_sum
-        splits_sum_stream = self._util_ListOfListsAsStream(splits_sum)
-
-        return splits_sum_stream
+        #if not (arg_output_as_Stream):
+        return splits_sum
+        #splits_sum_stream = self._util_ListOfListsAsStream(splits_sum)
+        #return splits_sum_stream
 
     #   }}}
 
     def ParserInterface_SplitSum(self, _args):
-        return self.Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen)
+        self.ParserUpdate_Vars_Paramaters(_args)
+        self.ParserUpdate_Vars_Scan(_args)
+        result_list = self.Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen)
+        results_stream = self._util_ListOfListsAsStream(result_list)
+        for loop_line in results_stream:
+            loop_line = loop_line.strip()
+            print(loop_line)
+        results_stream.close()
+        #result_list.close()
+        
 
     #   TODO: 2020-12-23T19:17:35AEDT 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
     #   TODO: 2020-11-25T16:14:04AEDT code to write stream to temp file -> used (duplicatate) by both FilterDateTimes_FastFilter() and FilterDateTimes_ScanStream(), place in dedicated function
@@ -548,6 +592,7 @@ class DTScanner(object):
             dateformat_str = "%Y-%m-%d"
             datefrequency = 'D'
         else:
+            arg_input_stream.close()
             raise Exception("Invalid arg_interval=(%s), must be one of [y, m, d]" % str(arg_interval))
 
         #   If arg_date_(start|end) are integers, (or integers in string format) set them to the current date offset by that number of intervals (days,months,years) prior to now
@@ -599,6 +644,7 @@ class DTScanner(object):
                 raise Exception("Got None for arg_date_end")
 
         if (arg_date_start > arg_date_end):
+            arg_input_stream.close()
             raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_date_start), str(arg_date_end)))
 
         #   About Pandas date range:
@@ -700,7 +746,9 @@ class DTScanner(object):
         if isinstance(arg_end, str):
             arg_end = self.dtconvert.Convert_string2DateTime(arg_end)
 
+        #   raise Exception if arg_start > arg_end (close file to prevent unclosed resource warning during start>end test)
         if (arg_start is not None) and (arg_end is not None) and (arg_start > arg_end):
+            arg_input_stream.close()
             raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_start), str(arg_end)))
 
         #   if arg_input_stream is a string, consisting of a valid filepath, create stream from said file
@@ -971,13 +1019,18 @@ class DTScanner(object):
                         scanmatch_datetimes.append(match_item_datetime)
                         scanmatch_output_text.append(match_item_datetime_outformat)
 
-                        loop_delta_s = 0
-                        if (loop_match_num >= 1):
-                            loop_timedelta = match_item_datetime - scanmatch_datetime_previous 
-                            #loop_delta_s = loop_timedelta.total_seconds()
-                            loop_delta_s = decimal.Decimal(str(loop_timedelta.total_seconds()))
-                        else:
+                        try:
                             loop_delta_s = 0
+                            if (loop_match_num >= 1):
+                                loop_timedelta = match_item_datetime - scanmatch_datetime_previous 
+                                #loop_delta_s = loop_timedelta.total_seconds()
+                                loop_delta_s = decimal.Decimal(str(loop_timedelta.total_seconds()))
+                            else:
+                                loop_delta_s = 0
+                        except Exception as e:
+                            _log.warning("%s, %s, loop_timedelta calulation failed for match_item_datetime=(%s), scanmatch_datetime_previous=(%s), set loop_timedelta=(None)" % (type(e), str(e), str(match_item_datetime), str(scanmatch_datetime_previous)))
+                            loop_delta_s = None
+
                         scanmatch_datetime_previous = match_item_datetime
                         scanmatch_delta_s.append(loop_delta_s)
                         loop_match_num += 1

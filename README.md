@@ -43,8 +43,6 @@ previous command, (to be implemented) 'uniques' (how? caller of dtscan? perl/xar
 		--IFS
 	Output column delimitor
 		--OFS
-	
-### scan
 
 	Limit dt scan to given column
 		--col
@@ -66,16 +64,19 @@ previous command, (to be implemented) 'uniques' (how? caller of dtscan? perl/xar
 		--sortdt
 	Replace datetimes with given format
 		--outfmt
+	only match historical (before now) datetimes 
+		--historic
 
 TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) seperators between '%F' and '%H/%M/%S'
 
+### scan
+
+
 ### matches (continues 'scan')
 
-	only historical
-		--historic
 	include position of matches
 		--pos
-	
+
 ### count (continues 'matches')
 
 	Interval to count by (ymwdHMS)
@@ -90,11 +91,21 @@ TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) sepe
 
 ### splits (continues 'deltas')
 
+	negative delta behaviour (Unimplemented)
+		--negativedelta
+	Use seconds for outputs
+		--nodhms
 	Split by length in seconds
 		--splitlen
 
 ### splitsum (continues 'splits')
 
+	negative delta behaviour (Unimplemented)
+		--negativedelta
+	Use seconds for outputs
+		--nodhms
+	Split by length in seconds
+		--splitlen
 	Interval to sum by (ymwdHMS)	
 		--interval
 
