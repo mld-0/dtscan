@@ -139,7 +139,7 @@ class DTScanner(object):
     #   }}}
 
     def __init__(self):
-        self.Read_RegexList()
+        self._ReadResource_RegexList()
 
     #   Destructor, delete _path_temp_dir if it exists
     def __del__(self):
@@ -150,7 +150,42 @@ class DTScanner(object):
             shutil.rmtree(self._path_temp_dir)
     #   }}}
 
+    #   TODO: 2021-01-30T22:42:52AEDT differentiate/unifiy ParserUpdate_Vars_Scan/ParserUpdate_Vars_Paramaters
+    def ParserUpdate_Vars_Scan(self, _args):
+        return self._Update_Vars_Scan(_args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
+    def ParserUpdate_Vars_Paramaters(self, _args):
+        return self._Update_Vars_Parameters(_args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
+    def _Update_Vars_Scan(self, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
+    #   {{{
+        self._scan_sortdt = arg_sortdt
+        self._scan_qfstart = arg_qfstart
+        self._scan_qfend = arg_qfend
+        self._scan_qfinterval = arg_qfinterval
+        self._scan_rfstart = arg_rfstart
+        self._scan_rfend = arg_rfend
+        self._scan_outfmt = arg_outfmt
+    #   }}}
+    def _Update_Vars_Parameters(self, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
+    #   {{{
+        self._IFS = arg_IFS
+        self._OFS = arg_OFS
+        self._assumeLocalTz = not arg_noassumetz
+        self._warn_LocalTz = arg_warnings
+        self._warn_substitute = arg_warnings
+        self._printdebug_func_outputs = arg_debug
+        self._printdebug_func_inputs = arg_debug
+        self._printdebug_destructor = arg_debug
+        self.dtrange._Update_Vars_Parameters(arg_warnings, arg_debug)
+        self.dtconvert._Update_Vars_Parameters(arg_noassumetz, arg_IFS, arg_OFS, arg_warnings, arg_debug)
+        if isinstance(arg_col, list):
+            self._scan_column = arg_col[0]
+        else:
+            self._scan_column = arg_col
+    #   }}}
+
+    #   Ongoing: 2021-02-06T21:15:57AEDT 'scandir' has no tests, and no parser
     def _ScanDir_ScanFileMatches(self, arg_dir):
+    #   {{{
         """Get list of lines from files in dir containing datetimes within 'Scan' range, and corresponding filenames and linenums"""
         results_filepaths = []
         results_linenums = []
@@ -198,9 +233,9 @@ class DTScanner(object):
         _log.debug("len(results_datetimes)=(%s)" % len(results_datetimes))
 
         return [ results_datetimes, results_filepaths, results_linenums, results_linecontents ]
-
-
+    #   }}}
     def Interface_ScanDir_ScanFileMatches(self, arg_dir, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
+    #   {{{
         results_datetimes, results_filepaths, results_linenums, results_linecontents = self._ScanDir_ScanFileMatches(arg_dir)
         results_list = []
 
@@ -209,9 +244,21 @@ class DTScanner(object):
             results_list.append(loop_result)
 
         return results_list
-
-
+    #   }}}
+    def _Interface_ScanDir_FormatMatch(self, arg_datetime, arg_filepath, arg_linenum, arg_linecontent, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
+    #   {{{
+        result_list = []
+        if (flag_include_path):
+            result_list.append(arg_filepath)
+        if (flag_include_linenum):
+            result_list.append(arg_linenum)
+        result_list.append(arg_datetime)
+        if (flag_include_contents):
+            result_list.append(arg_linecontent)
+        return result_list
+    #   }}}
     def ParserInterface_ScanDir_Matches(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         results_list = self.Interface_ScanDir_ScanFileMatches(_args.dir)
@@ -221,94 +268,6 @@ class DTScanner(object):
             print(loop_line)
         result_list_stream.close()
         #return result_list_stream
-
-
-    def _Interface_ScanDir_FormatMatch(self, arg_datetime, arg_filepath, arg_linenum, arg_linecontent, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
-        result_list = []
-        if (flag_include_path):
-            result_list.append(arg_filepath)
-        if (flag_include_linenum):
-            result_list.append(arg_linenum)
-
-        result_list.append(arg_datetime)
-
-        if (flag_include_contents):
-            result_list.append(arg_linecontent)
-
-        return result_list
-
-
-
-    #   TODO: 2021-01-30T22:42:52AEDT differentiate/unifiy ParserUpdate_Vars_Scan/
-    def _Update_Vars_Scan(self, arg_sortdt, arg_qfstart, arg_qfend, arg_qfinterval, arg_rfstart, arg_rfend, arg_outfmt):
-    #   {{{
-        self._scan_sortdt = arg_sortdt
-        self._scan_qfstart = arg_qfstart
-        self._scan_qfend = arg_qfend
-        self._scan_qfinterval = arg_qfinterval
-        self._scan_rfstart = arg_rfstart
-        self._scan_rfend = arg_rfend
-        self._scan_outfmt = arg_outfmt
-    #   }}}
-    def ParserUpdate_Vars_Scan(self, _args):
-        return self._Update_Vars_Scan(_args.sortdt, _args.qfstart, _args.qfend, _args.qfinterval, _args.rfstart, _args.rfend, _args.outfmt)
-    def _Update_Vars_Parameters(self, arg_noassumetz, arg_col, arg_IFS, arg_OFS, arg_warnings, arg_debug):
-    #   {{{
-        self._IFS = arg_IFS
-        self._OFS = arg_OFS
-        self._assumeLocalTz = not arg_noassumetz
-        self._warn_LocalTz = arg_warnings
-        self._warn_substitute = arg_warnings
-        self._printdebug_func_outputs = arg_debug
-        self._printdebug_func_inputs = arg_debug
-        self._printdebug_destructor = arg_debug
-        self.dtrange._Update_Vars_Parameters(arg_warnings, arg_debug)
-        self.dtconvert._Update_Vars_Parameters(arg_noassumetz, arg_IFS, arg_OFS, arg_warnings, arg_debug)
-        if isinstance(arg_col, list):
-            self._scan_column = arg_col[0]
-        else:
-            self._scan_column = arg_col
-    #   }}}
-    def ParserUpdate_Vars_Paramaters(self, _args):
-        return self._Update_Vars_Parameters(_args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
-
-    def _Resource_ReadFile_RegexFile(self, f):
-    #   {{{
-        try:
-            if (isinstance(f, str)):
-                f = open(f, "r")
-            for loop_line in f:
-                loop_regex_item = re.compile(loop_line.strip())
-                self._scan_regexlist.append(loop_regex_item)
-            f.close()
-        except Exception as e:
-            raise Exception("%s, %s, failed to read arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
-    #   }}}
-
-    def _Resource_GetStream_RegexFile(self):
-    #   {{{
-        try:
-            from importlib import resources
-            fid = resources.open_text(*self._scan_regexfile)
-            return fid
-        except Exception as e:
-            raise Exception("%s, %s, failed to get resource _scan_regexfile stream" % (type(e), str(e)))
-    #   }}}
-
-    #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
-    #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
-    def Read_RegexList(self, arg_regexfile=None):
-    #   {{{
-        """Read resource self._scan_regexfile, list of regex-as-strings to append to list self._scan_regexlist, (as well as arg_regexfile if given)"""
-        self._scan_regexlist = []
-        fid = self._Resource_GetStream_RegexFile()
-        self._Resource_ReadFile_RegexFile(fid)
-        if (arg_regexfile is not None):
-            self._Resource_ReadFile_RegexFile(arg_regexfile)
-        if (len(self._scan_regexlist) == 0):
-            raise Exception("Failed to read any elements to _scan_regexlist")
-        if (self._printdebug_func_outputs):
-            _log.debug("_scan_regexlist=(%s)" % str(self._scan_regexlist))
     #   }}}
 
 
@@ -322,7 +281,6 @@ class DTScanner(object):
 
     def _Interface_Scan_RemoveNonPrinting(self, arg_infile):
         pass
-
 
     def Interface_Scan(self, arg_infile):
     #   {{{
@@ -357,8 +315,8 @@ class DTScanner(object):
         return _infile
     #   }}}
 
-
     def ParserInterface_Scan(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         results_stream = self.Interface_Scan(_args.infile)
@@ -366,6 +324,7 @@ class DTScanner(object):
             loop_line = loop_line.strip()
             print(loop_line)
         results_stream.close()
+    #   }}}
 
 
     #	TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
@@ -415,8 +374,8 @@ class DTScanner(object):
         return scanmatch_outputTextAndPosition
     #   }}}
 
-
     def ParserInterface_Matches(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         scanmatch_outputTextAndPosition = self.Interface_Matches(_args.infile, _args.pos)
@@ -426,6 +385,7 @@ class DTScanner(object):
             print(loop_line)
         scanmatch_output_stream.close()
         #return scanmatch_output_stream
+    #   }}}
 
     def Interface_Count(self, arg_infile, arg_interval):
     #   {{{
@@ -443,6 +403,7 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_Count(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         count_results = self.Interface_Count(_args.infile, _args.interval)
@@ -452,6 +413,7 @@ class DTScanner(object):
             print(loop_line)
         count_results_stream.close()
         #return count_results_stream
+    #   }}}
 
     #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
     #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in ParserInterface_Splits
@@ -481,6 +443,7 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_Splits(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         result_output = self.Interface_Splits(_args.infile, _args.splitlen, _args.nodhms)
@@ -490,6 +453,7 @@ class DTScanner(object):
             print(loop_line)
         scanmatch_splits_stream.close()
         #return scanmatch_splits_stream
+    #   }}}
 
 
     #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed) 
@@ -509,6 +473,7 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_Deltas(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         scanmatch_deltas = self.Interface_Deltas(_args.infile, _args.nodhms)
@@ -518,6 +483,7 @@ class DTScanner(object):
             print(loop_line)
         scanmatch_deltas_stream.close()
         #return scanmatch_deltas_stream
+    #   }}}
 
 
     #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
@@ -535,9 +501,9 @@ class DTScanner(object):
         results_list = self.ScanStream_DateTimeItems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         result_splits_elapsed, result_splits = self.Split_DeltasList(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen)
-        _log.debug("len(result_splits)=(%s)" % str(len(result_splits)))
+        #_log.debug("len(result_splits)=(%s)" % str(len(result_splits)))
         splits_sum = self.dtrange.DTRange_SumSplits(result_splits, arg_interval, arg_nodhms)
-        _log.debug("splits_sum=(%s)" % str(splits_sum))
+        #_log.debug("splits_sum=(%s)" % str(splits_sum))
         splits_sum = list(zip(*splits_sum))
         _input_file.close()
 
@@ -549,6 +515,7 @@ class DTScanner(object):
     #   }}}
 
     def ParserInterface_SplitSum(self, _args):
+    #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
         result_list = self.Interface_SplitSum(_args.infile, _args.nodhms, _args.interval, _args.splitlen)
@@ -558,170 +525,105 @@ class DTScanner(object):
             print(loop_line)
         results_stream.close()
         #result_list.close()
+    #   }}}
         
 
+    #   TODO: 2021-02-06T20:58:00AEDT If given self._scan_column, limit filtering to strings within said column of input
     #   TODO: 2020-12-23T19:17:35AEDT 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
     #   TODO: 2020-11-25T16:14:04AEDT code to write stream to temp file -> used (duplicatate) by both FilterDateTimes_FastFilter() and FilterDateTimes_ScanStream(), place in dedicated function
     #   TODO: 2020-11-29T14:24:40AEDT get date range without using pandas
     def Scan_QuickFilter(self, arg_input_stream, arg_date_start, arg_date_end, arg_interval):
     #   {{{
         """Copy input stream, keeping only lines with datetimes (identified as text %Y, %Y-%m, %Y-%m-%d) which fall inside given date range, for start/end and interval [ymd]."""
-        #   Get list of all year-and-month-s that fall between arg_date_start and arg_date_end
-        import pandas
         func_name = inspect.currentframe().f_code.co_name
 
-        date_now = datetime.now()
-        dateformat_str = ""
-        datefrequency = ''
-
-        #   arguments from argparser (may?) come in the form of lists, if so, replace argument with first list element
         if isinstance(arg_interval, list):
             arg_interval = arg_interval[0]
-        if isinstance(arg_date_start, list):
-            arg_date_start = arg_date_start[0]
-        if isinstance(arg_date_end, list):
-            arg_date_end = arg_date_end[0]
 
+        #   Validate arg_interval as [ymd], otherwise raise Exception
+        #   {{{
         if (arg_interval == 'm'):
-            dateformat_str = "%Y-%m"
-            datefrequency = 'MS'
+            pass
         elif (arg_interval == 'y'):
-            dateformat_str = "%Y"
-            datefrequency = 'YS'
+            pass
         elif (arg_interval == 'd'):
-            dateformat_str = "%Y-%m-%d"
-            datefrequency = 'D'
+            pass
         else:
             arg_input_stream.close()
             raise Exception("Invalid arg_interval=(%s), must be one of [y, m, d]" % str(arg_interval))
+        #   }}}
 
-        #   If arg_date_(start|end) are integers, (or integers in string format) set them to the current date offset by that number of intervals (days,months,years) prior to now
-        try:
-            if (arg_date_start is not None):
-                arg_date_start = int(arg_date_start)
-        except Exception as e:
-            pass
-        try:
-            if (arg_date_end is not None):
-                arg_date_end = int(arg_date_end)
-        except Exception as e:
-            pass
-
-        if (arg_date_start is None):
-            arg_date_start = date_now
-        if (arg_date_end is None):
-            arg_date_end = date_now
-
-        if (isinstance(arg_date_end, int)):
-            pass
-            offset_list = [0] * 7
-            if not (arg_interval == 'd'):
-                offset_list[3] = arg_date_end
-            elif (arg_interval == 'm'):
-                offset_list[1] = arg_date_end
-            elif (arg_interval == 'y'):
-                offset_list[0] = arg_date_end
-            arg_date_end = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
-        if (isinstance(arg_date_start, int)):
-            pass
-            offset_list = [0] * 7
-            if not (arg_interval == 'd'):
-                offset_list[3] = arg_date_start
-            elif (arg_interval == 'm'):
-                offset_list[1] = arg_date_start
-            elif (arg_interval == 'y'):
-                offset_list[0] = arg_date_start
-            arg_date_start = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
-
-        #   If arg_date_(start|end) are strings, convert them to datetimes
-        if (isinstance(arg_date_start, str)):
-            arg_date_start = self.dtconvert.Convert_string2DateTime(arg_date_start)
-            if arg_date_start is None:
-                raise Exception("Got None for arg_date_start")
-        if (isinstance(arg_date_end, str)):
-            arg_date_end = self.dtconvert.Convert_string2DateTime(arg_date_end)
-            if arg_date_end is None:
-                raise Exception("Got None for arg_date_end")
-
-        if (arg_date_start > arg_date_end):
-            arg_input_stream.close()
-            raise Exception("arg_date_start=(%s) > arg_date_end=(%s)" % (str(arg_date_start), str(arg_date_end)))
-
-        #   About Pandas date range:
-        #   LINK: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html
-        #   LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
-        filter_dates_list = [ x.strftime(dateformat_str) for x in pandas.date_range(start=arg_date_start.strftime(dateformat_str), end=arg_date_end.strftime(dateformat_str), freq=datefrequency) ]
-
+        #   printdebug:
+        #   {{{
         if (self._printdebug_func_inputs):
             _log.debug("arg_date_start=(%s)" % (str(arg_date_start)))
             _log.debug("arg_date_end=(%s)" % (str(arg_date_end)))
             _log.debug("arg_interval=(%s)" % str(arg_interval))
+        #   }}}
+
+        filter_dates_list = self.dtrange.DTRange_FromDates(arg_date_start, arg_date_end, arg_interval)
 
         if (self._printdebug_func_outputs):
             _log.debug("filter_dates_list=(%s)" % str(filter_dates_list))
 
-        #   TODO: 2020-11-19T19:05:04AEDT if arg_input_stream is a string, consisting of a valid filepath, create stream from said file
+        #   if arg_input_stream is a string, assign it to stream opened from said string as path, allowing exception to be thrown if no such file exists
+        #   {{{
         _input_path = None
         if isinstance(arg_input_stream, str):
             _input_path = arg_input_stream
             arg_input_stream = open(_input_path, "r")
+        #   }}}
 
         if not (os.path.exists(self._path_temp_dir)):
             os.mkdir(self._path_temp_dir)
 
-        #   _path_tempfile, temp file we write filtered output to
-        #   {{{
+        #   _path_tempfile, temp file we write filtered output to, with name created from function name, and self._tempfile_counter
         _now = str(time.time())
         _path_tempfile = os.path.join(self._path_temp_dir, "%s.output.%s" % (func_name, self._tempfile_counter))
         self._tempfile_counter += 1
+        #   verify _path_tempfile does not exist
+        #   {{{
         if (os.path.exists(_path_tempfile)):
             raise Exception("_path_tempfile=(%s) exists, (this file is meant to be unique, name contains counter, if conflicts are encountered - new method of naming tempfiles is needed, (or use sleep() as a standin)" % _path_tempfile)
-        tempfile_stream_write = open(_path_tempfile, "w")
         #   }}}
+        tempfile_stream_write = open(_path_tempfile, "w")
 
-        #   count _input_lines
-        #   {{{
-        _input_lines = 0
+        #   count _input_line_count
+        _input_line_count = 0
         arg_input_stream = self._util_MakeStreamSeekable(arg_input_stream)
         for loop_line in arg_input_stream:
-            _input_lines += 1
+            _input_line_count += 1
         arg_input_stream.seek(0)
-        #   }}}
 
-        #   validate _input_lines > 0
-        #   {{{
-        if not (_input_lines > 0):
-            raise Exception("_input_lines=(%s)" % str(_input_lines))
-        #   }}}
+        #   validate _input_line_count > 0
+        if not (_input_line_count > 0):
+            raise Exception("_input_line_count=(%s)" % str(_input_line_count))
+
         #   printdebug:
         #   {{{
         if (self._printdebug_func_outputs):
-            _log.debug("_input_lines=(%s)" % str(_input_lines))
+            _log.debug("_input_line_count=(%s)" % str(_input_line_count))
         #   }}}
 
         #   Copy lines from arg_input_stream to tempfile_stream_write if they contain a string in filter_dates_list
-        #   {{{
         previous_input_linenums_map = self._input_linenum_map
         self._input_linenum_map = []
-        _output_lines = 0
+        _output_line_count = 0
         for loop_i, loop_line in enumerate(arg_input_stream):
             if any(x in loop_line for x in filter_dates_list):
                 tempfile_stream_write.write(loop_line)
                 self._input_linenum_map.append(previous_input_linenums_map[loop_i])
-                _output_lines += 1
-        #   }}}
+                _output_line_count += 1
 
-        #   printdebug, output
+        #   printdebug 
         #   {{{
         if (self._printdebug_func_outputs):
-            _log.debug("_output_lines=(%s)" % str(_output_lines))
+            _log.debug("_output_line_count=(%s)" % str(_output_line_count))
         #   }}}
 
         #   If arg_input_stream is a stream opened within function, close it
-        #   {{{
         if (_input_path is None):
             arg_input_stream.close()
-        #   }}}
 
         tempfile_stream_write.close()
         tempfile_stream_result = open(_path_tempfile, "r")
@@ -785,26 +687,26 @@ class DTScanner(object):
         #   }}}
 
         #   TODO: 2020-11-27T18:21:08AEDT (duplication being bad), 'make-seekable' (use in multiple functions) should be se singular function
-        _input_lines = 0
-        _output_lines = 0
-        #   Count lines in arg_input_stream as _input_lines. If input is not a seekable stream, write it to a file, and use that file as our stream (stdin is not seekable)
+        _input_line_count = 0
+        _output_line_count = 0
+        #   Count lines in arg_input_stream as _input_line_count. If input is not a seekable stream, write it to a file, and use that file as our stream (stdin is not seekable)
         #   {{{
         arg_input_stream = self._util_MakeStreamSeekable(arg_input_stream)
 
         for loop_line in arg_input_stream:
-            _input_lines += 1
+            _input_line_count += 1
         arg_input_stream.seek(0)
         #   }}}
 
-        #   validate _input_lines > 0
+        #   validate _input_line_count > 0
         #   {{{
-        if not (_input_lines > 0):
-            raise Exception("_input_lines=(%s)" % str(_input_lines))
+        if not (_input_line_count > 0):
+            raise Exception("_input_line_count=(%s)" % str(_input_line_count))
         #   }}}
         #   printdebug:
         #   {{{
         if (self._printdebug_func_inputs):
-            _log.debug("_input_lines=(%s)" % str(_input_lines))
+            _log.debug("_input_line_count=(%s)" % str(_input_line_count))
         #   }}}
 
         #   Ongoing: 2020-11-29T16:34:50AEDT performing ScanStream_DateTimeItems() earlier, storing the results (and not performing it again later), or, intentionally perform it again, presuming the results will change as a result of performing filtering
@@ -817,14 +719,14 @@ class DTScanner(object):
             #_log.error("exception: %s, %s, ScanStream_DateTimeItems() failed to read stream" % (str(type(e)), str(e)))
             #return None
 
-        #   _linenums_copy: for each line in _input_lines, do we copy it to output
+        #   _linenums_copy: for each line in _input_line_count, do we copy it to output
         _linenums_copy = []
-        #_linenums_copy = [0] * _input_lines
+        #_linenums_copy = [0] * _input_line_count
         #   {{{
         if (arg_includeNonDTs):
-            _linenums_copy = [1] * _input_lines
+            _linenums_copy = [1] * _input_line_count
         else:
-            _linenums_copy = [0] * _input_lines
+            _linenums_copy = [0] * _input_line_count
         #   }}}
 
         #   check mismatch len(scanmatch_positions) != len(scanmatch_datetimes)
@@ -875,7 +777,7 @@ class DTScanner(object):
         for loop_i, loop_line in enumerate(arg_input_stream):
             if (_linenums_copy[loop_i] == 1):
                 tempfile_stream_write.write(loop_line)
-                _output_lines += 1
+                _output_line_count += 1
                 #self._input_linenum_map.append(loop_i + 1)
                 self._input_linenum_map.append(previous_input_linenums_map[loop_i])
 
@@ -886,7 +788,7 @@ class DTScanner(object):
         #   printdebug, output
         #   {{{
         if (self._printdebug_func_outputs):
-            _log.debug("_output_lines=(%s)" % str(_output_lines))
+            _log.debug("_output_line_count=(%s)" % str(_output_line_count))
         #   }}}
 
         tempfile_stream_write.close()
@@ -911,7 +813,7 @@ class DTScanner(object):
         if len(self._scan_regexlist) == 0:
             raise Exception("self._scan_regexlist_len=(%s)" % len(self._scan_regexlist))
         if (self._printdebug_func_outputs) and (self._scan_regexlist):
-            _log.debug("self._scan_regexlist_len=(%s)" % len(self._scan_regexlist))
+            _log.debug("self._scan_regexlist=(%s)" % str(self._scan_regexlist))
 
         #   TODO: 2020-11-27T18:16:59AEDT write stream to tempfile if it is not seekable
 
@@ -923,8 +825,8 @@ class DTScanner(object):
         scanmatch_delta_s = []
         scanmatch_epoch_previous = 0
         scanmatch_datetime_previous = None
-        _input_lines = 0
-        _output_lines = 0
+        _input_line_count = 0
+        #_output_line_count = 0
 
         if (arg_stream is None):
             raise Exception("arg_stream is none")
@@ -938,11 +840,11 @@ class DTScanner(object):
         if not (os.path.exists(self._path_temp_dir)):
             os.mkdir(self._path_temp_dir)
 
-        #   Count lines in arg_stream as _input_lines. If input is not a seekable stream, write it to a file, and use that file as our stream (stdin is not seekable)
+        #   Count lines in arg_stream as _input_line_count. If input is not a seekable stream, write it to a file, and use that file as our stream (stdin is not seekable)
         #   {{{
         arg_stream = self._util_MakeStreamSeekable(arg_stream)
         for loop_line in arg_stream:
-            _input_lines += 1
+            _input_line_count += 1
         arg_stream.seek(0)
         #   }}}
 
@@ -1083,7 +985,7 @@ class DTScanner(object):
         try:
             if (self._printdebug_func_inputs):
                 _log.debug("len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
-                _log.debug("arg_deltalist=(%s)" % str(arg_deltalist))
+                #_log.debug("arg_deltalist=(%s)" % str(arg_deltalist))
             loop_i=0
             #   split_table:
             #       0:      start
@@ -1257,8 +1159,7 @@ class DTScanner(object):
         return result_list
     #   }}}
 
-    #   Functions: _util_(.*)
-    #   {{{
+    #   TODO: 2021-02-06T21:00:49AEDT util functions (to seperate class?) as static methods
 
     #   Copy a given stream to a tempfile and return stream of tempfile. Closes arg_stream. If arg_force is False, return input stream if it is seekable, if True, create new stream regardless
     def _util_MakeStreamSeekable(self, arg_stream, arg_force=False):
@@ -1345,6 +1246,43 @@ class DTScanner(object):
         return self._util_MakeStreamSeekable(result_stream, True)
     #   }}}
 
+    def _Resource_ReadFile_RegexFile(self, f):
+    #   {{{
+        try:
+            if (isinstance(f, str)):
+                f = open(f, "r")
+            for loop_line in f:
+                loop_regex_item = re.compile(loop_line.strip())
+                self._scan_regexlist.append(loop_regex_item)
+            f.close()
+        except Exception as e:
+            raise Exception("%s, %s, failed to read arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
+    #   }}}
+
+    def _Resource_GetStream_RegexFile(self):
+    #   {{{
+        try:
+            from importlib import resources
+            fid = resources.open_text(*self._scan_regexfile)
+            return fid
+        except Exception as e:
+            raise Exception("%s, %s, failed to get resource _scan_regexfile stream" % (type(e), str(e)))
+    #   }}}
+
+    #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
+    #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
+    def _ReadResource_RegexList(self, arg_regexfile=None):
+    #   {{{
+        """Read resource self._scan_regexfile, list of regex-as-strings to append to list self._scan_regexlist, (as well as arg_regexfile if given)"""
+        self._scan_regexlist = []
+        fid = self._Resource_GetStream_RegexFile()
+        self._Resource_ReadFile_RegexFile(fid)
+        if (arg_regexfile is not None):
+            self._Resource_ReadFile_RegexFile(arg_regexfile)
+        if (len(self._scan_regexlist) == 0):
+            raise Exception("Failed to read any elements to _scan_regexlist")
+        if (self._printdebug_func_outputs):
+            _log.debug("_scan_regexlist=(%s)" % str(self._scan_regexlist))
     #   }}}
 
 #   }}}

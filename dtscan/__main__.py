@@ -23,6 +23,7 @@ logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_loggin
 
 dtscanner = DTScanner()
 
+#   {{{
 #   these functions must call 'self.ParserUpdate_Vars_Paramaters(_args)'
 #def _Parsers_AssignFunc_cliscan(arg_dtscanner):
 ##   {{{
@@ -33,7 +34,6 @@ dtscanner = DTScanner()
 #    _subparser_cliscan_splits.set_defaults(func = arg_dtscanner.ParserInterface_Splits)
 #    _subparser_cliscan_splitsum.set_defaults(func = arg_dtscanner.ParserInterface_SplitSum)
 ##   }}}
-
 #def _SetupParser_cliscan_Main(arg_parser):
 ##   {{{
 #    #   TODO: 2020-12-15T13:29:22AEDT give multiple input files?
@@ -57,7 +57,6 @@ dtscanner = DTScanner()
 #    arg_parser.add_argument('--sortdt', action='store_true', default=None, help="Sort lines chronologically")
 #    arg_parser.add_argument('--outfmt', nargs=1, default=None, type=str, help="Replace datetimes with given format")
 ##   }}}
-
 #def _SetupParser_cliscan_Scan(arg_parser):
 ##   {{{
 #    pass
@@ -96,6 +95,7 @@ dtscanner = DTScanner()
 #    arg_parser.add_argument('--splitlen', nargs=1, default=300, help="Maximum delta (seconds) to consider datetimes adjacent")
 #    arg_parser.add_argument('--interval', nargs=1, default="d", choices=['y', 'm', 'w', 'd', 'H', 'M', 'S'], help="Interval (ymwdHMS) for which to sum")
 ##   }}}
+#   }}}
 
 def cliscan():
 #   {{{
@@ -132,10 +132,11 @@ def cliscan():
 
 #   }}}
 
-
 #   TODO: 2020-12-14T21:29:49AEDT in 'help', rename 'positional arguments' to 'commands'
 _parser_cliscan = argparse.ArgumentParser(prog=self_name, formatter_class = argparse.ArgumentDefaultsHelpFormatter)
 #_SetupParser_cliscan_Main(_parser_cliscan)
+
+#   dtscan common arguments
 _parser_cliscan.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 _parser_cliscan.add_argument('-v', '--debug', action='store_true', default=False, help="Use debug level logging")
 _parser_cliscan.add_argument('-w', '--warnings', default=False, action='store_true', help="Include warnings")
@@ -148,43 +149,50 @@ _parser_cliscan.add_argument('--nodhms', action='store_true', default=False, hel
 _parser_cliscan.add_argument('--qfstart', nargs=1, default=None, type=str, help="Quick-Filter start date")
 _parser_cliscan.add_argument('--qfend', nargs=1, default=None, type=str, help="Quick-Filter end date")
 _parser_cliscan.add_argument('--qfinterval', nargs=1, default='m', type=str, help="Quick-Filter interval (ymd)")
-_parser_cliscan.add_argument('--qfnum', nargs=1, default=None, type=int, help="filter using %%y(-%%m)(-%%d) from current date to given number of qfinterval before current date")
+#   qfnum: not used
+#_parser_cliscan.add_argument('--qfnum', nargs=1, default=None, type=int, help="filter using %%y(-%%m)(-%%d) (as per interval) from current date to given number of qfinterval before current date")
 _parser_cliscan.add_argument('--rfstart', nargs=1, default=None, type=str, help="Range-Filter start datetime")
 _parser_cliscan.add_argument('--rfend', nargs=1, default=None, type=str, help="Range-Filter end datetime")
 _parser_cliscan.add_argument('--rfinvert', action='store_true', default=False, help="Output datetimes outside given Range-Filter interval")
-_parser_cliscan.add_argument('--historic', action='store_true', default=False, help="Only include datetimes before the present time")
+#   historic: role filled by rangefilter?
+#_parser_cliscan.add_argument('--historic', action='store_true', default=False, help="Only include datetimes before the present time")
 _parser_cliscan.add_argument('--sortdt', action='store_true', default=None, help="Sort lines chronologically")
 _parser_cliscan.add_argument('--outfmt', nargs=1, default=None, type=str, help="Replace datetimes with given format")
 
-
 _subparsers_cliscan = _parser_cliscan.add_subparsers(dest="subparsers")
+
+#   subparser scan
 _subparser_cliscan_scan = _subparsers_cliscan.add_parser('scan', description="filter input, divide per column unique item")
 _subparser_cliscan_scan.set_defaults(func = dtscanner.ParserInterface_Scan)
 
-
+#   subparser matches
 _subparser_cliscan_matches = _subparsers_cliscan.add_parser('matches', description="")
 _subparser_cliscan_matches.add_argument('--pos', action='store_true', default=False, help="Include positions of matches <headings?>")
 _subparser_cliscan_matches.set_defaults(func = dtscanner.ParserInterface_Matches)
 
-
+#   subparser count
 _subparser_cliscan_count = _subparsers_cliscan.add_parser('count', description="")
 _subparser_cliscan_count.add_argument('--interval', nargs=1, default="d", choices=['y', 'm', 'w', 'd', 'H', 'M', 'S'], help="Interval (ymwdHMS) for count")
 _subparser_cliscan_count.set_defaults(func = dtscanner.ParserInterface_Count)
 
-
+#   subparser deltas
 _subparser_cliscan_deltas = _subparsers_cliscan.add_parser('deltas', description="")
 _subparser_cliscan_deltas.set_defaults(func = dtscanner.ParserInterface_Deltas)
 
-
+#   subparser splits
 _subparser_cliscan_splits = _subparsers_cliscan.add_parser('splits', description="")
 _subparser_cliscan_splits.add_argument('--splitlen', nargs=1, default=300, help="Maximum delta (seconds) to consider datetimes adjacent")
 _subparser_cliscan_splits.set_defaults(func = dtscanner.ParserInterface_Splits)
 
-
+#   subparser splitsum
 _subparser_cliscan_splitsum = _subparsers_cliscan.add_parser('splitsum', description="")
 _subparser_cliscan_splitsum.add_argument('--splitlen', nargs=1, default=300, help="Maximum delta (seconds) to consider datetimes adjacent")
 _subparser_cliscan_splitsum.add_argument('--interval', nargs=1, default="d", choices=['y', 'm', 'w', 'd', 'H', 'M', 'S'], help="Interval (ymwdHMS) for which to sum")
 _subparser_cliscan_splitsum.set_defaults(func = dtscanner.ParserInterface_SplitSum)
+
+
+
+
 
 
 
@@ -201,7 +209,7 @@ def _SetupParser_clirange_range(arg_parser):
     arg_parser.add_argument('--qfstart', nargs=1, default=None, type=str, help="Quick-Filter start date")
     arg_parser.add_argument('--qfend', nargs=1, default=None, type=str, help="Quick-Filter end date")
     arg_parser.add_argument('--qfinterval', nargs=1, default='m', type=str, help="Quick-Filter interval (ymd)")
-    arg_parser.add_argument('--qfnum', nargs=1, default=None, type=int, help="filter using %%y(-%%m)(-%%d) from current date to given number of qfinterval before current date")
+    #arg_parser.add_argument('--qfnum', nargs=1, default=None, type=int, help="filter using %%y(-%%m)(-%%d) from current date to given number of qfinterval before current date")
 
 def clirange():
 #   {{{

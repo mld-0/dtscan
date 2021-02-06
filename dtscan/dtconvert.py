@@ -85,7 +85,7 @@ class DTConvert(object):
         self._printdebug_warn_strict_parse = arg_warnings
         self._printdebug_func_outputs = arg_debug
         self._printdebug_func_inputs = arg_debug
-        self._printdebug_func_includeConvert = arg_debug
+        #self._printdebug_func_includeConvert = arg_debug
         self._assume_local_Tz = not arg_noassumetz
     #   }}}
 
@@ -661,15 +661,9 @@ class DTConvert(object):
     def Convert_SplitListItem2String(self, arg_splitlist_item, arg_nodhms=False, arg_fixed_width=False):
     #   {{{
         """Given a split (info on a group of adjacent datetimes) (as a list, [0,1,2,3,4,5,6]=[startindex, endindex, count, elapsed, starttime, endtime, before, after]), convert to a string, either as a fixed width of 98chars, or variable width with self._OFS as delim."""
-        #   If splitlist is a list of lists, vs list of scalars 
         _delim = self._OFS
-        result_str = ""
-        #for loop_item in arg_splitlist_item:
-        #    result_str += str(loop_item) + _delim
-        #result_str = result_str[0:-1]
         split_startindex = arg_splitlist_item[0]
         split_count = arg_splitlist_item[2]
-
         split_elapsed = arg_splitlist_item[3] 
         split_before = arg_splitlist_item[6]
         split_datetime_start = self.Convert_DateTime2String(arg_splitlist_item[4])
@@ -677,14 +671,12 @@ class DTConvert(object):
         if not (arg_nodhms):
             split_elapsed = self.Convert_seconds2Dhms(split_elapsed)
             split_before = self.Convert_seconds2Dhms(split_before)
-
         result_str = None
         if (arg_fixed_width):
             #result_str = "%-8s%-6s%16s%26s%26s%16s" % (str(split_startindex), str(split_count), str(split_elapsed), str(split_datetime_start), str(split_datetime_end), str(split_before))
             result_str = "%26s%26s%-8s%16s%-6s%16s" % (str(split_datetime_start), str(split_datetime_end), str(split_startindex), str(split_elapsed), str(split_count), str(split_before))
         else:
             result_str = str(split_datetime_start) + _delim +  str(split_datetime_end) + _delim + str(split_startindex) + _delim + str(split_elapsed) + _delim + str(split_count) + _delim +  str(split_before) 
-
         return result_str
     #   }}}
 

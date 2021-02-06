@@ -46,26 +46,35 @@ previous command, (to be implemented) 'uniques' (how? caller of dtscan? perl/xar
 
 	Limit dt scan to given column
 		--col
-	quickfilter date start
-		--qfstart
-	quickfilter date end
-		--qfend
-	quickfilter range, intervals before now
-		--qfnum
+
+	quickfilter date start/end 
+	Generate datetime range from start/end values, and only include lines containing date-as-string within range.
+		--qfstart 	<filter-start> 			Defaults to now. If integer <value>, subtract 									
+		--qfend 	<filter-end>	 		<value> qfintervals {y|m|d} from now. If string,
+											parse to datetime
 	quickfilter interval
-		-qfinterval
-	Range filter start
-		--rfstart
-	Range filter end
+		--qfinterval {y|m|d}
+
+	Range filter start/end
+	Parse datetimes on each line, and only include lines which fall between start/end datetimes.
+		--rfstart 
 		--rfend
-	Invert Range Filter 
+
+	Range Filter Invert 
 		--rfinvert
+
 	Sort lines chronologically
 		--sortdt
+
 	Replace datetimes with given format
 		--outfmt
+
 	only match historical (before now) datetimes 
 		--historic
+
+# unused:
+#	quickfilter range, intervals before now
+#		--qfnum
 
 TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) seperators between '%F' and '%H/%M/%S'
 
