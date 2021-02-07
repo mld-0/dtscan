@@ -4,6 +4,7 @@
 #   vim: set foldlevel=2 foldcolumn=3:
 #   }}}1
 #   {{{3
+import dateparser
 import dateutil
 import logging
 import os
@@ -62,7 +63,7 @@ class DTRange(object):
     def _DTRange_Date_From_Integer(self, arg_datetime_offset, arg_interval):
         #   {{{
         date_now = datetime.now()
-        arg_datetime_offset = -1 * arg_datetime_offset
+        arg_datetime_offset = arg_datetime_offset
         offset_list = [0] * 7
         if (arg_interval == 'y'):
             offset_list[0] = arg_datetime_offset
@@ -85,6 +86,7 @@ class DTRange(object):
         return arg_datetime
         #   }}}
 
+    #   Bug: 2021-02-07T19:03:10AEDT if both arg_datetime_start/arg_datetime_end are set to 'now' on different seconds, they may be rejected for the former being after the latter, despite being supposedly identical, we set microseconds=0 on both to prevent this for most occurences, bug relies on edge case where function is called right before tick of second. This can occur one of the arguments is None, and the other contains string 'now'
     #   Ongoing: 2021-02-06T20:36:43AEDT '_FromDates' being a bad name when datetime start/end can be lists, strings, integers, or datetimes
     #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as Scan_QuickFilter -> code in which is to be replaced by call to this function)
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
@@ -101,20 +103,30 @@ class DTRange(object):
         if isinstance(arg_datetime_end, list):
             arg_datetime_end = arg_datetime_end[0]
 
-        try:
-            if (arg_datetime_start is not None):
-                arg_datetime_start = int(arg_datetime_start)
-        except Exception:
-            pass
-        try:
-            if (arg_datetime_end is not None):
-                arg_datetime_end = int(arg_datetime_end)
-        except Exception:
-            pass
+        #try:
+        #    if (arg_datetime_start is not None):
+        #        arg_datetime_start = int(arg_datetime_start)
+        #except Exception:
+        #    pass
+        #try:
+        #    if (arg_datetime_end is not None):
+        #        arg_datetime_end = int(arg_datetime_end)
+        #except Exception:
+        #    pass
+
+        #   If either arg_datetime_start/arg_datetime_end, is a string, beginning with 'now', followed by an integer, set said variable equal to that integer
+        if isinstance(arg_datetime_start, str) and re.match("now[\+\-]?[0-9]+", arg_datetime_start):
+            arg_datetime_start = arg_datetime_start.replace("now", "")
+            arg_datetime_start = int(arg_datetime_start)
+        if isinstance(arg_datetime_end, str) and re.match("now[\+\-]?[0-9]+", arg_datetime_end):
+            arg_datetime_end = arg_datetime_end.replace("now", "")
+            arg_datetime_end = int(arg_datetime_end)
+
+        _now = datetime.now()
         if (arg_datetime_start is None):
-            arg_datetime_start = 0
+            arg_datetime_start = _now
         if (arg_datetime_end is None):
-            arg_datetime_end = 0
+            arg_datetime_end = _now
 
         delim_date = "-"
         delim_time = ":"
@@ -150,9 +162,11 @@ class DTRange(object):
 
         #   If arg_datetime_(start|end) are strings, convert them to datetimes
         if (isinstance(arg_datetime_start, str)):
-            arg_datetime_start = self.dtconvert.Convert_string2DateTime(arg_datetime_start)
+            #arg_datetime_start = self.dtconvert.Convert_string2DateTime(arg_datetime_start)
+            arg_datetime_start = dateparser.parse(arg_datetime_start)
         if (isinstance(arg_datetime_end, str)):
-            arg_datetime_end = self.dtconvert.Convert_string2DateTime(arg_datetime_end)
+            #arg_datetime_end = self.dtconvert.Convert_string2DateTime(arg_datetime_end)
+            arg_datetime_end = dateparser.parse(arg_datetime_end)
 
         #   Ongoing: 2020-12-07T18:40:38AEDT treatment of negative numbers '-' as arguments (dtscan, python argparse)
         #   If arg_datetime_(start|end) are integers, subtract that many intervals from current date to get value for argument
@@ -161,9 +175,9 @@ class DTRange(object):
         if (isinstance(arg_datetime_end, int)):
             arg_datetime_end = self._DTRange_Date_From_Integer(arg_datetime_end, arg_interval)
 
-        #   Require arg_datetime_start to not be after arg_datetime_end
-        if (arg_datetime_start.replace(tzinfo=None) > arg_datetime_end.replace(tzinfo=None)):
-            raise Exception("backward interval, arg_datetime_start=(%s), arg_datetime_end=(%s)" % (str(arg_datetime_start), str(arg_datetime_end)))
+        #   Require arg_datetime_start to not be after arg_datetime_end. Remove timezones to enable comparison to be made between any datetimes
+        if (arg_datetime_start.replace(microsecond=0, tzinfo=None) > arg_datetime_end.replace(microsecond=0, tzinfo=None)):
+            raise Exception("backward interval, arg_datetime_start=(%s), arg_datetime_end=(%s) (See: is this the race condition where each arg_datetime is set to 'now' by a different line of code?)" % (str(arg_datetime_start), str(arg_datetime_end)))
 
         if (self._printdebug_func_inputs):
             _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
@@ -172,10 +186,8 @@ class DTRange(object):
             _log.debug("arg_type_datetime=(%s)" % str(arg_type_datetime))
 
         #   About Pandas date range:
-        #   {{{
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html
         #   LINK: https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
-        #   }}}
 
         #   pandas not imported until needed (due to ~1s loadtime)
         import pandas

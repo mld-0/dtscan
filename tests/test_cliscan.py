@@ -331,11 +331,12 @@ class Test_CliScan(unittest.TestCase):
             _test_result = self.runtest_parseargs(args_list)
             self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
+
     #   quick-filter for current (November) month
     def test_scan_qfMonthqfStart0(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
-        args_list = ['-I', path_test, '--qfinterval', 'm', '--qfstart', '0', 'scan']
+        args_list = ['-I', path_test, '--qfinterval', 'm', '--qfstart', 'now-0', 'scan']
         _test_result = None
         self._util_assertExists(path_test)
         with freeze_time("2020-11-01"):
@@ -353,7 +354,7 @@ class Test_CliScan(unittest.TestCase):
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     #   quick-filter, backwards date range
-    def test_scan_qfMonthqfStartNovEndOct(self):
+    def test_scan_qfMonthqfBackwardStartNovEndOct(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
         args_list = ['-I', path_test, '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-10', 'scan']
@@ -361,6 +362,17 @@ class Test_CliScan(unittest.TestCase):
         self._util_assertExists(path_test)
         with self.assertRaises(Exception) as context:
             _test_result = self.runtest_parseargs(args_list)
+
+    #   quick-filter, same start and end date
+    def test_scan_qfMonthqfStartEnd2020(self):
+        path_test = self._getPath_TestData("vimh-samples.txt")
+        path_check = path_test
+        args_list = ['-I', path_test, '--qfinterval', 'y', '--qfstart', '2020', '--qfend', '2020', 'scan']
+        _test_result = None
+        self._util_assertExists(path_test)
+        _test_result = self.runtest_parseargs(args_list)
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
+
 
 #   def test_matches_historic(self):
 #       pass

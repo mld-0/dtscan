@@ -57,7 +57,7 @@ class Test_CliRange(unittest.TestCase):
         test_intervals = ["y", "m", "d"]
         expected_strftime_format = ["%Y", "%Y-%m", "%Y-%m-%d"]
         for arg_interval, expected_format in zip(test_intervals, expected_strftime_format):
-            args_list = ['range', '--qfinterval', arg_interval, '--qfstart', '0', '--qfend', '0']
+            args_list = ['range', '--qfinterval', arg_interval, '--qfstart', 'now-0', '--qfend', 'now-0']
             expected_result = [datetime.datetime.now().strftime(expected_format)]
             test_result = self.runtest_parseargs(args_list)
             self.assertEqual(test_result, expected_result)
@@ -66,7 +66,7 @@ class Test_CliRange(unittest.TestCase):
     def test_dateFromInteger_One(self):
         test_freezetime = "2020-11-01"
         test_intervals = ['y', 'm', 'w', 'd', 'H', 'M', 'S']
-        test_datetimes = [1, 1, 1, 1, 1, 1, 1]
+        test_datetimes = [-1, -1, -1, -1, -1, -1, -1]
         test_expectedresults = ["2019-11-01", "2020-10-01", "2020-10-25", "2020-10-31", "2020-10-31T23:00:00", "2020-10-31T23:59:00", "2020-10-31T23:59:59"]
         for arg_interval, arg_datetime, expected_result_str in zip(test_intervals, test_datetimes, test_expectedresults):
             expected_result = dateutil.parser.parse(expected_result_str)
@@ -78,7 +78,7 @@ class Test_CliRange(unittest.TestCase):
     def test_dtrangeFromDates_yearly(self):
         test_freezetime = "2020-11-01"
         arg_interval = 'y'
-        args_list = ['range', '--qfinterval', arg_interval, '--qfstart', '5', '--qfend', '0']
+        args_list = ['range', '--qfinterval', arg_interval, '--qfstart', 'now-5', '--qfend', 'now-0']
         test_result = None
         expected_result = ['2015', '2016', '2017', '2018', '2019', '2020']
         with freeze_time(test_freezetime):
@@ -88,7 +88,7 @@ class Test_CliRange(unittest.TestCase):
     def test_dtrangeFromDates_monthly(self):
         test_freezetime = "2020-11-01"
         arg_interval = 'm'
-        args_list = ['range', '--qfinterval', arg_interval, '--qfstart', '5', '--qfend', '0']
+        args_list = ['range', '--qfinterval', arg_interval, '--qfstart', 'now-5', '--qfend', 'now-0']
         test_result = None
         expected_result = ['2020-06', '2020-07', '2020-08', '2020-09', '2020-10', '2020-11']
         with freeze_time(test_freezetime):
@@ -98,7 +98,7 @@ class Test_CliRange(unittest.TestCase):
     def test_dtrangeFromDates_daily(self):
         test_freezetime = "2020-11-01"
         arg_interval = 'd'
-        args_list = ['range', '--qfinterval', arg_interval, '--qfstart', '5', '--qfend', '0']
+        args_list = ['range', '--qfinterval', arg_interval, '--qfstart', 'now-5', '--qfend', 'now-0']
         test_result = None
         expected_result = ['2020-10-27', '2020-10-28', '2020-10-29', '2020-10-30', '2020-10-31', '2020-11-01']
         with freeze_time(test_freezetime):
