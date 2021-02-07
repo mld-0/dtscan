@@ -1,6 +1,6 @@
 #   VIM SETTINGS: {{{3
 #   vim: set tabstop=4 modeline modelines=10 foldmethod=marker:
-#   vim: set foldlevel=2 foldcolumn=3: 
+#   vim: set foldlevel=2 foldcolumn=3:
 #   }}}1
 #   {{{3
 import importlib
@@ -11,16 +11,10 @@ import datetime
 import dateutil
 import logging
 import io
-import filecmp
-from subprocess import Popen, PIPE
-from unittest.mock import patch
 from freezegun import freeze_time
-import difflib
 #   pandas must be imported *before* any freezegun fake times are used
 import pandas
 import inspect
-import sys
-import argparse
 import logging
 import traceback
 #   }}}1
@@ -30,16 +24,14 @@ from dtscan.__main__ import _parser_cliscan, dtscanner
 
 #   debug logging
 _log = logging.getLogger('dtscan')
-_logging_format="%(funcName)s: %(levelname)s, %(message)s"
-_logging_datetime="%Y-%m-%dT%H:%M:%S%Z"
+_logging_format = "%(funcName)s: %(levelname)s, %(message)s"
+_logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
-class Test_CliScan(unittest.TestCase):
-#   {{{
 
-    #_printdebug_tests = True
-    #_printdebug_tests_inputs = True
-    #_printdebug_tests_intermediate = True
+class Test_CliScan(unittest.TestCase):
+    #   {{{
+
     _printdebug_tests_leading = ""
     _printdebug_tests_trailing = "\n"
     _pkg_testdata = "tests.data.test_input"
@@ -47,39 +39,33 @@ class Test_CliScan(unittest.TestCase):
 
     _printdebug_include_test_check_vals = True
 
-    #dtscan_instance = DTScanner()
-    #dtscan_instance._assume_LocalTz = True
-    #dtscan_instance._warn_LocalTz = True
-    #dtscan_instance._printdebug_func_inputs = True
-    #dtscan_instance._printdebug_func_outputs = True
-
-    _arg_debug = '-v' 
+    _arg_debug = '-v'
 
     def _getPath_CheckData(self, arg_fname):
-    #   {{{
+        #   {{{
         path_check = None
         with importlib.resources.path(self._pkg_checkdata, arg_fname) as p:
             path_check = str(p)
         return path_check
-    #   }}}
+        #   }}}
 
     def _getPath_TestData(self, arg_fname):
-    #   {{{
+        #   {{{
         path_test = None
         with importlib.resources.path(self._pkg_testdata, arg_fname) as p:
             path_test = str(p)
         return path_test
-    #   }}}
+        #   }}}
 
     def _util_assertExists(self, path_file):
-    #   {{{
+        #   {{{
         self.assertTrue(os.path.isfile(path_file), "file path_file=(%s) not found" % str(path_file))
-    #   }}}
+        #   }}}
 
     #   TODO: 2020-12-12T19:46:37AEDT test method does not account for newlines between streams, unique item headings - which are in the output from (actual) cli dtscan usage (see __main__.py)
-    #   About: Simulate cli usage with args_list 
+    #   About: Simulate cli usage with args_list
     def runtest_parseargs(self, args_list, arg_flag_expectStreamList=True):
-    #   {{{
+        #   {{{
         print("%s" % self._printdebug_tests_leading, end='')
 
         if (len(self._arg_debug) > 0):
@@ -90,23 +76,22 @@ class Test_CliScan(unittest.TestCase):
 
         if not hasattr(_args, 'func'):
             raise Exception("No subparser command given\n")
-        #try:
+        # try:
         sys.stdout = capturedOutput
         _args.func(_args)
         sys.stdout = sys.__stdout__
-        #except Exception as e:
+        # except Exception as e:
         #    _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
 
         print("%s" % self._printdebug_tests_trailing, end='')
 
         return capturedOutput
-    #   }}}
+        #   }}}
 
     #   About: Compare (result stream or list of streams) with (path check of list of paths)
     def runtest_CompareStreamListAndCheckFileList(self, stream_test, path_check):
-    #   {{{
+        #   {{{
         sys.stderr.write("path_check:\n%s\n" % str(path_check))
-        func_caller = inspect.stack()[1][3]
 
         stream_test_text = stream_test.getvalue()
         stream_check_text = None
@@ -121,7 +106,7 @@ class Test_CliScan(unittest.TestCase):
 
         self.maxDiff = None
         self.assertEqual(stream_test_text, stream_check_text)
-    #   }}}
+        #   }}}
 
     #   Continue: 2021-02-06T19:34:56AEDT qffilter tests
     #   Continue: 2021-02-06T19:35:05AEDT rfilter test, historic datetimes, (others)
@@ -130,64 +115,64 @@ class Test_CliScan(unittest.TestCase):
     def test_matches(self):
         path_test = self._getPath_TestData("column-datetime.txt")
         path_check = self._getPath_CheckData("column-datetime.txt")
-        args_list = [ '-I', path_test, 'matches' ]
+        args_list = ['-I', path_test, 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_sortdt_pos(self):
         path_test = self._getPath_TestData("vimh-samples-scrambled.txt")
         path_check = self._getPath_CheckData("vimh-samples-scrambled-sortdt-pos.txt")
-        args_list = [ '--sortdt', '-I', path_test, 'matches', '--pos' ]
+        args_list = ['--sortdt', '-I', path_test, 'matches', '--pos']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_sortdt(self):
         path_test = self._getPath_TestData("vimh-samples-scrambled.txt")
         path_check = self._getPath_CheckData("vimh-samples-scrambled-sortdt.txt")
-        args_list = [ '--sortdt', '-I', path_test, 'matches' ]
+        args_list = ['--sortdt', '-I', path_test, 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_col0(self):
         path_test = self._getPath_TestData("column-datetime.txt")
         path_check = self._getPath_CheckData("column-datetimes-col0.txt")
-        args_list = [ '-I', path_test, '--col', '0',  'matches' ]
+        args_list = ['-I', path_test, '--col', '0', 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_col1(self):
         path_test = self._getPath_TestData("column-datetime.txt")
         path_check = self._getPath_CheckData("column-datetimes-col1.txt")
-        args_list = [ '-I', path_test, '--col', '1',  'matches' ]
+        args_list = ['-I', path_test, '--col', '1', 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_col2(self):
         path_test = self._getPath_TestData("column-datetime.txt")
         path_check = self._getPath_CheckData("column-datetimes-col2.txt")
-        args_list = [ '-I', path_test, '--col', '2',  'matches' ]
+        args_list = ['-I', path_test, '--col', '2', 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_col3(self):
         path_test = self._getPath_TestData("column-datetime.txt")
         path_check = self._getPath_CheckData("column-datetimes-col3.txt")
-        args_list = [ '-I', path_test, '--col', '3',  'matches' ]
+        args_list = ['-I', path_test, '--col', '3', 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_noassumetz(self):
         path_test = self._getPath_TestData("mixed-text-datetimes.txt")
         path_check = self._getPath_CheckData("mixed-text-datetimes-matches-noassumetz.txt")
-        args_list = [ '-I', path_test, '--noassumetz', 'matches' ]
+        args_list = ['-I', path_test, '--noassumetz', 'matches']
         _test_result = self.runtest_parseargs(args_list)
-        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)       
+        self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     #   scan with chronological sort
     def test_scan_sortdt(self):
         path_test = self._getPath_TestData("vimh-samples-scrambled.txt")
         path_check = self._getPath_TestData("vimh-samples.txt")
-        args_list = [   '-I', path_test, '--sortdt', 'scan', ]
+        args_list = ['-I', path_test, '--sortdt', 'scan']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -195,14 +180,14 @@ class Test_CliScan(unittest.TestCase):
     def test_matches_sortdt_linenums(self):
         path_test = self._getPath_TestData("vimh-samples-scrambled.txt")
         path_check = self._getPath_CheckData("vimh-samples-scrambled-sortdt-pos.txt")
-        args_list = [ '-I', path_test, '--sortdt', 'matches', '--pos' ]
+        args_list = ['-I', path_test, '--sortdt', 'matches', '--pos']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     def test_matches_sortdt_order(self):
         path_test = self._getPath_TestData("mixed-text-datetimes.txt")
         path_check = self._getPath_CheckData("mixed-text-datetimes-sorted-pos.txt")
-        args_list = [ '-I', path_test, '--sortdt', 'matches', '--pos' ]
+        args_list = ['-I', path_test, '--sortdt', 'matches', '--pos']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -210,7 +195,7 @@ class Test_CliScan(unittest.TestCase):
     def test_scan_helloworld(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_TestData("vimh-samples.txt")
-        args_list = [  '-I', path_test, 'scan' ]
+        args_list = ['-I', path_test, 'scan']
         _test_result = None
         self._util_assertExists(path_test)
         with freeze_time("2020-11-01"):
@@ -221,7 +206,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splitsum_d(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-splitsum-d-dhms.txt")
-        args_list = [ '-I', path_test, 'splitsum', '--interval', 'd']
+        args_list = ['-I', path_test, 'splitsum', '--interval', 'd']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -229,7 +214,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splitsum_m(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-splitsum-m-dhms.txt")
-        args_list = [ '-I', path_test, 'splitsum', '--interval', 'm']
+        args_list = ['-I', path_test, 'splitsum', '--interval', 'm']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -237,7 +222,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splitsum_y(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-splitsum-y-dhms.txt")
-        args_list = [ '-I', path_test, 'splitsum', '--interval', 'y']
+        args_list = ['-I', path_test, 'splitsum', '--interval', 'y']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -245,7 +230,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splitsum_nodhms(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-splitsum-s.txt")
-        args_list = [ '-I', path_test, '--nodhms', 'splitsum' ]
+        args_list = ['-I', path_test, '--nodhms', 'splitsum']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -253,7 +238,7 @@ class Test_CliScan(unittest.TestCase):
     def test_deltas(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-deltas-dhms.txt")
-        args_list = [ '-I', path_test, 'deltas' ]
+        args_list = ['-I', path_test, 'deltas']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -261,7 +246,7 @@ class Test_CliScan(unittest.TestCase):
     def test_deltas_nodhms(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-deltas-s.txt")
-        args_list = [ '-I', path_test, '--nodhms', 'deltas' ]
+        args_list = ['-I', path_test, '--nodhms', 'deltas']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -269,7 +254,7 @@ class Test_CliScan(unittest.TestCase):
     def test_count_d(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-count-d.txt")
-        args_list = [ '-I', path_test, 'count', '--interval', 'd' ]
+        args_list = ['-I', path_test, 'count', '--interval', 'd']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -277,7 +262,7 @@ class Test_CliScan(unittest.TestCase):
     def test_count_m(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-count-m.txt")
-        args_list = [ '-I', path_test, 'count', '--interval', 'm' ]
+        args_list = ['-I', path_test, 'count', '--interval', 'm']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -285,7 +270,7 @@ class Test_CliScan(unittest.TestCase):
     def test_count_y(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-count-y.txt")
-        args_list = [ '-I', path_test, 'count', '--interval', 'y' ]
+        args_list = ['-I', path_test, 'count', '--interval', 'y']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -293,7 +278,7 @@ class Test_CliScan(unittest.TestCase):
     def test_count_H(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-count-H.txt")
-        args_list = [ '-I', path_test, 'count', '--interval', 'H' ]
+        args_list = ['-I', path_test, 'count', '--interval', 'H']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -301,7 +286,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splits300(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-split300-dhms.txt")
-        args_list = [ '-I', path_test, 'splits', '--splitlen', '300' ]
+        args_list = ['-I', path_test, 'splits', '--splitlen', '300']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -309,7 +294,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splits60(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-split60-dhms.txt")
-        args_list = [ '-I', path_test, 'splits', '--splitlen', '60' ]
+        args_list = ['-I', path_test, 'splits', '--splitlen', '60']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -317,7 +302,7 @@ class Test_CliScan(unittest.TestCase):
     def test_splits60_nodhms(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-split60-s.txt")
-        args_list = [ '-I', path_test, '--nodhms', 'splits', '--splitlen', '60' ]
+        args_list = ['-I', path_test, '--nodhms', 'splits', '--splitlen', '60']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -325,15 +310,15 @@ class Test_CliScan(unittest.TestCase):
     def test_scan_rfNov27Minutes(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov27Minutes.txt")
-        args_list = [  '-I', path_test, "--rfstart", "2020-11-27T22:24:10AEDT", "--rfend", "2020-11-27T22:25:55AEDT", 'scan' ]
+        args_list = ['-I', path_test, "--rfstart", "2020-11-27T22:24:10AEDT", "--rfend", "2020-11-27T22:25:55AEDT", 'scan']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
-    #   Get entries from March 
+    #   Get entries from March
     def test_scan_rfMar(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Mar.txt")
-        args_list = [  '-I', path_test, "--rfstart", "2020-03-01", "--rfend", "2020-04-01", 'scan' ]
+        args_list = ['-I', path_test, "--rfstart", "2020-03-01", "--rfend", "2020-04-01", 'scan']
         _test_result = self.runtest_parseargs(args_list)
         self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
@@ -341,15 +326,16 @@ class Test_CliScan(unittest.TestCase):
     def test_scan_rfNovBackward27Minutes(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov27Minutes.txt")
-        args_list = [  '-I', path_test, "--rfstart", "2020-11-27T22:25:55AEDT", "--rfend", "2020-11-27T22:24:10AEDT", 'scan' ]
+        args_list = ['-I', path_test, "--rfstart", "2020-11-27T22:25:55AEDT", "--rfend", "2020-11-27T22:24:10AEDT", 'scan']
         with self.assertRaises(Exception) as context:
             _test_result = self.runtest_parseargs(args_list)
+            self.runtest_CompareStreamListAndCheckFileList(_test_result, path_check)
 
     #   quick-filter for current (November) month
     def test_scan_qfMonthqfStart0(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
-        args_list = [  '-I', path_test, '--qfinterval', 'm', '--qfstart', '0' , 'scan']
+        args_list = ['-I', path_test, '--qfinterval', 'm', '--qfstart', '0', 'scan']
         _test_result = None
         self._util_assertExists(path_test)
         with freeze_time("2020-11-01"):
@@ -360,7 +346,7 @@ class Test_CliScan(unittest.TestCase):
     def test_scan_qfMonthqfStartEndNov(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
-        args_list = [  '-I', path_test, '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-11', 'scan']
+        args_list = ['-I', path_test, '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-11', 'scan']
         _test_result = None
         self._util_assertExists(path_test)
         _test_result = self.runtest_parseargs(args_list)
@@ -370,7 +356,7 @@ class Test_CliScan(unittest.TestCase):
     def test_scan_qfMonthqfStartNovEndOct(self):
         path_test = self._getPath_TestData("vimh-samples.txt")
         path_check = self._getPath_CheckData("vimh-samples-Nov.txt")
-        args_list = [  '-I', path_test, '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-10', 'scan']
+        args_list = ['-I', path_test, '--qfinterval', 'm', '--qfstart', '2020-11', '--qfend', '2020-10', 'scan']
         _test_result = None
         self._util_assertExists(path_test)
         with self.assertRaises(Exception) as context:
@@ -384,12 +370,12 @@ class Test_CliScan(unittest.TestCase):
 #   def test_scan_rfstartend(self):
 #       pass
 #       {{{
-#       test cases: 
+#       test cases:
 #       scan (hello world)
 #           scan
-#       scan, current month: 
-#           scan --qfinterval m --qfnum 0 
-#       scan, current and previous month: 
+#       scan, current month:
+#           scan --qfinterval m --qfnum 0
+#       scan, current and previous month:
 #           scan --qfinterval m --qfnum 1
 #       scan, Nov
 #           scan --qfstart 2020-11 --qfend 2020-11
@@ -405,15 +391,13 @@ class Test_CliScan(unittest.TestCase):
 #           scan --sortdt
 #       matches, only first column
 #           matches --col 1
-#       matches, 
+#       matches,
 #       count <interval>
 #       splits
 #       deltas
 #       splitsum
 #       }}}
 
-
-#   }}}
+    #   }}}
 
 #   }}}1
-

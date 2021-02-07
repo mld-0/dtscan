@@ -1,6 +1,6 @@
 
 class DTposition(object):
-#   {{{
+    #   {{{
     #   match number
     match_id = None
     #   regex item used to match datetime
@@ -11,5 +11,4 @@ class DTposition(object):
     start = None
     #   location in line, end
     end = None
-#   }}}
-
+    #   }}}

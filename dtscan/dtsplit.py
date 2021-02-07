@@ -1,6 +1,6 @@
 
 class DTsplit(object):
-#   {{{
+    #   {{{
     #   split start time
     starttime = None
     #   split end time
@@ -15,5 +15,4 @@ class DTsplit(object):
     delta_before = None
     #   delta before next split
     delta_after = None
-#   }}}
-
+    #   }}}
