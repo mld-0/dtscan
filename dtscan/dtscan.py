@@ -34,8 +34,6 @@ _logging_format = "%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
-#   Continue: 2021-01-19T17:42:37AEDT menu item, splitsum for global vimh for today
-
 
 class DTScanner(object):
     #   {{{
