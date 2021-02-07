@@ -115,10 +115,10 @@ class DTRange(object):
         #    pass
 
         #   If either arg_datetime_start/arg_datetime_end, is a string, beginning with 'now', followed by an integer, set said variable equal to that integer
-        if isinstance(arg_datetime_start, str) and re.match("now[\+\-]?[0-9]+", arg_datetime_start):
+        if isinstance(arg_datetime_start, str) and re.match(r"now[\+\-]?[0-9]+", arg_datetime_start):
             arg_datetime_start = arg_datetime_start.replace("now", "")
             arg_datetime_start = int(arg_datetime_start)
-        if isinstance(arg_datetime_end, str) and re.match("now[\+\-]?[0-9]+", arg_datetime_end):
+        if isinstance(arg_datetime_end, str) and re.match(r"now[\+\-]?[0-9]+", arg_datetime_end):
             arg_datetime_end = arg_datetime_end.replace("now", "")
             arg_datetime_end = int(arg_datetime_end)
 
