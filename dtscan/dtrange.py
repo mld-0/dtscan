@@ -280,8 +280,8 @@ class DTRange(object):
         #   datetime_range_str will be 1 element longer than count_range, last element discarded by zip
         for loop_count, loop_dtStr in zip(count_range, datetime_range_str):
             if (not isinstance(loop_count, str) and (loop_count > 0)) or (isinstance(loop_count, str) and loop_count != "0s"):
-                result_list[0].append(loop_count)
-                result_list[1].append(loop_dtStr)
+                result_list[1].append(loop_count)
+                result_list[0].append(loop_dtStr)
         if (len(result_list[0]) != len(result_list[1])):
             raise Exception("mismatch lengths, len(result_list[0])=(%i) != len(result_list[1])=(%i), result_list=(%s)" % (len(result_list[0]), len(result_list[1]), str(result_list)))
         if (self._printdebug_func_outputs):
@@ -318,10 +318,10 @@ class DTRange(object):
             interval_split_sum_temp = interval_split_sum
             interval_split_sum = [self.dtconvert.Convert_seconds2Dhms(x) for x in interval_split_sum_temp]
         result_list = [[], []]
-        for loop_count, loop_dtStr in zip(interval_split_sum, datetime_range_str):
-            if (not isinstance(loop_count, str) and (loop_count > 0)) or (isinstance(loop_count, str) and loop_count != "0s"):
-                result_list[0].append(loop_count)
-                result_list[1].append(loop_dtStr)
+        for loop_sum, loop_dtStr in zip(interval_split_sum, datetime_range_str):
+            if (not isinstance(loop_sum, str) and (loop_sum > 0)) or (isinstance(loop_sum, str) and loop_sum != "0s"):
+                result_list[1].append(loop_sum)
+                result_list[0].append(loop_dtStr)
         if (self._printdebug_func_outputs):
             _log.debug("interval_split_sum=(%s)" % str(interval_split_sum))
         #   datetime_range_str has last interval, which is after values in text, removed, to give lists of matching length.
