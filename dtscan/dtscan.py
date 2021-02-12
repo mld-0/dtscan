@@ -25,6 +25,7 @@ import decimal
 #   {{{1
 from .dtconvert import DTConvert
 from .dtrange import DTRange
+from .dtsplit import DTSplit
 # from .dtsplit import DTsplit
 # from .dtposition import DTposition
 # from .dtformats import datetime_formats
@@ -53,7 +54,7 @@ class DTScanner(object):
     #   If True, pass function inputs to _log.debug()
     _printdebug_func_inputs = False
     #   If True, pass function results to _log.debug
-    _printdebug_func_outputs = False
+    _printdebug_func_outputs = True
     #   If True, destructor __del__() logs actions it performs (deleting tempfile/dir)
     _printdebug_destructor = False
 
@@ -782,79 +783,69 @@ class DTScanner(object):
         if (len(arg_deltalist) != len(arg_datetime_list)):
             raise Exception("mismatch, len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
 
-        try:
-            if (self._printdebug_func_inputs):
-                _log.debug("len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
-            loop_i = 0
-            #   split_table:
-            #       0:      start
-            #       1:      end
-            #       2:      count
-            #       3:      elapsed
-            #       4:      starttime
-            #       5:      endtime
-            #       6:      before
-            #       7:      after
-            _index_start = 0
-            _index_end = 1
-            _index_count = 2
-            _index_elapsed = 3
-            _index_starttime = 4
-            _index_endtime = 5
-            _index_before = 6
-            _index_after = 7
-            split_table = [0] * 8
-            split_table[_index_starttime] = arg_datetime_list[0]
-            split_table[_index_endtime] = '-'
-            split_table[_index_elapsed] = decimal.Decimal(0)
-            split_table[_index_before] = decimal.Decimal(0)
-            split_table[_index_after] = decimal.Decimal(0)
-            split_table[_index_start] = 1
-            loop_elapsed = 0
+        if (self._printdebug_func_inputs):
+            _log.debug("len(arg_deltalist)=(%i), len(arg_datetime_list)=(%i), arg_split=(%s)" % (len(arg_deltalist), len(arg_datetime_list), str(arg_split)))
+        loop_i = 0
 
-            for loop_delta_decimal in arg_deltalist:
-                if (loop_delta_decimal > arg_split) and (loop_delta_decimal > 0):
-                    split_table[_index_end] = loop_i + 1
-                    split_table[_index_after] = loop_delta_decimal
-                    split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
-                    split_table[_index_endtime] = arg_datetime_list[loop_i - 1]
-                    split_table[_index_elapsed] = loop_elapsed
-                    result_splits.append(split_table)
-                    result_split_elapsed.append(loop_elapsed)
-                    split_table = [0] * 8
-                    split_table[_index_start] = loop_i + 1
-                    split_table[_index_starttime] = arg_datetime_list[loop_i]
-                    split_table[_index_before] = loop_delta_decimal
-                    loop_elapsed = 0
-                elif (loop_delta_decimal >= 0):
-                    #   Ongoing: 2020-11-24T20:04:36AEDT dealing with rounding errors?
-                    loop_elapsed += loop_delta_decimal
-                else:
-                    split_table[_index_end] = loop_i + 1
-                    split_table[_index_after] = loop_delta_decimal
-                    split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
-                    split_table[_index_endtime] = arg_datetime_list[loop_i - 1]
-                    split_table[_index_elapsed] = loop_elapsed
-                    result_splits.append(split_table)
-                    result_split_elapsed.append(loop_elapsed)
-                    split_table = [0] * 8
-                    split_table[_index_start] = loop_i + 1
-                    split_table[_index_starttime] = arg_datetime_list[loop_i]
-                    split_table[_index_before] = loop_delta_decimal
-                    loop_elapsed = 0
-                    _log.warning("negative loop_delta_decimal=(%s)" % str(loop_delta_decimal))
-                loop_i += 1
+        split = DTSplit()
+        split.starttime = arg_datetime_list[0]
+        split.endtime = "-"
+        split.elapsed = decimal.Decimal(0)
+        split.delta_before = decimal.Decimal(0)
+        split.delta_after = decimal.Decimal(0)
+        split.start_index = 1
 
-            split_table[_index_end] = (loop_i - 1) + 1
-            split_table[_index_after] = arg_deltalist[loop_i - 1]
-            split_table[_index_count] = split_table[_index_end] - split_table[_index_start]
-            split_table[_index_endtime] = arg_datetime_list[loop_i - 1]
-            split_table[_index_elapsed] = loop_elapsed
-            result_splits.append(split_table)
-            result_split_elapsed.append(loop_elapsed)
-        except Exception as e:
-            _log.error("exception: %s %s" % (type(e), str(e)))
-            return [None, None]
+        loop_elapsed = 0
+
+        for loop_delta_decimal in arg_deltalist:
+            if (loop_delta_decimal > arg_split) and (loop_delta_decimal > 0):
+                split.end_index = loop_i + 1
+                split.delta_after = loop_delta_decimal
+                split.count = split.end_index - split.start_index
+                split.endtime = arg_datetime_list[loop_i - 1]
+                split.elapsed = loop_elapsed
+
+                result_splits.append(split)
+                result_split_elapsed.append(loop_elapsed)
+
+                split = DTSplit()
+                split.start_index = loop_i + 1
+                split.starttime = arg_datetime_list[loop_i]
+                split.delta_before = loop_delta_decimal
+
+                loop_elapsed = 0
+            elif (loop_delta_decimal >= 0):
+                #   Ongoing: 2020-11-24T20:04:36AEDT dealing with rounding errors?
+                loop_elapsed += loop_delta_decimal
+            else:
+                split.end_index = loop_i + 1
+                split.delta_after = loop_delta_decimal
+                split.count = split.end_index - split.start_index
+                split.endtime = arg_datetime_list[loop_i - 1]
+                split.elapsed = loop_elapsed
+
+                result_splits.append(split)
+                result_split_elapsed.append(loop_elapsed)
+
+                split = DTSplit()
+                split.start_index = loop_i + 1
+                split.starttime = arg_datetime_list[loop_i]
+                split.delta_before = loop_delta_decimal
+
+                loop_elapsed = 0
+
+                _log.warning("negative loop_delta_decimal=(%s)" % str(loop_delta_decimal))
+            loop_i += 1
+
+        split.end_index = (loop_i - 1) + 1
+        split.delta_after = arg_deltalist[loop_i - 1]
+        split.count = split.end_index - split.start_index
+        split.endtime = arg_datetime_list[loop_i - 1]
+        split.elapsed = loop_elapsed
+
+        result_splits.append(split)
+        result_split_elapsed.append(loop_elapsed)
+
         if (self._printdebug_func_outputs):
             _log.debug("len(result_splits)=(%i)" % len(result_splits))
 

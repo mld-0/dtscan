@@ -21,6 +21,7 @@ import decimal
 import dateparser
 #   }}}1
 #   {{{2
+from .dtsplit import DTSplit
 from datetime import datetime
 from .dtformats import datetime_formats
 
@@ -596,12 +597,14 @@ class DTConvert(object):
         #   {{{
         """Given a split (info on a group of adjacent datetimes) (as a list, [0,1,2,3,4,5,6]=[startindex, endindex, count, elapsed, starttime, endtime, before, after]), convert to a string, either as a fixed width of 98chars, or variable width with self._OFS as delim."""
         _delim = self._OFS
-        split_startindex = arg_splitlist_item[0]
-        split_count = arg_splitlist_item[2]
-        split_elapsed = arg_splitlist_item[3]
-        split_before = arg_splitlist_item[6]
-        split_datetime_start = self.Convert_DateTime2String(arg_splitlist_item[4])
-        split_datetime_end = self.Convert_DateTime2String(arg_splitlist_item[5])
+
+        split_startindex = arg_splitlist_item.start_index
+        split_count = arg_splitlist_item.count
+        split_elapsed = arg_splitlist_item.elapsed
+        split_before = arg_splitlist_item.delta_before
+        split_datetime_start = self.Convert_DateTime2String(arg_splitlist_item.starttime)
+        split_datetime_end = self.Convert_DateTime2String(arg_splitlist_item.endtime)
+
         if not (arg_nodhms):
             split_elapsed = self.Convert_seconds2Dhms(split_elapsed)
             split_before = self.Convert_seconds2Dhms(split_before)

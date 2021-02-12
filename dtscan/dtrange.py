@@ -298,8 +298,13 @@ class DTRange(object):
             _log.debug("len(arg_splitlist)=(%s)" % str(len(arg_splitlist)))
             _log.debug("arg_interval=(%s)" % str(arg_interval))
         #   Get datetime range for first/last datetimes and arg_interval
-        splitlist_datetimes = list(zip(*arg_splitlist))[4]
-        splitlist_elapseds = list(zip(*arg_splitlist))[3]
+
+        #splitlist_datetimes = list(zip(*arg_splitlist))[4]
+        #splitlist_elapseds = list(zip(*arg_splitlist))[3]
+
+        splitlist_datetimes = [ x.starttime for x in arg_splitlist ]
+        splitlist_elapseds = [ x.elapsed for x in arg_splitlist ]
+
         scanmatch_datetimes_sorted = sorted(splitlist_datetimes)
         datetime_range = self._DTRange_Convert_SortedDTList2Range(scanmatch_datetimes_sorted, arg_interval, True)
         datetime_range_str = self._DTRange_Convert_SortedDTList2Range(scanmatch_datetimes_sorted, arg_interval, False)
