@@ -26,6 +26,7 @@ import decimal
 from .dtconvert import DTConvert
 from .dtrange import DTRange
 from .dtsplit import DTSplit
+from .dtposition import DTPosition
 # from .dtsplit import DTsplit
 # from .dtposition import DTposition
 # from .dtformats import datetime_formats
@@ -280,6 +281,7 @@ class DTScanner(object):
         return _infile
         #   }}}
 
+    #   Continue: 2021-02-13T01:39:12AEDT Seperate 'return' scanmatch_positions from 'print' positions -> ParserInterface_Matches should handle conversion to output, matches() should return list of DTPositions, and instead of _matches_addpositions() result -> return [ scanmatch_output_text, scanmatch_positions ], (and let parser function handle conversion from that to cli output columns)
     #   TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
     #   TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
     #   TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that _scan_datetimeitems is able to return line numbers corresponding to input, not those from filtered stream it processes)
@@ -590,7 +592,8 @@ class DTScanner(object):
         _lineranges_copy_start = None
         _lineranges_copy_end = None
         for loop_i, (loop_datetime, loop_match) in enumerate(zip(scanmatch_datetimes, scanmatch_positions)):
-            loop_linenum = loop_match[2] - 1
+            #loop_linenum = loop_match[2] - 1
+            loop_linenum = loop_match.linenum - 1
             if (not arg_invert and ((loop_datetime >= arg_start) and (loop_datetime <= arg_end or arg_end is None))) or (arg_invert and ((loop_datetime < arg_start or arg_start is None) or (loop_datetime > arg_end or arg_end is None))):
                 _linenums_copy[loop_linenum] = 1
                 if (_lineranges_copy_start is None):
@@ -716,7 +719,15 @@ class DTScanner(object):
                     else:
                         linenum_lookup = loop_line_num
 
-                    match_item_list = [loop_match_num, loop_regex_item_num, linenum_lookup, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group())]
+                    #match_item_list = [loop_match_num, loop_regex_item_num, linenum_lookup, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group())]
+                    match_item_list = DTPosition()
+                    match_item_list.match_id = loop_match_num
+                    match_item_list.regex_id = loop_regex_item_num
+                    match_item_list.linenum = linenum_lookup
+                    match_item_list.start = loop_regex_match.start()
+                    match_item_list.end = loop_regex_match.end()
+                    match_item_list.length = len(loop_regex_match.group())
+
 
                     match_item_datetime = self.dtconvert.Convert_string2DateTime(loop_regex_match.group())
 
@@ -873,7 +884,8 @@ class DTScanner(object):
     def _sort_lines_chrono(self, input_lines, match_datetimes, match_positions, match_output_datetimes, arg_reverse=False, arg_incNonDTLines=True):
         #   {{{
         #   line numbers, sorted first by line number, second by position in line. Convert from 1-indexed to 0-indexed
-        lines_order = [x[2] - 1 for x in sorted(match_positions, key=operator.itemgetter(2, 3))]
+        #lines_order = [x[2] - 1 for x in sorted(match_positions, key=operator.itemgetter(2, 3))]
+        lines_order = [x.linenum - 1 for x in sorted(match_positions, key=operator.attrgetter('linenum', 'start'))]
         if (self._printdebug_func_inputs):
             _log.debug("lines_order=(%s)" % str(lines_order))
         #   Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes with same value?
@@ -959,7 +971,10 @@ class DTScanner(object):
                 continue
 
             f = open(loop_file, 'r')
+
+            #   Ongoing: 2021-02-13T01:42:27AEDT what self.matches() returns given arg_pos=True *should* be [ matches, positions ], where positions is a list of DTPosition
             loop_results_matches = self.matches(f, True)
+
             _log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
             f.close()
 
@@ -967,8 +982,10 @@ class DTScanner(object):
             _index_linenum = 3
 
             for loop_match in loop_results_matches:
+
                 loop_match_item = loop_match[_index_match]
                 loop_match_linenum = int(loop_match[_index_linenum])
+
                 loop_match_linestr = ""
 
                 #   Continue: 2021-01-29T23:40:55AEDT get line loop_match_linenum from loop_file as loop_match_linestr
@@ -991,8 +1008,13 @@ class DTScanner(object):
             raise Exception("mismatch, len(scanmatch_output_text)=(%i), len(scanmatch_positions)=(%i)" % (len(scanmatch_output_text), len(scanmatch_positions)))
         for loop_output_text, loop_position in zip(scanmatch_output_text, scanmatch_positions):
             loop_list_item = [loop_output_text]
-            for loop_position_item in loop_position:
-                loop_list_item.append(loop_position_item)
+            #for loop_position_item in loop_position:
+
+            loop_position_item = [ loop_position.match_id, loop_position.regex_id, loop_position.linenum, loop_position.start, loop_position.end, loop_position.length ]
+            loop_list_item += loop_position_item
+
+            #loop_list_item.append(loop_position_item)
+
             scanmatch_outputTextAndPosition.append(loop_list_item)
         return scanmatch_outputTextAndPosition
         #   }}}

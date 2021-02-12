@@ -1,5 +1,5 @@
 
-class DTposition(object):
+class DTPosition(object):
     #   {{{
     #   match number
     match_id = None
@@ -11,4 +11,6 @@ class DTposition(object):
     start = None
     #   location in line, end
     end = None
+
+    length = None
     #   }}}
