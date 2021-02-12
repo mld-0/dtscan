@@ -88,7 +88,7 @@ class DTRange(object):
 
     #   Bug: 2021-02-07T19:03:10AEDT if both arg_datetime_start/arg_datetime_end are set to 'now' on different seconds, they may be rejected for the former being after the latter, despite being supposedly identical, we set microseconds=0 on both to prevent this for most occurences, bug relies on edge case where function is called right before tick of second. This can occur one of the arguments is None, and the other contains string 'now'
     #   Ongoing: 2021-02-06T20:36:43AEDT '_FromDates' being a bad name when datetime start/end can be lists, strings, integers, or datetimes
-    #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as Scan_QuickFilter -> code in which is to be replaced by call to this function)
+    #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as _scan_quickfilter -> code in which is to be replaced by call to this function)
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
     #   TODO: 2020-12-07T19:14:18AEDT unimplemented hourly/minutly/secondly (HMS of ymwdHMS)
     #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?)
@@ -252,8 +252,8 @@ class DTRange(object):
     #def DTRange_CountBy(self, arg_infile, arg_interval):
     ##   {{{
     #    #arg_infile = self._util_MakeStreamSeekable(arg_infile)
-    #    #   ScanStream_DateTimeItems() handles is-datetime-in-column, provided self._scan_column has been specified
-    #    scanresults_list = self.ScanStream_DateTimeItems(arg_infile)
+    #    #   _scan_datetimeitems() handles is-datetime-in-column, provided self._scan_column has been specified
+    #    scanresults_list = self._scan_datetimeitems(arg_infile)
     #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
     #   }}}
 

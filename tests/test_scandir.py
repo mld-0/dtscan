@@ -130,7 +130,7 @@ class Test_CliScan(unittest.TestCase):
         import pprint
         path_scandir = self._getPath_ScanDir()
         _log.debug("path_scandir=(%s)" % str(path_scandir))
-        results_test = self.dtscan_instance.Interface_ScanDir_ScanFileMatches(path_scandir, True, True, True)
+        results_test = self.dtscan_instance.scandir(path_scandir, True, True, True)
         pprint.pprint(results_test)
 
     #   }}}
