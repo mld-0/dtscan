@@ -7,6 +7,7 @@ import sys
 import argparse
 import logging
 import traceback
+import dateparser
 from .dtscan import DTScanner
 from .dtrange import DTRange
 
