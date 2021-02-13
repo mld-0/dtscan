@@ -188,8 +188,14 @@ class DTScanner(object):
         #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
-        scanmatch_outputTextAndPosition = self.matches(_args.infile, _args.pos)
-        scanmatch_output_stream = self._util_ListOfListsAsStream(scanmatch_outputTextAndPosition)
+        if not (_args.pos):
+            scanmatch_output = self.matches(_args.infile, _args.pos)
+            scanmatch_output_stream = self._util_ListOfListsAsStream(scanmatch_output)
+        else:
+            scanmatch_outputText, scanmatch_positions  = self.matches(_args.infile, _args.pos)
+            scanmatch_outputTextAndPosition = self._matches_addpositions(scanmatch_outputText, scanmatch_positions)
+            scanmatch_output_stream = self._util_ListOfListsAsStream(scanmatch_outputTextAndPosition)
+
         for loop_line in scanmatch_output_stream:
             loop_line = loop_line.strip()
             print(loop_line)
@@ -281,6 +287,7 @@ class DTScanner(object):
         return _infile
         #   }}}
 
+    #   Ongoing: 2021-02-13T21:38:39AEDT different return types (presumedly) being bad
     #   Continue: 2021-02-13T01:39:12AEDT Seperate 'return' scanmatch_positions from 'print' positions -> ParserInterface_Matches should handle conversion to output, matches() should return list of DTPositions, and instead of _matches_addpositions() result -> return [ scanmatch_output_text, scanmatch_positions ], (and let parser function handle conversion from that to cli output columns)
     #   TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
     #   TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
@@ -308,7 +315,7 @@ class DTScanner(object):
         if not (arg_pos):
             return scanmatch_output_text
         else:
-            return self._matches_addpositions(scanmatch_output_text, scanmatch_positions)
+            return [scanmatch_output_text, scanmatch_positions]
         #   }}}
 
     def count(self, arg_infile, arg_interval):
@@ -972,28 +979,26 @@ class DTScanner(object):
 
             f = open(loop_file, 'r')
 
-            #   Ongoing: 2021-02-13T01:42:27AEDT what self.matches() returns given arg_pos=True *should* be [ matches, positions ], where positions is a list of DTPosition
-            loop_results_matches = self.matches(f, True)
+            loop_results_matches, scanmatch_positions = self.matches(f, True)
 
             _log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
-            f.close()
 
             _index_match = 0
             _index_linenum = 3
 
-            for loop_match in loop_results_matches:
-
-                loop_match_item = loop_match[_index_match]
-                loop_match_linenum = int(loop_match[_index_linenum])
-
-                loop_match_linestr = ""
+            for loop_match, loop_position in zip(loop_results_matches, scanmatch_positions):
+                loop_match_item = loop_match
+                loop_match_linenum = int(loop_position.linenum)
 
                 #   Continue: 2021-01-29T23:40:55AEDT get line loop_match_linenum from loop_file as loop_match_linestr
+                loop_match_linestr = ""
 
                 results_filepaths.append(loop_file)
                 results_datetimes.append(loop_match_item)
                 results_linenums.append(loop_match_linenum)
                 results_linecontents.append(loop_match_linestr)
+
+            f.close()
 
         _log.debug("len(results_datetimes)=(%s)" % len(results_datetimes))
 
