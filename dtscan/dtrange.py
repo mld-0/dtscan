@@ -59,9 +59,9 @@ class DTRange(object):
         self._printdebug_func_inputs = arg_debug
         #   }}}
 
-    #   About: Given an integer, and an interval [ymwdHMS], subtract given number of intervals from current datetime
     def _DTRange_Date_From_Integer(self, arg_datetime_offset, arg_interval):
         #   {{{
+        """Given an integer, and an interval [ymwdHMS], subtract given number of intervals from current datetime"""
         date_now = datetime.now()
         arg_datetime_offset = arg_datetime_offset
         offset_list = [0] * 7
@@ -86,15 +86,15 @@ class DTRange(object):
         return arg_datetime
         #   }}}
 
+    #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?)
+    #   last datetime in resulting list is *after* arg_datetime_end
+    def DTRange_FromDates(self, arg_datetime_start, arg_datetime_end, arg_interval="d", arg_type_datetime=False):
+        #   {{{
     #   Bug: 2021-02-07T19:03:10AEDT if both arg_datetime_start/arg_datetime_end are set to 'now' on different seconds, they may be rejected for the former being after the latter, despite being supposedly identical, we set microseconds=0 on both to prevent this for most occurences, bug relies on edge case where function is called right before tick of second. This can occur one of the arguments is None, and the other contains string 'now'
     #   Ongoing: 2021-02-06T20:36:43AEDT '_FromDates' being a bad name when datetime start/end can be lists, strings, integers, or datetimes
     #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as _scan_quickfilter -> code in which is to be replaced by call to this function)
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
     #   TODO: 2020-12-07T19:14:18AEDT unimplemented hourly/minutly/secondly (HMS of ymwdHMS)
-    #   All unique datetimes for given arg_interval (YMWDhms) (as strings if arg_type_datetime is False, as python datetimes if True), (assume local timezone as per flag_assume_local_timezone). (More advanced rules for interval i.e: start/end?)
-    #   last datetime in resulting list is *after* arg_datetime_end
-    def DTRange_FromDates(self, arg_datetime_start, arg_datetime_end, arg_interval="d", arg_type_datetime=False):
-        #   {{{
 
         if isinstance(arg_interval, list):
             arg_interval = arg_interval[0]
@@ -257,9 +257,9 @@ class DTRange(object):
     #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
     #   }}}
 
-    #   TODO: 2020-12-08T15:15:45AEDT handle cases of (only) 0/1 datetimes
     def DTRange_CountBy(self, arg_scanmatch_datetimes, arg_interval):
         #   {{{
+    #   TODO: 2020-12-08T15:15:45AEDT handle cases of (only) 0/1 datetimes
         #   Get first and last datetime in input
         scanmatch_datetimes_sorted = sorted(arg_scanmatch_datetimes)
         #   for item in range list, create list of datetimes which are after item, but before next item
@@ -289,9 +289,9 @@ class DTRange(object):
         return result_list
         #   }}}
 
-    #   TODO: 2020-12-09T22:38:21AEDT finding firstAndLast from sorted list, duplication being bad, dedicated function, (currently) located in DTRange_CountBy(), DTRange_SumSplits
     def DTRange_SumSplits(self, arg_splitlist, arg_interval, arg_nodhms=False):
         #   {{{
+    #   TODO: 2020-12-09T22:38:21AEDT finding firstAndLast from sorted list, duplication being bad, dedicated function, (currently) located in DTRange_CountBy(), DTRange_SumSplits
         #   splitlist: [ start, end, count, elapsed, starttime, endtime, before, after ]
         #   Get first and last datetime in arg_splitlist
         if (self._printdebug_func_inputs):
