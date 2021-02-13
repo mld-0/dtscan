@@ -66,7 +66,7 @@ class DTScanner(object):
     # _scan_regexfile_second = [ 'dtscan.dtscan', 'dt-regex-items.txt' ]
     _scan_regexlist = []
 
-    #   variables: _scan_(.*), filled by ParserInterface_Scan(), if not None, used by _scan_datetimeitems to limit search location of datetimes
+    #   variables: _scan_(.*), filled by ParserInterface_Scan(), if not None, used by scan_datetimeitems to limit search location of datetimes
     _scan_column = None
 
     #   TODO: 2020-12-14T23:06:44AEDT Allow specifying of custom regex format/file-containing formats
@@ -114,7 +114,8 @@ class DTScanner(object):
     #   }}}
 
     def __init__(self):
-        self._ReadResource_RegexList()
+        self._resource_read_regexlist()
+        #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
 
     #   Destructor, delete _path_temp_dir if it exists
     def __del__(self):
@@ -161,11 +162,20 @@ class DTScanner(object):
     def ParserUpdate_Vars_Paramaters(self, _args):
         return self._Update_Vars_Parameters(_args.noassumetz, _args.col, _args.IFS, _args.OFS, _args.warnings, _args.debug)
 
+    #   ParserInterface Functions:
+    #   {{{
     def ParserInterface_ScanDir_Matches(self, _args):
         #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
-        results_list = self.scandir(_args.dir)
+        #results_list = self.scandir(_args.dir)
+
+        results_datetimes, results_filepaths, results_linenums, results_linecontents = self.scandir_datetimeitems(arg_dir)
+        results_list = []
+        for loop_datetime, loop_filepath, loop_linenum, loop_linecontents in zip(results_datetimes, results_filepaths, results_linenums, results_linecontents):
+            loop_result = self._Interface_ScanDir_FormatMatch(loop_datetime, loop_filepath, loop_linenum, loop_linecontents, flag_include_path, flag_include_linenum, flag_include_contents)
+            results_list.append(loop_result)
+
         result_list_stream = self._util_ListOfListsAsStream(results_list)
         for loop_line in result_list_stream:
             loop_line = loop_line.strip()
@@ -249,16 +259,17 @@ class DTScanner(object):
             print(loop_line)
         results_stream.close()
         #   }}}
+    #   }}}
 
-    def scandir(self, arg_dir, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
-        #   {{{
-        results_datetimes, results_filepaths, results_linenums, results_linecontents = self._ScanDir_ScanFileMatches(arg_dir)
-        results_list = []
-        for loop_datetime, loop_filepath, loop_linenum, loop_linecontents in zip(results_datetimes, results_filepaths, results_linenums, results_linecontents):
-            loop_result = self._Interface_ScanDir_FormatMatch(loop_datetime, loop_filepath, loop_linenum, loop_linecontents, flag_include_path, flag_include_linenum, flag_include_contents)
-            results_list.append(loop_result)
-        return results_list
-        #   }}}
+    #def scandir(self, arg_dir, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
+    #    #   {{{
+    #    results_datetimes, results_filepaths, results_linenums, results_linecontents = self.scandir_datetimeitems(arg_dir)
+    #    results_list = []
+    #    for loop_datetime, loop_filepath, loop_linenum, loop_linecontents in zip(results_datetimes, results_filepaths, results_linenums, results_linecontents):
+    #        loop_result = self._Interface_ScanDir_FormatMatch(loop_datetime, loop_filepath, loop_linenum, loop_linecontents, flag_include_path, flag_include_linenum, flag_include_contents)
+    #        results_list.append(loop_result)
+    #    return results_list
+    #    #   }}}
 
     def scan(self, arg_infile):
         #   {{{
@@ -287,14 +298,14 @@ class DTScanner(object):
         return _infile
         #   }}}
 
+    def matches(self, arg_infile, arg_pos):
+        #   {{{
+        """Scan input, get list of matches, and output, optionally with position of said matches. Output either as stream, or list of matches (and positions). Output columns: {0,1,2,3,4,5,6} = {match, """
     #   Ongoing: 2021-02-13T21:38:39AEDT different return types (presumedly) being bad
     #   Continue: 2021-02-13T01:39:12AEDT Seperate 'return' scanmatch_positions from 'print' positions -> ParserInterface_Matches should handle conversion to output, matches() should return list of DTPositions, and instead of _matches_addpositions() result -> return [ scanmatch_output_text, scanmatch_positions ], (and let parser function handle conversion from that to cli output columns)
     #   TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
     #   TODO: 2020-12-13T18:31:51AEDT Implement argument _args.matchtext, if given use scanmatch_text instead of scanmatch_output_text
-    #   TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that _scan_datetimeitems is able to return line numbers corresponding to input, not those from filtered stream it processes)
-    def matches(self, arg_infile, arg_pos):
-        #   {{{
-        """Scan input, get list of matches, and output, optionally with position of said matches. Output either as stream, or list of matches (and positions). Output columns: {0,1,2,3,4,5,6} = {match, """
+    #   TODO: 2020-12-13T18:32:26AEDT preserve line numbers from input (so that scan_datetimeitems is able to return line numbers corresponding to input, not those from filtered stream it processes)
         _input_file = self.scan(arg_infile)
 
         scanmatch_output_text = None
@@ -306,7 +317,7 @@ class DTScanner(object):
             scanmatch_output_text = self._sorted_match_output_datetimes
             scanmatch_datetimes = self._sorted_match_datetimes
         else:
-            results_list = self._scan_datetimeitems(_input_file)
+            results_list = self.scan_datetimeitems(_input_file)
             scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
 
         arg_infile.close()
@@ -323,7 +334,7 @@ class DTScanner(object):
         """Scan, and Count datetime instances by interval."""
         _input_file = self.scan(arg_infile)
 
-        results_list = self._scan_datetimeitems(_input_file)
+        results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         arg_infile.close()
 
@@ -333,19 +344,19 @@ class DTScanner(object):
         return count_results
         #   }}}
 
-    #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
-    #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in ParserInterface_Splits
-    #   TODO: 2021-01-29T22:03:21AEDT return List from _Interface Methods -> Interface methods perform conversion to stream
     def splits(self, arg_infile, arg_splitlen, arg_nodhms):
         #   {{{
         """Scan, Identify deltas, and sum adjacent deltas of length < arg_splitlen."""
+    #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
+    #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in ParserInterface_Splits
+    #   TODO: 2021-01-29T22:03:21AEDT return List from _Interface Methods -> Interface methods perform conversion to stream
         _input_file = self.scan(arg_infile)
 
         if (arg_splitlen is None):
             arg_splitlen = self._splitlen_default
             _log.debug("default arg_splitlen=(%s)" % str(arg_splitlen))
 
-        results_list = self._scan_datetimeitems(_input_file)
+        results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen)
 
@@ -359,12 +370,12 @@ class DTScanner(object):
         return result_output
         #   }}}
 
-    #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed)
     def deltas(self, arg_infile, arg_nodhms):
         #   {{{
         """Scan, Identify deltas, and output."""
+    #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed)
         _input_file = self.scan(arg_infile)
-        results_list = self._scan_datetimeitems(_input_file)
+        results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         _input_file.close()
         if (arg_nodhms):
@@ -374,11 +385,11 @@ class DTScanner(object):
             return scanmatch_delta_dhms
         #   }}}
 
-    #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
-    #   TODO: 2021-01-25T21:05:23AEDT arg_nodhms should be a class option
     def splitsums(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen):
         #   {{{
         """Scan, Identify adjacent deltas of length < arg_splitlen, and sum results by arg_interval"""
+    #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
+    #   TODO: 2021-01-25T21:05:23AEDT arg_nodhms should be a class option
         #   list of streams from scan,
         #   for each stream,
         #       if stream belongs to 'unique', label result with column item
@@ -386,7 +397,7 @@ class DTScanner(object):
         #   result is a sum, for each unique item, for each interval in range
         _input_file = self.scan(arg_infile)
 
-        results_list = self._scan_datetimeitems(_input_file)
+        results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
         result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen)
         splits_sum = self.dtrange.DTRange_SumSplits(result_splits, arg_interval, arg_nodhms)
@@ -396,17 +407,209 @@ class DTScanner(object):
         return splits_sum
         #   }}}
 
+    def scandir_datetimeitems(self, arg_dir):
+        #   {{{
+        """Get list of lines from files in dir containing datetimes within 'Scan' range, and corresponding filenames and linenums"""
+    #   Continue: 2021-02-13T22:40:06AEDT scandir tests
+    #   Ongoing: 2021-02-06T21:15:57AEDT 'scandir' has no tests, and no parser
+        results_filepaths = []
+        results_linenums = []
+        results_linecontents = []
+        results_datetimes = []
+
+        #   For each (text) file in arg_dir:
+        search_files = [x for x in glob.iglob(arg_dir + '**/**', recursive=True)]
+        _log.debug("search_files=(%s)" % pprint.pformat(search_files))
+
+        import mimetypes
+
+        for loop_file in search_files:
+            _log.debug("loop_file=(%s)" % str(loop_file))
+
+            if (os.path.isdir(loop_file)):
+                _log.debug("skip, isdir for loop_file=(%s)" % str(loop_file))
+                continue
+
+            mime = mimetypes.guess_type(loop_file)
+            if (mime[0] != 'text/plain'):
+                _log.debug("skip, mime=(%s) for loop_file=(%s)" % (str(mime), str(loop_file)))
+                continue
+
+            f = open(loop_file, 'r')
+
+            loop_results_matches, scanmatch_positions = self.matches(f, True)
+
+            _log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
+
+            _index_match = 0
+            _index_linenum = 3
+
+            for loop_match, loop_position in zip(loop_results_matches, scanmatch_positions):
+                loop_match_item = loop_match
+                loop_match_linenum = int(loop_position.linenum)
+
+                #   Continue: 2021-01-29T23:40:55AEDT get line loop_match_linenum from loop_file as loop_match_linestr
+                loop_match_linestr = ""
+
+                results_filepaths.append(loop_file)
+                results_datetimes.append(loop_match_item)
+                results_linenums.append(loop_match_linenum)
+                results_linecontents.append(loop_match_linestr)
+
+            f.close()
+
+        _log.debug("len(results_datetimes)=(%s)" % len(results_datetimes))
+
+        return [results_datetimes, results_filepaths, results_linenums, results_linecontents]
+        #   }}}
+
     #   About: Replace datetime instances with those of arg_outfmt
     def replace_datetimes(self, arg_infile, arg_outfmt):
         raise Exception("ReplaceDTs unimplemented")
 
+    def scan_datetimeitems(self, arg_stream):
+        #   {{{
+        """Scan stream, identifying items matching regex-for-datetime, and returning list of lists [ scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s ]."""
+
+        #   TODO: 2020-10-12T18:38:58AEDT removing (possible) duplicates from results -> do not allow item to be added to scanstream_regexlist if it is (partially/completely?) contained within a prior result.
+
+        if len(self._scan_regexlist) == 0:
+            raise Exception("self._scan_regexlist_len=(%s)" % len(self._scan_regexlist))
+        if (self._printdebug_func_outputs) and (self._scan_regexlist):
+            _log.debug("self._scan_regexlist=(%s)" % str(self._scan_regexlist))
+
+        #   TODO: 2020-11-27T18:16:59AEDT write stream to tempfile if it is not seekable
+
+        scanmatch_text = []
+        #   positions: [ match_num, regex_num, line_num, start_index, end_index, len ]
+        scanmatch_positions = []
+        scanmatch_datetimes = []
+        scanmatch_output_text = []
+        scanmatch_delta_s = []
+        scanmatch_datetime_previous = None
+        _input_line_count = 0
+
+        if (arg_stream is None):
+            raise Exception("arg_stream is none")
+
+        #   TODO: 2020-11-19T19:05:04AEDT if arg_stream is a string, consisting of a valid filepath, create stream from said file
+        _input_path = None
+        if isinstance(arg_stream, str):
+            _input_path = arg_stream
+            arg_stream = open(_input_path, "r")
+
+        if not (os.path.exists(self._path_temp_dir)):
+            os.mkdir(self._path_temp_dir)
+
+        #   Count lines in arg_stream as _input_line_count. If input is not a seekable stream, write it to a file, and use that file as our stream (stdin is not seekable)
+        #   {{{
+        arg_stream = self._util_MakeStreamSeekable(arg_stream)
+        for loop_line in arg_stream:
+            _input_line_count += 1
+        arg_stream.seek(0)
+        #   }}}
+
+        #   Continue: 2020-11-24T19:06:13AEDT fix scan_datetimeitems() deltas calculation
+
+        #   TODO: 2020-11-30T21:29:57AEDT how (best) to limit search to given column (create new stream, of only that column), or (check for each item, whether it is in the specified column)
+
+        loop_match_num = 0
+        loop_line_num = 0
+        for stream_line in arg_stream:
+            loop_regex_item_num = 0
+
+            #   Ongoing: 2020-11-30T21:44:54AEDT behaviour if self._scan_column > len(loop_split_columns)?
+            loop_split_columns = []
+            if (self._scan_column is not None) and (self._IFS is not None):
+                loop_split_columns = [pos for pos, char in enumerate(stream_line) if char == self._IFS]
+                loop_split_columns.append(len(stream_line))
+
+            #   item is in a column-a, start > col[a], end <= col[a+1]
+            for loop_regex_item in self._scan_regexlist:
+                for loop_regex_match in loop_regex_item.finditer(stream_line):
+                    loop_match_col_start = -1
+                    if (self._scan_column is not None) and (self._IFS is not None):
+                        loop_match_col_start = 0
+                        loop_match_col_end = 0
+                        for loop_col_i, loop_col_x in enumerate(loop_split_columns):
+                            if (loop_col_x > loop_regex_match.start()):
+                                loop_match_col_start = loop_col_i
+                            if (loop_col_x >= loop_regex_match.end()):
+                                loop_match_col_end = loop_col_i
+                                break
+
+                    #   Ongoing: 2020-12-17T18:11:13AEDT (I don't like it) - either use _input_linenum_map or dont? Why are we even making this exception anyway? (out-of-bounds exception when calling DTRange_GetFirstAndLast() directly from python code)
+                    linenum_lookup = None
+                    if (len(self._input_linenum_map) > loop_line_num):
+                        linenum_lookup = self._input_linenum_map[loop_line_num]
+                    else:
+                        linenum_lookup = loop_line_num
+
+                    #match_item_list = [loop_match_num, loop_regex_item_num, linenum_lookup, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group())]
+                    match_item_list = DTPosition()
+                    match_item_list.match_id = loop_match_num
+                    match_item_list.regex_id = loop_regex_item_num
+                    match_item_list.linenum = linenum_lookup
+                    match_item_list.start = loop_regex_match.start()
+                    match_item_list.end = loop_regex_match.end()
+                    match_item_list.length = len(loop_regex_match.group())
+
+
+                    match_item_datetime = self.dtconvert.Convert_string2DateTime(loop_regex_match.group())
+
+                    if not (match_item_datetime is None):
+                        match_item_datetime_outformat = self.dtconvert.Convert_DateTime2String(match_item_datetime)
+                    else:
+                        raise Exception("Failed to decipher match_item_datetime, loop_regex_match_group=(%s)" % str(loop_regex_match.group()))
+
+                    #   Add result match_item to list matches_scan
+                    #   Ongoing: 2020-11-30T23:06:33AEDT is our if condition here correct?
+                    if (self._scan_column is None) or (loop_match_col_start == self._scan_column):
+                        scanmatch_text.append(loop_regex_match.group())
+                        scanmatch_positions.append(match_item_list)
+                        scanmatch_datetimes.append(match_item_datetime)
+                        scanmatch_output_text.append(match_item_datetime_outformat)
+
+                        try:
+                            loop_delta_s = 0
+                            if (loop_match_num >= 1):
+                                loop_timedelta = match_item_datetime - scanmatch_datetime_previous
+                                loop_delta_s = decimal.Decimal(str(loop_timedelta.total_seconds()))
+                            else:
+                                loop_delta_s = 0
+                        except Exception as e:
+                            _log.warning("%s, %s, loop_timedelta calulation failed for match_item_datetime=(%s), scanmatch_datetime_previous=(%s), set loop_timedelta=(None)" % (type(e), str(e), str(match_item_datetime), str(scanmatch_datetime_previous)))
+                            loop_delta_s = None
+
+                        scanmatch_datetime_previous = match_item_datetime
+                        scanmatch_delta_s.append(loop_delta_s)
+                        loop_match_num += 1
+
+                loop_regex_item_num += 1
+            loop_line_num += 1
+
+        #   Remove any matches already in text? (or), remove said matches from text, before searching with dateparser
+
+        #   Ongoing: 2020-11-24T01:27:14AEDT is dateparser faster vis-a-vis extracting a list of datetimes from text?
+        #   TODO: 2020-10-19T09:09:24AEDT dtscan, scan_datetimeitems(), (optionally) examine text with dateparser
+        #   Attempt 2) Using dateparser, search arg_stream
+
+        arg_stream.seek(0)
+
+        if (len(scanmatch_text) != len(scanmatch_positions)) or (len(scanmatch_positions) != len(scanmatch_datetimes)) or (len(scanmatch_datetimes) != len(scanmatch_output_text)) or (len(scanmatch_output_text) != len(scanmatch_delta_s)):
+            raise Exception("mismatch, matches_ lists lengths, scanmatch_text, scanmatch_positions, scanmatch_datetimes, scanmatch_output_text, scanmatch_delta_s: %i, %i, %i, %i, %i" % (len(scanmatch_text), len(scanmatch_positions), len(scanmatch_datetimes), len(scanmatch_output_text), len(scanmatch_delta_s)))
+        if (self._printdebug_func_outputs):
+            _log.debug("len(matches)=(%i)" % len(scanmatch_positions))
+        return [scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s]
+        #   }}}
+
+    def _scan_quickfilter(self, arg_input_stream, arg_date_start, arg_date_end, arg_interval):
+        #   {{{
+        """Copy input stream, keeping only lines with datetimes (identified as text %Y, %Y-%m, %Y-%m-%d) which fall inside given date range, for start/end and interval [ymd]."""
     #   TODO: 2021-02-06T20:58:00AEDT If given self._scan_column, limit filtering to strings within said column of input
     #   TODO: 2020-12-23T19:17:35AEDT 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
     #   TODO: 2020-11-25T16:14:04AEDT code to write stream to temp file -> used (duplicatate) by both FilterDateTimes_FastFilter() and FilterDateTimes_ScanStream(), place in dedicated function
     #   TODO: 2020-11-29T14:24:40AEDT get date range without using pandas
-    def _scan_quickfilter(self, arg_input_stream, arg_date_start, arg_date_end, arg_interval):
-        #   {{{
-        """Copy input stream, keeping only lines with datetimes (identified as text %Y, %Y-%m, %Y-%m-%d) which fall inside given date range, for start/end and interval [ymd]."""
         func_name = inspect.currentframe().f_code.co_name
 
         if isinstance(arg_interval, list):
@@ -501,11 +704,11 @@ class DTScanner(object):
         return tempfile_stream_result
         #   }}}
 
-    #   TODO: 2020-10-19T13:46:43AEDT Create _path_temp_dir on dtscan start, (delete anything inside older than 24h upon dtscan exit)
-    #   Note: 2020-10-19T13:26:34AEDT arg_input_stream must be a seekable stream -> if input has been recieved from stdin, it (must/should?) be written to a temp file, and the stream of that file passed to function.
     def _scan_rangefilter(self, arg_input_stream, arg_start, arg_end, arg_invert=False, arg_includeNonDTs=False):
         #   {{{
         """Copy input stream, parsing datetimes and keeping only lines containing datetimes falling between given start/end."""
+    #   TODO: 2020-10-19T13:46:43AEDT Create _path_temp_dir on dtscan start, (delete anything inside older than 24h upon dtscan exit)
+    #   Note: 2020-10-19T13:26:34AEDT arg_input_stream must be a seekable stream -> if input has been recieved from stdin, it (must/should?) be written to a temp file, and the stream of that file passed to function.
         func_name = inspect.currentframe().f_code.co_name
 
         if isinstance(arg_start, list):
@@ -575,9 +778,9 @@ class DTScanner(object):
             _log.debug("_input_line_count=(%s)" % str(_input_line_count))
         #   }}}
 
-        #   Ongoing: 2020-11-29T16:34:50AEDT performing _scan_datetimeitems() earlier, storing the results (and not performing it again later), or, intentionally perform it again, presuming the results will change as a result of performing filtering
+        #   Ongoing: 2020-11-29T16:34:50AEDT performing scan_datetimeitems() earlier, storing the results (and not performing it again later), or, intentionally perform it again, presuming the results will change as a result of performing filtering
         #   Ongoing: 2020-10-19T10:38:29AEDT Do we make a temp file, or do we keep the result in memory?
-        scanresults_list = self._scan_datetimeitems(arg_input_stream)
+        scanresults_list = self.scan_datetimeitems(arg_input_stream)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
         arg_input_stream.seek(0)
 
@@ -647,151 +850,14 @@ class DTScanner(object):
         return tempfile_stream_result
         #   }}}
 
-    #   Rename: Scan_DateTimes()
-    def _scan_datetimeitems(self, arg_stream):
+    def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split):
         #   {{{
-        """Scan stream, identifying items matching regex-for-datetime, and returning list of lists [ scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s ]."""
-
-        #   TODO: 2020-10-12T18:38:58AEDT removing (possible) duplicates from results -> do not allow item to be added to scanstream_regexlist if it is (partially/completely?) contained within a prior result.
-
-        if len(self._scan_regexlist) == 0:
-            raise Exception("self._scan_regexlist_len=(%s)" % len(self._scan_regexlist))
-        if (self._printdebug_func_outputs) and (self._scan_regexlist):
-            _log.debug("self._scan_regexlist=(%s)" % str(self._scan_regexlist))
-
-        #   TODO: 2020-11-27T18:16:59AEDT write stream to tempfile if it is not seekable
-
-        scanmatch_text = []
-        #   positions: [ match_num, regex_num, line_num, start_index, end_index, len ]
-        scanmatch_positions = []
-        scanmatch_datetimes = []
-        scanmatch_output_text = []
-        scanmatch_delta_s = []
-        scanmatch_datetime_previous = None
-        _input_line_count = 0
-
-        if (arg_stream is None):
-            raise Exception("arg_stream is none")
-
-        #   TODO: 2020-11-19T19:05:04AEDT if arg_stream is a string, consisting of a valid filepath, create stream from said file
-        _input_path = None
-        if isinstance(arg_stream, str):
-            _input_path = arg_stream
-            arg_stream = open(_input_path, "r")
-
-        if not (os.path.exists(self._path_temp_dir)):
-            os.mkdir(self._path_temp_dir)
-
-        #   Count lines in arg_stream as _input_line_count. If input is not a seekable stream, write it to a file, and use that file as our stream (stdin is not seekable)
-        #   {{{
-        arg_stream = self._util_MakeStreamSeekable(arg_stream)
-        for loop_line in arg_stream:
-            _input_line_count += 1
-        arg_stream.seek(0)
-        #   }}}
-
-        #   Continue: 2020-11-24T19:06:13AEDT fix _scan_datetimeitems() deltas calculation
-
-        #   TODO: 2020-11-30T21:29:57AEDT how (best) to limit search to given column (create new stream, of only that column), or (check for each item, whether it is in the specified column)
-
-        loop_match_num = 0
-        loop_line_num = 0
-        for stream_line in arg_stream:
-            loop_regex_item_num = 0
-
-            #   Ongoing: 2020-11-30T21:44:54AEDT behaviour if self._scan_column > len(loop_split_columns)?
-            loop_split_columns = []
-            if (self._scan_column is not None) and (self._IFS is not None):
-                loop_split_columns = [pos for pos, char in enumerate(stream_line) if char == self._IFS]
-                loop_split_columns.append(len(stream_line))
-
-            #   item is in a column-a, start > col[a], end <= col[a+1]
-            for loop_regex_item in self._scan_regexlist:
-                for loop_regex_match in loop_regex_item.finditer(stream_line):
-                    loop_match_col_start = -1
-                    if (self._scan_column is not None) and (self._IFS is not None):
-                        loop_match_col_start = 0
-                        loop_match_col_end = 0
-                        for loop_col_i, loop_col_x in enumerate(loop_split_columns):
-                            if (loop_col_x > loop_regex_match.start()):
-                                loop_match_col_start = loop_col_i
-                            if (loop_col_x >= loop_regex_match.end()):
-                                loop_match_col_end = loop_col_i
-                                break
-
-                    #   Ongoing: 2020-12-17T18:11:13AEDT (I don't like it) - either use _input_linenum_map or dont? Why are we even making this exception anyway? (out-of-bounds exception when calling DTRange_GetFirstAndLast() directly from python code)
-                    linenum_lookup = None
-                    if (len(self._input_linenum_map) > loop_line_num):
-                        linenum_lookup = self._input_linenum_map[loop_line_num]
-                    else:
-                        linenum_lookup = loop_line_num
-
-                    #match_item_list = [loop_match_num, loop_regex_item_num, linenum_lookup, loop_regex_match.start(), loop_regex_match.end(), len(loop_regex_match.group())]
-                    match_item_list = DTPosition()
-                    match_item_list.match_id = loop_match_num
-                    match_item_list.regex_id = loop_regex_item_num
-                    match_item_list.linenum = linenum_lookup
-                    match_item_list.start = loop_regex_match.start()
-                    match_item_list.end = loop_regex_match.end()
-                    match_item_list.length = len(loop_regex_match.group())
-
-
-                    match_item_datetime = self.dtconvert.Convert_string2DateTime(loop_regex_match.group())
-
-                    if not (match_item_datetime is None):
-                        match_item_datetime_outformat = self.dtconvert.Convert_DateTime2String(match_item_datetime)
-                    else:
-                        raise Exception("Failed to decipher match_item_datetime, loop_regex_match_group=(%s)" % str(loop_regex_match.group()))
-
-                    #   Add result match_item to list matches_scan
-                    #   Ongoing: 2020-11-30T23:06:33AEDT is our if condition here correct?
-                    if (self._scan_column is None) or (loop_match_col_start == self._scan_column):
-                        scanmatch_text.append(loop_regex_match.group())
-                        scanmatch_positions.append(match_item_list)
-                        scanmatch_datetimes.append(match_item_datetime)
-                        scanmatch_output_text.append(match_item_datetime_outformat)
-
-                        try:
-                            loop_delta_s = 0
-                            if (loop_match_num >= 1):
-                                loop_timedelta = match_item_datetime - scanmatch_datetime_previous
-                                loop_delta_s = decimal.Decimal(str(loop_timedelta.total_seconds()))
-                            else:
-                                loop_delta_s = 0
-                        except Exception as e:
-                            _log.warning("%s, %s, loop_timedelta calulation failed for match_item_datetime=(%s), scanmatch_datetime_previous=(%s), set loop_timedelta=(None)" % (type(e), str(e), str(match_item_datetime), str(scanmatch_datetime_previous)))
-                            loop_delta_s = None
-
-                        scanmatch_datetime_previous = match_item_datetime
-                        scanmatch_delta_s.append(loop_delta_s)
-                        loop_match_num += 1
-
-                loop_regex_item_num += 1
-            loop_line_num += 1
-
-        #   Remove any matches already in text? (or), remove said matches from text, before searching with dateparser
-
-        #   Ongoing: 2020-11-24T01:27:14AEDT is dateparser faster vis-a-vis extracting a list of datetimes from text?
-        #   TODO: 2020-10-19T09:09:24AEDT dtscan, _scan_datetimeitems(), (optionally) examine text with dateparser
-        #   Attempt 2) Using dateparser, search arg_stream
-
-        arg_stream.seek(0)
-
-        if (len(scanmatch_text) != len(scanmatch_positions)) or (len(scanmatch_positions) != len(scanmatch_datetimes)) or (len(scanmatch_datetimes) != len(scanmatch_output_text)) or (len(scanmatch_output_text) != len(scanmatch_delta_s)):
-            raise Exception("mismatch, matches_ lists lengths, scanmatch_text, scanmatch_positions, scanmatch_datetimes, scanmatch_output_text, scanmatch_delta_s: %i, %i, %i, %i, %i" % (len(scanmatch_text), len(scanmatch_positions), len(scanmatch_datetimes), len(scanmatch_output_text), len(scanmatch_delta_s)))
-        if (self._printdebug_func_outputs):
-            _log.debug("len(matches)=(%i)" % len(scanmatch_positions))
-        return [scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s]
-        #   }}}
-
+        """Given a list of deltas (elapsed times between datetimes), identify those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
     #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
     #   TODO: 2020-12-09T22:23:19AEDT Replace split_table (list) with dictionary, indexes 0-7 with descriptive keys
     #   TODO: 2020-11-25T18:22:27AEDT flag -> output delta quantities as Dhms instead of seconds
     #   Ongoing: 2020-11-24T21:28:36AEDT use Decimal anywhere (currently) float is being used to store seconds
     #   Ongoing: 2020-11-24T21:26:30AEDT (do we want to be) returning decimals instead of floats for elapsed/before/after -> (better solution presumedly being to) store as integer in microseconds, or using Python's builtin <datetime.delta>
-    def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split):
-        #   {{{
-        """Given a list of deltas (elapsed times between datetimes), identify those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
         if isinstance(arg_split, list):
             arg_split = arg_split[0]
         if isinstance(arg_split, str):
@@ -870,16 +936,16 @@ class DTScanner(object):
         return [result_split_elapsed, result_splits]
         #   }}}
 
-    #   TODO: 2020-12-15T19:12:03AEDT Sort functions need rewriting
     def _scan_sort(self, arg_input_file, arg_reverse=False):
         #   {{{
+    #   TODO: 2020-12-15T19:12:03AEDT Sort functions need rewriting
         if (self._printdebug_func_inputs):
             _log.debug("sortdt")
         input_lines = []
         for loop_line in arg_input_file:
             input_lines.append(loop_line.strip())
         arg_input_file.seek(0)
-        scanresults_list = self._scan_datetimeitems(arg_input_file)
+        scanresults_list = self.scan_datetimeitems(arg_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
         result_lines = self._sort_lines_chrono(input_lines, scanmatch_datetimes, scanmatch_positions, scanmatch_output_text, arg_reverse)
         _stream_tempfile = self._util_ListAsStream(result_lines)
@@ -887,9 +953,9 @@ class DTScanner(object):
         return _stream_tempfile
         #   }}}
 
-    #   Ongoing: 2020-12-17T17:05:51AEDT here we 1) sort stream chronologically, with each line being positioned according to the earliest datetime it contains. Also, match_positions and match_output_datetimes
     def _sort_lines_chrono(self, input_lines, match_datetimes, match_positions, match_output_datetimes, arg_reverse=False, arg_incNonDTLines=True):
         #   {{{
+    #   Ongoing: 2020-12-17T17:05:51AEDT here we 1) sort stream chronologically, with each line being positioned according to the earliest datetime it contains. Also, match_positions and match_output_datetimes
         #   line numbers, sorted first by line number, second by position in line. Convert from 1-indexed to 0-indexed
         #lines_order = [x[2] - 1 for x in sorted(match_positions, key=operator.itemgetter(2, 3))]
         lines_order = [x.linenum - 1 for x in sorted(match_positions, key=operator.attrgetter('linenum', 'start'))]
@@ -926,83 +992,6 @@ class DTScanner(object):
         if (self._printdebug_func_outputs):
             _log.debug("lines_order=(%s)" % str(lines_order))
         return results_lines
-        #   }}}
-
-    # #   Ongoing: 2020-12-15T20:28:46AEDT not useable without (access to) dtscan
-    # #   Return tuple containing first and last datetimes from arg_stream
-    # def DTRange_GetFirstAndLast(self, arg_stream):
-    #     #   {{{
-    #     arg_stream = self._util_MakeStreamSeekable(arg_stream)
-    #     scanresults_list = None
-    #     try:
-    #         #   Ongoing: 2020-12-15T12:32:16AEDT
-    #         scanresults_list = self._scan_datetimeitems(arg_stream)
-    #         arg_stream.seek(0)
-    #     except Exception as e:
-    #         raise Exception("%s, %s, _scan_datetimeitems() failed to read stream" % (str(type(e)), str(e)))
-    #     scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
-    #     scanmatch_datetimes.sort()
-    #     result_dt_first = scanmatch_datetimes[0]
-    #     result_dt_last = scanmatch_datetimes[-1]
-    #     result_list = [result_dt_first, result_dt_last]
-    #     if (self._printdebug_func_outputs):
-    #         _log.debug("result_list=(%s)" % str(result_list))
-    #     return result_list
-    #     #   }}}
-
-    #   Ongoing: 2021-02-06T21:15:57AEDT 'scandir' has no tests, and no parser
-    def _ScanDir_ScanFileMatches(self, arg_dir):
-        #   {{{
-        """Get list of lines from files in dir containing datetimes within 'Scan' range, and corresponding filenames and linenums"""
-        results_filepaths = []
-        results_linenums = []
-        results_linecontents = []
-        results_datetimes = []
-
-        #   For each (text) file in arg_dir:
-        search_files = [x for x in glob.iglob(arg_dir + '**/**', recursive=True)]
-        _log.debug("search_files=(%s)" % pprint.pformat(search_files))
-
-        import mimetypes
-
-        for loop_file in search_files:
-            _log.debug("loop_file=(%s)" % str(loop_file))
-
-            if (os.path.isdir(loop_file)):
-                _log.debug("skip, isdir for loop_file=(%s)" % str(loop_file))
-                continue
-
-            mime = mimetypes.guess_type(loop_file)
-            if (mime[0] != 'text/plain'):
-                _log.debug("skip, mime=(%s) for loop_file=(%s)" % (str(mime), str(loop_file)))
-                continue
-
-            f = open(loop_file, 'r')
-
-            loop_results_matches, scanmatch_positions = self.matches(f, True)
-
-            _log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
-
-            _index_match = 0
-            _index_linenum = 3
-
-            for loop_match, loop_position in zip(loop_results_matches, scanmatch_positions):
-                loop_match_item = loop_match
-                loop_match_linenum = int(loop_position.linenum)
-
-                #   Continue: 2021-01-29T23:40:55AEDT get line loop_match_linenum from loop_file as loop_match_linestr
-                loop_match_linestr = ""
-
-                results_filepaths.append(loop_file)
-                results_datetimes.append(loop_match_item)
-                results_linenums.append(loop_match_linenum)
-                results_linecontents.append(loop_match_linestr)
-
-            f.close()
-
-        _log.debug("len(results_datetimes)=(%s)" % len(results_datetimes))
-
-        return [results_datetimes, results_filepaths, results_linenums, results_linecontents]
         #   }}}
 
     def _matches_addpositions(self, scanmatch_output_text, scanmatch_positions):
@@ -1042,9 +1031,9 @@ class DTScanner(object):
 
     #   TODO: 2021-02-06T21:00:49AEDT util functions (to seperate class?) as static methods
 
-    #   Copy a given stream to a tempfile and return stream of tempfile. Closes arg_stream. If arg_force is False, return input stream if it is seekable, if True, create new stream regardless
     def _util_MakeStreamSeekable(self, arg_stream, arg_force=False):
         #   {{{
+        """Copy a given stream to a tempfile and return stream of tempfile. Closes arg_stream. If arg_force is False, return input stream if it is seekable, if True, create new stream regardless"""
         func_name = inspect.currentframe().f_code.co_name
         if (arg_stream.seekable()) and not (arg_force):
             return arg_stream
@@ -1074,9 +1063,9 @@ class DTScanner(object):
         return arg_stream
         #   }}}
 
-    #   About: Given a list of streams, create and return single stream containing combined data from all streams
     def _util_CombineStreamList(self, arg_stream_list, flag_keepOpen=False):
         #   {{{
+        """Given a list of streams, create and return single stream containing combined data from all streams"""
         if (arg_stream_list is None):
             return None
         if isinstance(arg_stream_list, io.TextIOWrapper):
@@ -1091,9 +1080,9 @@ class DTScanner(object):
         return result_stream
         #   }}}
 
-    #   About: Create and return a (tempfile based) stream from a list
     def _util_ListAsStream(self, arg_list):
         #   {{{
+        """Create and return a (tempfile based) stream from a list"""
         result_string = ""
         if (arg_list is None):
             return None
@@ -1122,43 +1111,67 @@ class DTScanner(object):
         return self._util_MakeStreamSeekable(result_stream, True)
         #   }}}
 
-    def _Resource_ReadFile_RegexFile(self, f):
+    def _resource_read_regexlist(self, arg_regexfile=None):
         #   {{{
-        try:
-            if (isinstance(f, str)):
-                f = open(f, "r")
-            for loop_line in f:
-                loop_regex_item = re.compile(loop_line.strip())
-                self._scan_regexlist.append(loop_regex_item)
-            f.close()
-        except Exception as e:
-            raise Exception("%s, %s, failed to read f=(%s)" % (type(e), str(e), str(f)))
-        #   }}}
+        """Read resource self._scan_regexfile, list of regex-as-strings (as well as arg_regexfile if given) to append to list self._scan_regexlist."""
+        self._scan_regexlist = []
 
-    def _Resource_GetStream_RegexFile(self):
-        #   {{{
+        fid = None
         try:
             fid = importlib.resources.open_text(*self._scan_regexfile)
-            return fid
         except Exception as e:
             raise Exception("%s, %s, failed to get resource _scan_regexfile stream" % (type(e), str(e)))
-        #   }}}
 
-    #   TODO: 2020-12-15T18:00:41AEDT set arg_regexfile (from parser value, where?)
-    #   About: Read _scan_regexfile and arg_regexfile to _scan_regexlist as re.compile() instances
-    def _ReadResource_RegexList(self, arg_regexfile=None):
-        #   {{{
-        """Read resource self._scan_regexfile, list of regex-as-strings to append to list self._scan_regexlist, (as well as arg_regexfile if given)"""
-        self._scan_regexlist = []
-        fid = self._Resource_GetStream_RegexFile()
-        self._Resource_ReadFile_RegexFile(fid)
+        try:
+            for loop_line in fid:
+                loop_regex_item = re.compile(loop_line.strip())
+                self._scan_regexlist.append(loop_regex_item)
+            fid.close()
+        except Exception as e:
+            raise Exception("%s, %s, failed to read default regex items from fid=(%s)" % (type(e), str(e), str(fid)))
+
         if (arg_regexfile is not None):
-            self._Resource_ReadFile_RegexFile(arg_regexfile)
+            try:
+                if (isinstance(arg_regexfile, str)):
+                    arg_regexfile = open(arg_regexfile, "r")
+                for loop_line in arg_regexfile:
+                    loop_regex_item = re.compile(loop_line.strip())
+                    self._scan_regexlist.append(loop_regex_item)
+                arg_regexfile.close()
+            except Exception as e:
+                raise Exception("%s, %s, failed to read extra regex items from arg_regexfile=(%s)" % (type(e), str(e), str(arg_regexfile)))
+    
+        #   Remove duplicates
+        _duplicatecheck = set()
+        self._scan_regexlist = [x for x in self._scan_regexlist if x not in _duplicatecheck and not _duplicatecheck.add(x)]
+
         if (len(self._scan_regexlist) == 0):
             raise Exception("Failed to read any elements to _scan_regexlist")
         if (self._printdebug_func_outputs):
             _log.debug("_scan_regexlist=(%s)" % str(self._scan_regexlist))
         #   }}}
+
+    # def DTRange_GetFirstAndLast(self, arg_stream):
+    #     #   {{{
+    # #   Ongoing: 2020-12-15T20:28:46AEDT not useable without (access to) dtscan
+    # #   Return tuple containing first and last datetimes from arg_stream
+    #     arg_stream = self._util_MakeStreamSeekable(arg_stream)
+    #     scanresults_list = None
+    #     try:
+    #         #   Ongoing: 2020-12-15T12:32:16AEDT
+    #         scanresults_list = self.scan_datetimeitems(arg_stream)
+    #         arg_stream.seek(0)
+    #     except Exception as e:
+    #         raise Exception("%s, %s, scan_datetimeitems() failed to read stream" % (str(type(e)), str(e)))
+    #     scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
+    #     scanmatch_datetimes.sort()
+    #     result_dt_first = scanmatch_datetimes[0]
+    #     result_dt_last = scanmatch_datetimes[-1]
+    #     result_list = [result_dt_first, result_dt_last]
+    #     if (self._printdebug_func_outputs):
+    #         _log.debug("result_list=(%s)" % str(result_list))
+    #     return result_list
+    #     #   }}}
 
 #   }}}
 

@@ -33,6 +33,9 @@ def cliscan():
         _parser_cliscan.print_help()
         sys.exit(2)
 
+    if (_args.regexfile):
+        dtscanner._resource_read_regexlist(_args.regexfile)
+
     try:
         _args.func(_args)
     except Exception as e:
@@ -53,6 +56,7 @@ _parser_cliscan.add_argument('--version', action='version', version='%(prog)s ' 
 _parser_cliscan.add_argument('-v', '--debug', action='store_true', default=False, help="Use debug level logging")
 _parser_cliscan.add_argument('-w', '--warnings', default=False, action='store_true', help="Include warnings")
 _parser_cliscan.add_argument('-I', '--infile', type=argparse.FileType('r', encoding='utf-8', errors='ignore'), default=sys.stdin, help="Input file")
+_parser_cliscan.add_argument('--regexfile', type=argparse.FileType('r', encoding='utf-8', errors='ignore'), help="File containing (extra) regex strings for matching datetimes")
 _parser_cliscan.add_argument('--noassumetz', action='store_true', default=False, help="Do not assume local timezone for datetimes without timezones")
 _parser_cliscan.add_argument('-C', '--col', nargs=1, default=None, type=int, help="Limit scan to given column (0-indexed)")
 _parser_cliscan.add_argument('--IFS', nargs=1, default="\t", type=str, help="Input field seperator")

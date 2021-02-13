@@ -252,8 +252,8 @@ class DTRange(object):
     #def DTRange_CountBy(self, arg_infile, arg_interval):
     ##   {{{
     #    #arg_infile = self._util_MakeStreamSeekable(arg_infile)
-    #    #   _scan_datetimeitems() handles is-datetime-in-column, provided self._scan_column has been specified
-    #    scanresults_list = self._scan_datetimeitems(arg_infile)
+    #    #   scan_datetimeitems() handles is-datetime-in-column, provided self._scan_column has been specified
+    #    scanresults_list = self.scan_datetimeitems(arg_infile)
     #    scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = scanresults_list
     #   }}}
 

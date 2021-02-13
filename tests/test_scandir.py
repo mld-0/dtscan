@@ -123,15 +123,15 @@ class Test_CliScan(unittest.TestCase):
     #def test_Interface_ScanDir_Matches(self):
     #    path_scandir = self._getPath_ScanDir()
     #    _log.debug("path_scandir=(%s)" % str(path_scandir))
-    #    results_test = self.dtscan_instance._ScanDir_ScanFileMatches(path_scandir)
+    #    results_test = self.dtscan_instance.scandir_datetimeitems(path_scandir)
     #    print(results_test)
 
-    def test_Interface_ScanDir_ScanFileMatches(self):
-        import pprint
-        path_scandir = self._getPath_ScanDir()
-        _log.debug("path_scandir=(%s)" % str(path_scandir))
-        results_test = self.dtscan_instance.scandir(path_scandir, True, True, True)
-        pprint.pprint(results_test)
+    #def test_Interfacescandir_datetimeitems(self):
+    #    import pprint
+    #    path_scandir = self._getPath_ScanDir()
+    #    _log.debug("path_scandir=(%s)" % str(path_scandir))
+    #    results_test = self.dtscan_instance.scandir(path_scandir, True, True, True)
+    #    pprint.pprint(results_test)
 
     #   }}}
 
