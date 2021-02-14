@@ -72,6 +72,10 @@ _parser_cliscan.add_argument('--nodhms', action='store_true', default=False, hel
 _parser_cliscan.add_argument('--qfstart', nargs=1, default=None, type=str, help="Quick-Filter start date")
 _parser_cliscan.add_argument('--qfend', nargs=1, default=None, type=str, help="Quick-Filter end date")
 _parser_cliscan.add_argument('--qfinterval', nargs=1, default='m', type=str, help="Quick-Filter interval (ymd)")
+
+#   Continue: 2021-02-15T00:11:30AEDT Implement --strip 
+_parser_cliscan.add_argument('--strip', action='store_true', default=False, help="Remove whitespace from any output match text")
+
 #   qfnum: not used
 # _parser_cliscan.add_argument('--qfnum', nargs=1, default=None, type=int, help="filter using %%y(-%%m)(-%%d) (as per interval) from current date to given number of qfinterval before current date")
 _parser_cliscan.add_argument('--rfstart', nargs=1, default=None, type=str, help="Range-Filter start datetime")
@@ -117,6 +121,10 @@ _subparser_cliscan_splitsum.set_defaults(func=dtscanner.ParserInterface_SplitSum
 #   Continue: 2021-02-14T19:56:47AEDT subparser scandir
 _subparser_cliscan_scandir = _subparsers_cliscan.add_parser('scandir', description="")
 _subparser_cliscan_scandir.add_argument('--dir', type=dir_path)
+_subparser_cliscan_scandir.add_argument('--nofn', action='store_true', default=False, help="No filename in output")
+_subparser_cliscan_scandir.add_argument('--noln', action='store_true', default=False, help="No linenum in output")
+_subparser_cliscan_scandir.add_argument('--nodt', action='store_true', default=False, help="No datetime match in output")
+_subparser_cliscan_scandir.add_argument('--noline', action='store_true', default=False, help="No line content in output")
 _subparser_cliscan_scandir.set_defaults(func=dtscanner.ParserInterface_ScanDir_Matches)
 
 

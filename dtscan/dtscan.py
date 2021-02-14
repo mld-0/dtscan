@@ -173,17 +173,30 @@ class DTScanner(object):
         flag_include_path = True
         flag_include_linenum = True
         flag_include_contents = True
+        flag_include_dt = True
+
+
+        #   Continue: 2021-02-15T00:01:39AEDT remove columns from output as per --nofn | --noln | --nodt | --noline
+        if (_args.nofn):
+            flag_include_path = False
+        if (_args.noln):
+            flag_include_linenum = False
+        if (_args.nodt):
+            flag_include_dt = False
+        if (_args.noline):
+            flag_include_contents = False
 
         results_datetimes, results_filepaths, results_linenums, results_linecontents = self.scandir_datetimeitems(arg_dir)
         results_list = []
         for loop_datetime, loop_filepath, loop_linenum, loop_linecontents in zip(results_datetimes, results_filepaths, results_linenums, results_linecontents):
-            loop_result = self._Interface_ScanDir_FormatMatch(loop_datetime, loop_filepath, loop_linenum, loop_linecontents, flag_include_path, flag_include_linenum, flag_include_contents)
+            loop_result = self._Interface_ScanDir_FormatMatch(loop_datetime, loop_filepath, loop_linenum, loop_linecontents, flag_include_path, flag_include_linenum, flag_include_contents, flag_include_dt)
             results_list.append(loop_result)
 
         result_list_stream = self._util_ListOfListsAsStream(results_list)
         for loop_line in result_list_stream:
             loop_line = loop_line.strip()
             print(loop_line)
+
         result_list_stream.close()
         #   }}}
 
@@ -433,7 +446,8 @@ class DTScanner(object):
                 continue
 
             mime = mimetypes.guess_type(loop_file)
-            if (mime[0] != 'text/plain'):
+            #if (mime[0] != 'text/plain'):
+            if not self._scandir_datetimeitems_typeisallowed(mime):
                 _log.debug("skip, mime=(%s) for loop_file=(%s)" % (str(mime), str(loop_file)))
                 continue
 
@@ -464,8 +478,19 @@ class DTScanner(object):
 
         _log.debug("len(results_datetimes)=(%s)" % len(results_datetimes))
 
+        if (self._scan_sortdt):
+            results_zip = zip(results_datetimes, results_filepaths, results_linenums, results_linecontents)
+            results_zip = sorted(results_zip, key=lambda x: x[0])
+            results_datetimes, results_filepaths, results_linenums, results_linecontents = zip(*results_zip)
+
         return [results_datetimes, results_filepaths, results_linenums, results_linecontents]
         #   }}}
+
+    def _scandir_datetimeitems_typeisallowed(self, arg_type):
+        #if arg_type == 'text/plain':
+        #    return True
+        if re.search(r"text/*", str(arg_type)):
+            return True
 
     #   About: Replace datetime instances with those of arg_outfmt
     def replace_datetimes(self, arg_infile, arg_outfmt):
@@ -959,7 +984,11 @@ class DTScanner(object):
 
     def _sort_lines_chrono(self, input_lines, match_datetimes, match_positions, match_output_datetimes, arg_reverse=False, arg_incNonDTLines=True):
         #   {{{
+    #   TODO: 2021-02-14T23:44:31AEDT dtscan, option, sort by last datetime (chronologically) on line
     #   Ongoing: 2020-12-17T17:05:51AEDT here we 1) sort stream chronologically, with each line being positioned according to the earliest datetime it contains. Also, match_positions and match_output_datetimes
+        if len(match_datetimes) == 0:
+            return []
+
         dtzipped = zip(match_datetimes, match_output_datetimes, match_positions)
 
         #dtzipped = sorted(dtzipped, reverse=arg_reverse)
@@ -1018,14 +1047,15 @@ class DTScanner(object):
     def _Interface_Scan_RemoveNonPrinting(self, arg_infile):
         pass
 
-    def _Interface_ScanDir_FormatMatch(self, arg_datetime, arg_filepath, arg_linenum, arg_linecontent, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True):
+    def _Interface_ScanDir_FormatMatch(self, arg_datetime, arg_filepath, arg_linenum, arg_linecontent, flag_include_path=True, flag_include_linenum=True, flag_include_contents=True, flag_include_dt=True):
         #   {{{
         result_list = []
         if (flag_include_path):
             result_list.append(arg_filepath)
         if (flag_include_linenum):
             result_list.append(arg_linenum)
-        result_list.append(arg_datetime)
+        if (flag_include_dt):
+            result_list.append(arg_datetime)
         if (flag_include_contents):
             result_list.append(arg_linecontent)
         return result_list
