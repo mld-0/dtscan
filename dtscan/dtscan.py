@@ -960,15 +960,13 @@ class DTScanner(object):
     def _sort_lines_chrono(self, input_lines, match_datetimes, match_positions, match_output_datetimes, arg_reverse=False, arg_incNonDTLines=True):
         #   {{{
     #   Ongoing: 2020-12-17T17:05:51AEDT here we 1) sort stream chronologically, with each line being positioned according to the earliest datetime it contains. Also, match_positions and match_output_datetimes
-        #   line numbers, sorted first by line number, second by position in line. Convert from 1-indexed to 0-indexed
-        #lines_order = [x[2] - 1 for x in sorted(match_positions, key=operator.itemgetter(2, 3))]
-        lines_order = [x.linenum - 1 for x in sorted(match_positions, key=operator.attrgetter('linenum', 'start'))]
-        if (self._printdebug_func_inputs):
-            _log.debug("lines_order=(%s)" % str(lines_order))
-        #   Bug: 2020-12-04T01:53:23AEDT sort is not stable for datetimes with same value?
-        dtzipped = zip(match_datetimes, match_output_datetimes, lines_order, match_positions)
-        dtzipped = sorted(dtzipped, reverse=arg_reverse)
-        match_datetimes, match_output_datetimes, lines_order, match_positions = zip(*dtzipped)
+        dtzipped = zip(match_datetimes, match_output_datetimes, match_positions)
+
+        #dtzipped = sorted(dtzipped, reverse=arg_reverse)
+        dtzipped = sorted(dtzipped, reverse=arg_reverse, key=lambda x:x[0])
+
+        match_datetimes, match_output_datetimes, match_positions = zip(*dtzipped)
+        lines_order = [x.linenum - 1 for x in match_positions]
 
         #   Once we have sorted datetimes (by calling this function), store sorted lists (for use by 'matches', <others?>)
         self._sorted_match_positions = match_positions
