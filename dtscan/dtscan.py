@@ -169,6 +169,11 @@ class DTScanner(object):
         self.ParserUpdate_Vars_Scan(_args)
         #results_list = self.scandir(_args.dir)
 
+        arg_dir = _args.dir
+        flag_include_path = True
+        flag_include_linenum = True
+        flag_include_contents = True
+
         results_datetimes, results_filepaths, results_linenums, results_linecontents = self.scandir_datetimeitems(arg_dir)
         results_list = []
         for loop_datetime, loop_filepath, loop_linenum, loop_linecontents in zip(results_datetimes, results_filepaths, results_linenums, results_linecontents):

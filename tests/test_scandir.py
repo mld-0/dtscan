@@ -41,6 +41,12 @@ class Test_CliScan(unittest.TestCase):
     _pkg_testdata = "tests.data.test_input"
     _pkg_checkdata = "tests.data.test_check"
 
+    _printdebug_tests_leading = ""
+    _printdebug_tests_trailing = "\n"
+    _pkg_testdata = "tests.data.test_input"
+    _pkg_checkdata = "tests.data.test_check"
+    _printdebug_include_test_check_vals = True
+
     dtscan_instance = DTScanner()
     dtscan_instance._assume_LocalTz = True
     dtscan_instance._warn_LocalTz = True
@@ -54,6 +60,27 @@ class Test_CliScan(unittest.TestCase):
 
     #   TODO: 2020-12-12T19:46:37AEDT test method does not account for newlines between streams, unique item headings - which are in the output from (actual) cli dtscan usage (see __main__.py)
     #   About: Simulate cli usage with args_list
+#    def runtest_parseargs(self, args_list, arg_flag_expectStreamList=True):
+#        #   {{{
+#        print("%s" % self._printdebug_tests_leading, end='')
+#
+#        if (len(self._arg_debug) > 0):
+#            args_list.insert(0, self._arg_debug)
+#        _args = _parser_cliscan.parse_args(args_list)
+#
+#        capturedOutput = io.StringIO()
+#
+#        if not hasattr(_args, 'func'):
+#            raise Exception("No subparser command given\n")
+#        sys.stdout = capturedOutput
+#        _args.func(_args)
+#        sys.stdout = sys.__stdout__
+#
+#        print("%s" % self._printdebug_tests_trailing, end='')
+#
+#        return capturedOutput
+#        #   }}}
+
     def runtest_parseargs(self, args_list, arg_flag_expectStreamList=True):
         #   {{{
         print("%s" % self._printdebug_tests_leading, end='')
@@ -66,14 +93,19 @@ class Test_CliScan(unittest.TestCase):
 
         if not hasattr(_args, 'func'):
             raise Exception("No subparser command given\n")
+        # try:
         sys.stdout = capturedOutput
         _args.func(_args)
         sys.stdout = sys.__stdout__
+        # except Exception as e:
+        #    _log.error("%s\n%s, %s, for '_args.func(_args)' (%s)" % (str(traceback.format_exc()), str(type(e)), str(e), str(_args.func.__name__)))
 
         print("%s" % self._printdebug_tests_trailing, end='')
 
         return capturedOutput
         #   }}}
+
+
 
     #   About: Compare (result stream or list of streams) with (path check of list of paths)
     def runtest_CompareStreamListAndCheckFileList(self, stream_test, path_check):
@@ -153,17 +185,25 @@ class Test_CliScan(unittest.TestCase):
             _delim = "\t"
             for loop_item in loop_result:
                 loop_line += str(loop_item) + _delim
-            loop_line = loop_line[:-2]
+            loop_line = loop_line[:-1]
             #print(loop_line, end="")
             print(f"({loop_line})")  # using () to preserve any trailign whitespace when copying result into 'check' file (without it -> Pipe results directly to file)
         #   }}}
 
-    def test_Interface_ScanDir_Matches(self):
+    def test_cli_scandir_matches(self):
+        path_scandir = self._getPath_ScanDir()
+        path_check = self._getPath_CheckData("scandir-cli-results.txt")
+        test_args = ['scandir', '--dir', path_scandir]
+        test_results = self.runtest_parseargs(test_args)
+        self.runtest_CompareStreamListAndCheckFileList(test_results, path_check)
+
+    def test_scandir_matches(self):
         path_scandir = self._getPath_ScanDir()
         path_check = self._getPath_CheckData("scandir-results.txt")
         results_check = self.read_scandir_datetimeitems_transposedlist_file(path_check)
         _log.debug("path_scandir=(%s)" % str(path_scandir))
         results_test = self.dtscan_instance.scandir_datetimeitems(path_scandir)
+        #self.scandir_datetimeitems_results_to_transposedlist(results_test)
         self.assertEqual(results_test, results_check)
 
         #print(results_test == results_check)
@@ -183,14 +223,6 @@ class Test_CliScan(unittest.TestCase):
         #    #print(loop_line, end="")
         #    print(f"({loop_line})")
         ###pprint.pprint(list(zip(*results_test)))
-
-
-    #def test_Interfacescandir_datetimeitems(self):
-    #    import pprint
-    #    path_scandir = self._getPath_ScanDir()
-    #    _log.debug("path_scandir=(%s)" % str(path_scandir))
-    #    results_test = self.dtscan_instance.scandir(path_scandir, True, True, True)
-    #    pprint.pprint(results_test)
 
     #   }}}
 

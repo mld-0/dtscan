@@ -3,6 +3,7 @@
 #   vim: set foldlevel=2 foldcolumn=3:
 #   }}}1
 #   {{{2
+import os
 import sys
 import argparse
 import logging
@@ -22,6 +23,12 @@ _logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
 dtscanner = DTScanner()
+
+def dir_path(string):
+    if os.path.isdir(string):
+        return string
+    else:
+        raise NotADirectoryError(string)
 
 
 def cliscan():
@@ -108,7 +115,9 @@ _subparser_cliscan_splitsum.set_defaults(func=dtscanner.ParserInterface_SplitSum
 
 #   subparser scandir
 #   Continue: 2021-02-14T19:56:47AEDT subparser scandir
-
+_subparser_cliscan_scandir = _subparsers_cliscan.add_parser('scandir', description="")
+_subparser_cliscan_scandir.add_argument('--dir', type=dir_path)
+_subparser_cliscan_scandir.set_defaults(func=dtscanner.ParserInterface_ScanDir_Matches)
 
 
 
