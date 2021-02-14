@@ -21,14 +21,13 @@ import dateutil.parser
 # import dateutil.tz
 import tempfile
 import decimal
+import mimetypes
 #   }}}1
 #   {{{1
 from .dtconvert import DTConvert
 from .dtrange import DTRange
 from .dtsplit import DTSplit
 from .dtposition import DTPosition
-# from .dtsplit import DTsplit
-# from .dtposition import DTposition
 # from .dtformats import datetime_formats
 
 _log = logging.getLogger('dtscan')
@@ -421,8 +420,6 @@ class DTScanner(object):
         search_files = [x for x in glob.iglob(arg_dir + '**/**', recursive=True)]
         _log.debug("search_files=(%s)" % pprint.pformat(search_files))
 
-        import mimetypes
-
         for loop_file in search_files:
             _log.debug("loop_file=(%s)" % str(loop_file))
 
@@ -436,20 +433,22 @@ class DTScanner(object):
                 continue
 
             f = open(loop_file, 'r')
-
             loop_results_matches, scanmatch_positions = self.matches(f, True)
 
-            _log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
-
-            _index_match = 0
-            _index_linenum = 3
+            #_log.debug("loop_results_matches=(%s)" % str(loop_results_matches))
 
             for loop_match, loop_position in zip(loop_results_matches, scanmatch_positions):
                 loop_match_item = loop_match
                 loop_match_linenum = int(loop_position.linenum)
 
                 #   Continue: 2021-01-29T23:40:55AEDT get line loop_match_linenum from loop_file as loop_match_linestr
-                loop_match_linestr = ""
+                #loop_match_linestr = f.readlines()[loop_match_linenum-1]
+                f = open(loop_file, 'r')
+                for i, loop_line in enumerate(f):
+                    if (i == loop_match_linenum - 1):
+                        loop_match_linestr = loop_line[:-1]  # remove last character -> newline
+                        break
+                f.close()
 
                 results_filepaths.append(loop_file)
                 results_datetimes.append(loop_match_item)

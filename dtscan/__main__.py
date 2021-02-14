@@ -106,6 +106,8 @@ _subparser_cliscan_splitsum.add_argument('--splitlen', nargs=1, default=300, hel
 _subparser_cliscan_splitsum.add_argument('--interval', nargs=1, default="d", choices=['y', 'm', 'w', 'd', 'H', 'M', 'S'], help="Interval (ymwdHMS) for which to sum")
 _subparser_cliscan_splitsum.set_defaults(func=dtscanner.ParserInterface_SplitSum)
 
+#   subparser scandir
+#   Continue: 2021-02-14T19:56:47AEDT subparser scandir
 
 
 

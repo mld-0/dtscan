@@ -14,6 +14,7 @@ import io
 from freezegun import freeze_time
 #   pandas must be imported *before* any freezegun fake times are used
 import pandas
+import pprint
 #   }}}1
 #   {{{1
 from dtscan.dtscan import DTScanner
@@ -120,11 +121,69 @@ class Test_CliScan(unittest.TestCase):
         self.assertTrue(os.path.isdir(path_scandir), "Failed to find scandir path=(%s)" % str(path_scandir))
         return path_scandir
 
-    #def test_Interface_ScanDir_Matches(self):
-    #    path_scandir = self._getPath_ScanDir()
-    #    _log.debug("path_scandir=(%s)" % str(path_scandir))
-    #    results_test = self.dtscan_instance.scandir_datetimeitems(path_scandir)
-    #    print(results_test)
+    def read_scandir_datetimeitems_transposedlist_file(self, path_checkfile):
+        #   {{{
+        """Read results of scandir_datetimeitems_results_to_transposedlist() (with surrounding '()' removed) into list-of-lists matching origional output of scandir_datetimeitems()"""
+        check_list = []
+        _delim = '\t'
+        f = open(path_checkfile, "r")
+        for loop_line in f:
+            loop_line = loop_line[:-1]  # remove last character - newline
+            loop_line_split = loop_line.split(_delim)
+            check_list.append([])
+            check_list[-1].append(loop_line_split[0])
+            check_list[-1].append(loop_line_split[1])
+            check_list[-1].append(int(loop_line_split[2]))
+            loop_fileline = ""
+            for loop_join in loop_line_split[3:]:
+                loop_fileline += loop_join + _delim
+            loop_fileline = loop_fileline[:-1]
+            check_list[-1].append(loop_fileline)
+        check_list = list(map(list, zip(*check_list)))
+        f.close()
+        return check_list
+        #   }}}
+
+    def scandir_datetimeitems_results_to_transposedlist(self, results_test):
+        #   {{{
+        """Output results of scandir_datetimeitems in such a way that (with surrounding '()' removed), read_scandir_datetimeitems_transposedlist_file() can read them into an identical list of lists"""
+        results_test = list(zip(*results_test))
+        for loop_result in results_test:
+            loop_line = ""
+            _delim = "\t"
+            for loop_item in loop_result:
+                loop_line += str(loop_item) + _delim
+            loop_line = loop_line[:-2]
+            #print(loop_line, end="")
+            print(f"({loop_line})")  # using () to preserve any trailign whitespace when copying result into 'check' file (without it -> Pipe results directly to file)
+        #   }}}
+
+    def test_Interface_ScanDir_Matches(self):
+        path_scandir = self._getPath_ScanDir()
+        path_check = self._getPath_CheckData("scandir-results.txt")
+        results_check = self.read_scandir_datetimeitems_transposedlist_file(path_check)
+        _log.debug("path_scandir=(%s)" % str(path_scandir))
+        results_test = self.dtscan_instance.scandir_datetimeitems(path_scandir)
+        self.assertEqual(results_test, results_check)
+
+        #print(results_test == results_check)
+        #results_test_transpose = list(map(list, zip(*results_test)))
+        #results_check_transpose = list(map(list, zip(*results_check)))
+        #for loop_test, loop_check in zip(results_test_transpose, results_check_transpose):
+        #    print(loop_test == loop_check)
+        #    print(f"loop_test=({loop_test})")
+        #    print(f"loop_check=({loop_check})")
+        #results_test = list(zip(*results_test))
+        #for loop_result in results_test:
+        #    loop_line = ""
+        #    _delim = "\t"
+        #    for loop_item in loop_result:
+        #        loop_line += str(loop_item) + _delim
+        #    loop_line = loop_line[:-2]
+        #    #print(loop_line, end="")
+        #    print(f"({loop_line})")
+        ###pprint.pprint(list(zip(*results_test)))
+
 
     #def test_Interfacescandir_datetimeitems(self):
     #    import pprint
