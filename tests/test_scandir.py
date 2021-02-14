@@ -203,9 +203,11 @@ class Test_CliScan(unittest.TestCase):
         results_check = self.read_scandir_datetimeitems_transposedlist_file(path_check)
         _log.debug("path_scandir=(%s)" % str(path_scandir))
         results_test = self.dtscan_instance.scandir_datetimeitems(path_scandir)
-        #self.scandir_datetimeitems_results_to_transposedlist(results_test)
         self.assertEqual(results_test, results_check)
-
+        #   {{{
+        #   print test results in 'check' format
+        #self.scandir_datetimeitems_results_to_transposedlist(results_test)
+        #   compare test, check lists line-by-line
         #print(results_test == results_check)
         #results_test_transpose = list(map(list, zip(*results_test)))
         #results_check_transpose = list(map(list, zip(*results_check)))
@@ -213,16 +215,8 @@ class Test_CliScan(unittest.TestCase):
         #    print(loop_test == loop_check)
         #    print(f"loop_test=({loop_test})")
         #    print(f"loop_check=({loop_check})")
-        #results_test = list(zip(*results_test))
-        #for loop_result in results_test:
-        #    loop_line = ""
-        #    _delim = "\t"
-        #    for loop_item in loop_result:
-        #        loop_line += str(loop_item) + _delim
-        #    loop_line = loop_line[:-2]
-        #    #print(loop_line, end="")
-        #    print(f"({loop_line})")
-        ###pprint.pprint(list(zip(*results_test)))
+        #   }}}
+
 
     #   }}}
 
