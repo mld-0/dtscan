@@ -197,6 +197,13 @@ class Test_CliScan(unittest.TestCase):
         test_results = self.runtest_parseargs(test_args)
         self.runtest_CompareStreamListAndCheckFileList(test_results, path_check)
 
+    def test_cli_scandir_matches_sortdt(self):
+        path_scandir = self._getPath_ScanDir()
+        path_check = self._getPath_CheckData("scandir-cli-sorted-results.txt")
+        test_args = ['--sortdt', 'scandir', '--dir', path_scandir]
+        test_results = self.runtest_parseargs(test_args)
+        self.runtest_CompareStreamListAndCheckFileList(test_results, path_check)
+
     def test_scandir_matches(self):
         path_scandir = self._getPath_ScanDir()
         path_check = self._getPath_CheckData("scandir-results.txt")

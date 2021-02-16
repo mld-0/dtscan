@@ -489,6 +489,7 @@ class DTScanner(object):
     def _scandir_datetimeitems_typeisallowed(self, arg_type):
         #if arg_type == 'text/plain':
         #    return True
+
         if re.search(r"text/*", str(arg_type)):
             return True
 

@@ -1,0 +1,63 @@
+	ITEM: 
+	Start-Time: 2021-02-13T00:24:43AEDT
+	{{{ 	
+2021-02-13T00:57:10AEDT
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 2021-02-13T01:46:41AEDT 
+	}}}
+	Block-Elapsed: 1h21m58s
+
+	ITEM: Pulse py2app
+	Start-Time: 2021-02-13T17:20:41AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 15h34m
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 2021-02-13T20:23:14AEDT
+	}}}
+	Block-Elapsed: 3h2m33s
+
+	ITEM: 
+	Start-Time: 2021-02-13T19:30:53AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 52m21s
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 
+	}}}
+	Block-Elapsed: 
+
+	ITEM: 
+	Start-Time: 2021-02-13T21:01:15AEDT
+	{{{ 	
+
+	Evaluation: 
+	DeltaPrevious: 
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 2021-02-13T21:17:27AEDT
+	}}}
+	Block-Elapsed: 16m12s
+
+	ITEM: 
+	Start-Time: 2021-02-13T21:27:17AEDT
+	{{{ 	
+Continue: 2021-02-13T22:05:16AEDT build py2app application with dtscan as import
+
+	commit
+	Evaluation: 2021-02-13T22:44:15AEDT 
+
+	DeltaPrevious: 9m50s
+	TimeQuality: aim= val= content=
+	Qindex: 
+	Time-Done: 2021-02-13T22:44:22AEDT 
+	}}}
+	Block-Elapsed: 1h17m5s
+
