@@ -22,14 +22,19 @@ _logging_format = "%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
 logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
 
+#   Disable shtab debug output
+logging.getLogger("shtab").setLevel(logging.WARNING)
+
 dtscanner = DTScanner()
 
-def dir_path(string):
-    if os.path.isdir(string):
-        return string
+def dir_path(arg_dirpath):
+    #   {{{
+    """Verify a given path belongs to an existing directory"""
+    if os.path.isdir(arg_dirpath):
+        return arg_dirpath
     else:
-        raise NotADirectoryError(string)
-
+        raise NotADirectoryError(arg_dirpath)
+    #   }}}
 
 def cliscan():
     #   {{{
@@ -53,7 +58,6 @@ def cliscan():
             _log.error("%s, %s, failed to call print_help() after initial exception processing '_args.func(_args)'" % (str(type(e)), str(e)))
         sys.exit(2)
     #   }}}
-
 
 #   TODO: 2020-12-14T21:29:49AEDT in 'help', rename 'positional arguments' to 'commands'
 _parser_cliscan = argparse.ArgumentParser(prog=self_name, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
