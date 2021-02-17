@@ -33,7 +33,7 @@ from .dtposition import DTPosition
 _log = logging.getLogger('dtscan')
 _logging_format = "%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
-logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
+logging.basicConfig(level=logging.WARNING, format=_logging_format, datefmt=_logging_datetime)
 
 
 class DTScanner(object):

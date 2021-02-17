@@ -26,7 +26,7 @@ from .dtformats import datetime_formats
 _log = logging.getLogger('dtscan')
 _logging_format = "%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
-logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
+logging.basicConfig(level=logging.WARNING, format=_logging_format, datefmt=_logging_datetime)
 
 
 class DTRange(object):
@@ -83,6 +83,7 @@ class DTRange(object):
             offset_list[3] = arg_datetime_offset
             _log.warning("Use default 'd' arg_interval=(%s)" % str(arg_interval))
         arg_datetime = self.dtconvert.OffsetDateTime_DeltaYMWDhms(date_now, offset_list)
+        _log.debug(f"arg_datetime=({arg_datetime})")
         return arg_datetime
         #   }}}
 
@@ -95,6 +96,9 @@ class DTRange(object):
     #   TODO: 2020-12-23T19:19:06AEDT if arg_datetime_(start|end) are integers, set them to the current date, offset by that number of intervals prior (same behaviour as _scan_quickfilter -> code in which is to be replaced by call to this function)
     #   TODO: 2020-12-07T19:16:18AEDT begining of week is by default Sunday -> flag to use monday by default, parameter to specify start-day of week
     #   TODO: 2020-12-07T19:14:18AEDT unimplemented hourly/minutly/secondly (HMS of ymwdHMS)
+
+        arg_recieved_datetime_start = arg_datetime_start
+        arg_recieved_datetime_end = arg_datetime_end
 
         if isinstance(arg_interval, list):
             arg_interval = arg_interval[0]
@@ -174,6 +178,18 @@ class DTRange(object):
             arg_datetime_start = self._DTRange_Date_From_Integer(arg_datetime_start, arg_interval)
         if (isinstance(arg_datetime_end, int)):
             arg_datetime_end = self._DTRange_Date_From_Integer(arg_datetime_end, arg_interval)
+
+        #_log.debug(f"arg_datetime_start=({arg_datetime_start})")
+        #_log.debug(f"arg_datetime_end=({arg_datetime_end})")
+
+        if arg_datetime_end is None:
+            raise Exception(f"Invalid arg_datetime_end, arg_recieved_datetime_end=({arg_recieved_datetime_end}) use date or now[+-][int]")
+        if arg_datetime_start is None:
+            raise Exception(f"Invalid arg_datetime_start, arg_recieved_datetime_start=({arg_recieved_datetime_start}) use date or now[+-][int]")
+
+        if (abs((arg_datetime_end - arg_datetime_start).total_seconds()) < 1):
+            _log.debug("arg_datetime_start/arg_datetime_end within 1 sec, set equal")
+            arg_datetime_start = arg_datetime_end
 
         #   Require arg_datetime_start to not be after arg_datetime_end. Remove timezones to enable comparison to be made between any datetimes
         if (arg_datetime_start.replace(microsecond=0, tzinfo=None) > arg_datetime_end.replace(microsecond=0, tzinfo=None)):

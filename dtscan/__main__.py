@@ -20,7 +20,7 @@ __version__ = "0.2.1"
 _log = logging.getLogger(self_name)
 _logging_format = "%(funcName)s: %(levelname)s, %(message)s"
 _logging_datetime = "%Y-%m-%dT%H:%M:%S%Z"
-logging.basicConfig(level=logging.DEBUG, format=_logging_format, datefmt=_logging_datetime)
+logging.basicConfig(level=logging.WARNING, format=_logging_format, datefmt=_logging_datetime)
 
 #   Disable shtab debug output
 logging.getLogger("shtab").setLevel(logging.WARNING)
@@ -40,13 +40,16 @@ def cliscan():
     #   {{{
     _args = _parser_cliscan.parse_args()
 
+    if (_args.debug):
+        logging.getLogger('dtscan').setLevel(logging.DEBUG)
+
+    if (_args.regexfile):
+        dtscanner._resource_read_regexlist(_args.regexfile)
+
     if not hasattr(_args, 'func'):
         _log.error("No command given")
         _parser_cliscan.print_help()
         sys.exit(2)
-
-    if (_args.regexfile):
-        dtscanner._resource_read_regexlist(_args.regexfile)
 
     try:
         _args.func(_args)
@@ -156,11 +159,16 @@ def clirange():
     dtrange = DTRange()
     _Parsers_AssignFunc_clirange(dtrange)
     _args = _parser_clirange.parse_args()
+
+    if (_args.debug):
+        logging.getLogger('dtscan').setLevel(logging.DEBUG)
+
     if not hasattr(_args, 'func'):
         _log.error("No command given")
         _parser_cliscan.print_help()
         sys.exit(2)
     result_list = None
+
     try:
         dtrange.ParserUpdate_Vars_Paramaters(_args)
         result_list = _args.func(_args)
@@ -171,6 +179,7 @@ def clirange():
         except Exception as e:
             _log.error("%s, %s, failed to call print_help() after initial exception processing '_args.func(_args)'" % (str(type(e)), str(e)))
         sys.exit(2)
+
     if (result_list is None):
         _log.error("None result, exit")
         sys.exit(0)
