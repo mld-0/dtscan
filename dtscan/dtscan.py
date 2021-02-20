@@ -42,7 +42,7 @@ class DTScanner(object):
     dtconvert = DTConvert()
     dtrange = DTRange()
 
-    _splitlen_default = 300
+    _splitlen_default = 420
 
     #   substitute: _scan_column_delim
     _IFS = ""
