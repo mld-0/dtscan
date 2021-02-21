@@ -116,11 +116,13 @@ _subparser_cliscan_deltas.set_defaults(func=dtscanner.ParserInterface_Deltas)
 #   subparser splits
 _subparser_cliscan_splits = _subparsers_cliscan.add_parser('splits', description="")
 _subparser_cliscan_splits.add_argument('--splitlen', nargs=1, default=300, help="Maximum delta (seconds) to consider datetimes adjacent")
+_subparser_cliscan_splits.add_argument('--splitmin', nargs=1, default=None, help="Minimum delta")
 _subparser_cliscan_splits.set_defaults(func=dtscanner.ParserInterface_Splits)
 
 #   subparser splitsum
 _subparser_cliscan_splitsum = _subparsers_cliscan.add_parser('splitsum', description="")
 _subparser_cliscan_splitsum.add_argument('--splitlen', nargs=1, default=300, help="Maximum delta (seconds) to consider datetimes adjacent")
+_subparser_cliscan_splitsum.add_argument('--splitmin', nargs=1, default=None, help="Minimum delta")
 _subparser_cliscan_splitsum.add_argument('--interval', nargs=1, default="d", choices=['y', 'm', 'w', 'd', 'H', 'M', 'S'], help="Interval (ymwdHMS) for which to sum")
 _subparser_cliscan_splitsum.set_defaults(func=dtscanner.ParserInterface_SplitSum)
 

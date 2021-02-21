@@ -43,6 +43,7 @@ class DTScanner(object):
     dtrange = DTRange()
 
     _splitlen_default = 420
+    _splitlen_min = 60
 
     #   substitute: _scan_column_delim
     _IFS = ""
@@ -245,7 +246,7 @@ class DTScanner(object):
         #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
-        result_output = self.splits(_args.infile, _args.splitlen, _args.nodhms)
+        result_output = self.splits(_args.infile, _args.splitlen, _args.nodhms, _args.splitmin)
         scanmatch_splits_stream = self._util_ListAsStream(result_output)
         for loop_line in scanmatch_splits_stream:
             loop_line = loop_line.strip()
@@ -269,7 +270,7 @@ class DTScanner(object):
         #   {{{
         self.ParserUpdate_Vars_Paramaters(_args)
         self.ParserUpdate_Vars_Scan(_args)
-        result_list = self.splitsums(_args.infile, _args.nodhms, _args.interval, _args.splitlen)
+        result_list = self.splitsums(_args.infile, _args.nodhms, _args.interval, _args.splitlen, _args.splitmin)
         results_stream = self._util_ListOfListsAsStream(result_list)
         for loop_line in results_stream:
             loop_line = loop_line.strip()
@@ -361,7 +362,7 @@ class DTScanner(object):
         return count_results
         #   }}}
 
-    def splits(self, arg_infile, arg_splitlen, arg_nodhms):
+    def splits(self, arg_infile, arg_splitlen=None, arg_nodhms=False, arg_split_min=None):
         #   {{{
         """Scan, Identify deltas, and sum adjacent deltas of length < arg_splitlen."""
     #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
@@ -375,7 +376,7 @@ class DTScanner(object):
 
         results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
-        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen)
+        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen, arg_split_min )
 
         if (result_splits is None):
             raise Exception("result_splits is None")
@@ -402,7 +403,7 @@ class DTScanner(object):
             return scanmatch_delta_dhms
         #   }}}
 
-    def splitsums(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen):
+    def splitsums(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_split_min):
         #   {{{
         """Scan, Identify adjacent deltas of length < arg_splitlen, and sum results by arg_interval"""
     #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
@@ -416,7 +417,7 @@ class DTScanner(object):
 
         results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
-        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen)
+        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen, arg_split_min)
         splits_sum = self.dtrange.DTRange_SumSplits(result_splits, arg_interval, arg_nodhms)
         splits_sum = list(zip(*splits_sum))
         _input_file.close()
@@ -880,7 +881,7 @@ class DTScanner(object):
         return tempfile_stream_result
         #   }}}
 
-    def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split):
+    def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split, arg_split_min):
         #   {{{
         """Given a list of deltas (elapsed times between datetimes), identify those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
     #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
@@ -888,10 +889,16 @@ class DTScanner(object):
     #   TODO: 2020-11-25T18:22:27AEDT flag -> output delta quantities as Dhms instead of seconds
     #   Ongoing: 2020-11-24T21:28:36AEDT use Decimal anywhere (currently) float is being used to store seconds
     #   Ongoing: 2020-11-24T21:26:30AEDT (do we want to be) returning decimals instead of floats for elapsed/before/after -> (better solution presumedly being to) store as integer in microseconds, or using Python's builtin <datetime.delta>
+
         if isinstance(arg_split, list):
             arg_split = arg_split[0]
         if isinstance(arg_split, str):
             arg_split = decimal.Decimal(arg_split)
+        if isinstance(arg_split_min, list):
+            arg_split_min = arg_split_min[0]
+        if isinstance(arg_split_min, str):
+            arg_split_min = decimal.Decimal(arg_split_min)
+
         result_splits = []
         result_split_elapsed = []
         if (len(arg_deltalist) != len(arg_datetime_list)):
@@ -919,8 +926,9 @@ class DTScanner(object):
                 split.endtime = arg_datetime_list[loop_i - 1]
                 split.elapsed = loop_elapsed
 
-                result_splits.append(split)
-                result_split_elapsed.append(loop_elapsed)
+                if (arg_split_min is None) or (loop_elapsed >= arg_split_min):
+                    result_splits.append(split)
+                    result_split_elapsed.append(loop_elapsed)
 
                 split = DTSplit()
                 split.start_index = loop_i + 1
@@ -938,8 +946,9 @@ class DTScanner(object):
                 split.endtime = arg_datetime_list[loop_i - 1]
                 split.elapsed = loop_elapsed
 
-                result_splits.append(split)
-                result_split_elapsed.append(loop_elapsed)
+                if (arg_split_min is None) or (loop_elapsed >= arg_split_min):
+                    result_splits.append(split)
+                    result_split_elapsed.append(loop_elapsed)
 
                 split = DTSplit()
                 split.start_index = loop_i + 1
@@ -957,8 +966,9 @@ class DTScanner(object):
         split.endtime = arg_datetime_list[loop_i - 1]
         split.elapsed = loop_elapsed
 
-        result_splits.append(split)
-        result_split_elapsed.append(loop_elapsed)
+        if (arg_split_min is None) or (loop_elapsed >= arg_split_min):
+            result_splits.append(split)
+            result_split_elapsed.append(loop_elapsed)
 
         if (self._printdebug_func_outputs):
             _log.debug("len(result_splits)=(%i)" % len(result_splits))
