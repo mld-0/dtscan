@@ -403,7 +403,7 @@ class DTScanner(object):
             return scanmatch_delta_dhms
         #   }}}
 
-    def splitsums(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_split_min):
+    def splitsums(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_split_minimum=None):
         #   {{{
         """Scan, Identify adjacent deltas of length < arg_splitlen, and sum results by arg_interval"""
     #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
