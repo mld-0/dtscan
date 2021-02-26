@@ -362,7 +362,7 @@ class DTScanner(object):
         return count_results
         #   }}}
 
-    def splits(self, arg_infile, arg_splitlen=None, arg_nodhms=False, arg_split_min=None):
+    def splits(self, arg_infile, arg_splitlen=None, arg_nodhms=False, arg_split_minimum=None):
         #   {{{
         """Scan, Identify deltas, and sum adjacent deltas of length < arg_splitlen."""
     #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
@@ -376,7 +376,7 @@ class DTScanner(object):
 
         results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
-        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen, arg_split_min )
+        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen, arg_split_minimum )
 
         if (result_splits is None):
             raise Exception("result_splits is None")
@@ -417,7 +417,7 @@ class DTScanner(object):
 
         results_list = self.scan_datetimeitems(_input_file)
         scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s = results_list
-        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen, arg_split_min)
+        result_splits_elapsed, result_splits = self._split_deltas(scanmatch_datetimes, scanmatch_delta_s, arg_splitlen, arg_split_minimum)
         splits_sum = self.dtrange.DTRange_SumSplits(result_splits, arg_interval, arg_nodhms)
         splits_sum = list(zip(*splits_sum))
         _input_file.close()
@@ -881,7 +881,7 @@ class DTScanner(object):
         return tempfile_stream_result
         #   }}}
 
-    def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split, arg_split_min):
+    def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split, arg_split_minimum):
         #   {{{
         """Given a list of deltas (elapsed times between datetimes), identify those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
     #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
@@ -894,10 +894,10 @@ class DTScanner(object):
             arg_split = arg_split[0]
         if isinstance(arg_split, str):
             arg_split = decimal.Decimal(arg_split)
-        if isinstance(arg_split_min, list):
-            arg_split_min = arg_split_min[0]
-        if isinstance(arg_split_min, str):
-            arg_split_min = decimal.Decimal(arg_split_min)
+        if isinstance(arg_split_minimum, list):
+            arg_split_minimum = arg_split_minimum[0]
+        if isinstance(arg_split_minimum, str):
+            arg_split_minimum = decimal.Decimal(arg_split_minimum)
 
         result_splits = []
         result_split_elapsed = []
@@ -926,7 +926,7 @@ class DTScanner(object):
                 split.endtime = arg_datetime_list[loop_i - 1]
                 split.elapsed = loop_elapsed
 
-                if (arg_split_min is None) or (loop_elapsed >= arg_split_min):
+                if (arg_split_minimum is None) or (loop_elapsed >= arg_split_minimum):
                     result_splits.append(split)
                     result_split_elapsed.append(loop_elapsed)
 
@@ -946,7 +946,7 @@ class DTScanner(object):
                 split.endtime = arg_datetime_list[loop_i - 1]
                 split.elapsed = loop_elapsed
 
-                if (arg_split_min is None) or (loop_elapsed >= arg_split_min):
+                if (arg_split_minimum is None) or (loop_elapsed >= arg_split_minimum):
                     result_splits.append(split)
                     result_split_elapsed.append(loop_elapsed)
 
@@ -966,7 +966,7 @@ class DTScanner(object):
         split.endtime = arg_datetime_list[loop_i - 1]
         split.elapsed = loop_elapsed
 
-        if (arg_split_min is None) or (loop_elapsed >= arg_split_min):
+        if (arg_split_minimum is None) or (loop_elapsed >= arg_split_minimum):
             result_splits.append(split)
             result_split_elapsed.append(loop_elapsed)
 
