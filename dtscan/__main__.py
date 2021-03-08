@@ -16,6 +16,8 @@ self_name = "dtscan"
 self_name_dtrange = "dtrange"
 __version__ = "0.2.1"
 
+#   TODO: 2021-03-06T20:55:38AEDT scandir -> option, non-recursive
+
 #   debug logging
 _log = logging.getLogger(self_name)
 _logging_format = "%(funcName)s: %(levelname)s, %(message)s"
@@ -116,7 +118,7 @@ _subparser_cliscan_deltas.set_defaults(func=dtscanner.ParserInterface_Deltas)
 #   subparser splits
 _subparser_cliscan_splits = _subparsers_cliscan.add_parser('splits', description="")
 _subparser_cliscan_splits.add_argument('--splitlen', nargs=1, default=300, help="Maximum delta (seconds) to consider datetimes adjacent")
-_subparser_cliscan_splits.add_argument('--splitmin', nargs=1, default=None, help="Minimum delta")
+_subparser_cliscan_splits.add_argument('--splitmin', nargs=1, default=0, help="Minimum delta")
 _subparser_cliscan_splits.set_defaults(func=dtscanner.ParserInterface_Splits)
 
 #   subparser splitsum

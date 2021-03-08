@@ -883,7 +883,7 @@ class DTScanner(object):
 
     def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split, arg_split_minimum):
         #   {{{
-        """Given a list of deltas (elapsed times between datetimes), identify those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
+        """Given a list of deltas (elapsed times between datetimes), identify and group those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
     #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
     #   TODO: 2020-12-09T22:23:19AEDT Replace split_table (list) with dictionary, indexes 0-7 with descriptive keys
     #   TODO: 2020-11-25T18:22:27AEDT flag -> output delta quantities as Dhms instead of seconds
