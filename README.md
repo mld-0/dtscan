@@ -27,10 +27,15 @@ Run 'pip install .' in project directory
 Some commands begin where another function finishes, i.e: 'deltas/count' process results of 'matches'
 
 scan - read text, perform updates available by all our subsiquent commands, and outputs result
+
 matches - outputs list of strings identified as datetimes, optionally including their locations in input
+
 count - count the number of datetimes which fall in each given interval (ymwdHMS) between first and last datetime in input
+
 deltas - output difference in (s/dHMS) between subsiquent datetimes
+
 splits - group subsiqent datetimes together if the delta between them is less than a given value, both counting and summing all such deltas
+
 splitsum - output sum of splits identified for each given interval (ymwdHMS) between first and last datetime in input
 
 previous command, (to be implemented) 'uniques' (how? caller of dtscan? perl/xargs? don't tell me there isn't a tool for just such a thing), perform the given command once for each line containing a common value in a given column
