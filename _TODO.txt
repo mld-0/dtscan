@@ -1,0 +1,3 @@
+TODO: 2021-09-06T22:11:31AEST dtscan, test_scandir fails when running from /tmp/dtscan
+Ongoing: 2021-09-06T22:13:04AEST dtscan, (which is enourmously slow) has what purpouse (considering functionality defined in tests, <...>)
+TODO: 2021-09-06T22:14:43AEST dtscan, update 'master' to given (current) version
