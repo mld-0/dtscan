@@ -290,8 +290,8 @@ class DTScanner(object):
     #    #   }}}
 
     def scan(self, arg_infile):
-        #   {{{
         """Read stream, and optionally (as per self._scan_(.*) vars) sort, quickfilter (filter dates without parsing), rangefilter (filter dates with parsing), and/or replace with given format (unimplemented)"""
+        #   {{{
         self._sorted_match_positions = None
         self._sorted_match_datetimes = None
         self._sorted_match_output_datetimes = None
@@ -317,8 +317,8 @@ class DTScanner(object):
         #   }}}
 
     def matches(self, arg_infile, arg_pos):
-        #   {{{
         """Scan input, get list of matches, and output, optionally with position of said matches. Output either as stream, or list of matches (and positions). Output columns: {0,1,2,3,4,5,6} = {match, """
+        #   {{{
     #   Ongoing: 2021-02-13T21:38:39AEDT different return types (presumedly) being bad
     #   Continue: 2021-02-13T01:39:12AEDT Seperate 'return' scanmatch_positions from 'print' positions -> ParserInterface_Matches should handle conversion to output, matches() should return list of DTPositions, and instead of _matches_addpositions() result -> return [ scanmatch_output_text, scanmatch_positions ], (and let parser function handle conversion from that to cli output columns)
     #   TODO: 2020-12-08T23:38:04AEDT argument to print results in given dt format
@@ -348,8 +348,8 @@ class DTScanner(object):
         #   }}}
 
     def count(self, arg_infile, arg_interval):
-        #   {{{
         """Scan, and Count datetime instances by interval."""
+        #   {{{
         _input_file = self.scan(arg_infile)
 
         results_list = self.scan_datetimeitems(_input_file)
@@ -363,8 +363,8 @@ class DTScanner(object):
         #   }}}
 
     def splits(self, arg_infile, arg_splitlen=None, arg_nodhms=False, arg_split_minimum=None):
-        #   {{{
         """Scan, Identify deltas, and sum adjacent deltas of length < arg_splitlen."""
+        #   {{{
     #   TODO: 2021-01-29T23:53:24AEDT where a list is returned in place of a stream -> use list of lists, with an element for each value from a given result <- should be only thing returned, conversion to string/stream handled by non '_' function
     #   TODO: 2021-01-29T22:23:25AEDT Output list-of-dicts -> conversion of each item to stream being handled (by call to a utility function) in ParserInterface_Splits
     #   TODO: 2021-01-29T22:03:21AEDT return List from _Interface Methods -> Interface methods perform conversion to stream
@@ -389,8 +389,8 @@ class DTScanner(object):
         #   }}}
 
     def deltas(self, arg_infile, arg_nodhms):
-        #   {{{
         """Scan, Identify deltas, and output."""
+        #   {{{
     #   TODO: 2020-11-30T21:09:09AEDT avoid scanning same stream twice - keep results of scan, along with corresponding line numbers (later useable for whichever lines haven't been removed)
         _input_file = self.scan(arg_infile)
         results_list = self.scan_datetimeitems(_input_file)
@@ -404,8 +404,8 @@ class DTScanner(object):
         #   }}}
 
     def splitsums(self, arg_infile, arg_nodhms, arg_interval, arg_splitlen, arg_split_minimum=None):
-        #   {{{
         """Scan, Identify adjacent deltas of length < arg_splitlen, and sum results by arg_interval"""
+        #   {{{
     #   TODO: 2021-01-25T21:19:09AEDT arg_interval has a default value of 'd'
     #   TODO: 2021-01-25T21:05:23AEDT arg_nodhms should be a class option
         #   list of streams from scan,
@@ -426,8 +426,8 @@ class DTScanner(object):
         #   }}}
 
     def scandir_datetimeitems(self, arg_dir):
-        #   {{{
         """Get list of lines from files in dir containing datetimes within 'Scan' range, and corresponding filenames and linenums"""
+        #   {{{
     #   Continue: 2021-02-13T22:40:06AEDT scandir tests
     #   Ongoing: 2021-02-06T21:15:57AEDT 'scandir' has no tests, and no parser
         results_filepaths = []
@@ -499,8 +499,8 @@ class DTScanner(object):
         raise Exception("ReplaceDTs unimplemented")
 
     def scan_datetimeitems(self, arg_stream):
-        #   {{{
         """Scan stream, identifying items matching regex-for-datetime, and returning list of lists [ scanmatch_output_text, scanmatch_datetimes, scanmatch_text, scanmatch_positions, scanmatch_delta_s ]."""
+        #   {{{
 
         #   TODO: 2020-10-12T18:38:58AEDT removing (possible) duplicates from results -> do not allow item to be added to scanstream_regexlist if it is (partially/completely?) contained within a prior result.
 
@@ -635,8 +635,8 @@ class DTScanner(object):
         #   }}}
 
     def _scan_quickfilter(self, arg_input_stream, arg_date_start, arg_date_end, arg_interval):
-        #   {{{
         """Copy input stream, keeping only lines with datetimes (identified as text %Y, %Y-%m, %Y-%m-%d) which fall inside given date range, for start/end and interval [ymd]."""
+        #   {{{
     #   TODO: 2021-02-06T20:58:00AEDT If given self._scan_column, limit filtering to strings within said column of input
     #   TODO: 2020-12-23T19:17:35AEDT 2020-12-07T18:42:28AEDT Replace datetime range generation code with call to DTRange_FromDates()
     #   TODO: 2020-11-25T16:14:04AEDT code to write stream to temp file -> used (duplicatate) by both FilterDateTimes_FastFilter() and FilterDateTimes_ScanStream(), place in dedicated function
@@ -736,8 +736,8 @@ class DTScanner(object):
         #   }}}
 
     def _scan_rangefilter(self, arg_input_stream, arg_start, arg_end, arg_invert=False, arg_includeNonDTs=False):
-        #   {{{
         """Copy input stream, parsing datetimes and keeping only lines containing datetimes falling between given start/end."""
+        #   {{{
     #   TODO: 2020-10-19T13:46:43AEDT Create _path_temp_dir on dtscan start, (delete anything inside older than 24h upon dtscan exit)
     #   Note: 2020-10-19T13:26:34AEDT arg_input_stream must be a seekable stream -> if input has been recieved from stdin, it (must/should?) be written to a temp file, and the stream of that file passed to function.
         func_name = inspect.currentframe().f_code.co_name
@@ -882,8 +882,8 @@ class DTScanner(object):
         #   }}}
 
     def _split_deltas(self, arg_datetime_list, arg_deltalist, arg_split, arg_split_minimum):
-        #   {{{
         """Given a list of deltas (elapsed times between datetimes), identify and group those which are sepereated by less than arg_split, returning [ result_split_elapsed, result_splits ]."""
+        #   {{{
     #   Ongoing: 2020-12-16T14:14:59AEDT start/end in splittable refer to split number, *not* line number
     #   TODO: 2020-12-09T22:23:19AEDT Replace split_table (list) with dictionary, indexes 0-7 with descriptive keys
     #   TODO: 2020-11-25T18:22:27AEDT flag -> output delta quantities as Dhms instead of seconds
@@ -1037,8 +1037,8 @@ class DTScanner(object):
         #   }}}
 
     def _matches_addpositions(self, scanmatch_output_text, scanmatch_positions):
-        #   {{{
         """Given lists scanmatch_output_text, scanmatch_positions, produce and return scanmatch_outputTextAndPosition, which has elements for each match: {}"""
+        #   {{{
         scanmatch_outputTextAndPosition = []
         if (len(scanmatch_output_text) != len(scanmatch_positions)):
             raise Exception("mismatch, len(scanmatch_output_text)=(%i), len(scanmatch_positions)=(%i)" % (len(scanmatch_output_text), len(scanmatch_positions)))
@@ -1075,8 +1075,8 @@ class DTScanner(object):
     #   TODO: 2021-02-06T21:00:49AEDT util functions (to seperate class?) as static methods
 
     def _util_MakeStreamSeekable(self, arg_stream, arg_force=False):
-        #   {{{
         """Copy a given stream to a tempfile and return stream of tempfile. Closes arg_stream. If arg_force is False, return input stream if it is seekable, if True, create new stream regardless"""
+        #   {{{
         func_name = inspect.currentframe().f_code.co_name
         if (arg_stream.seekable()) and not (arg_force):
             return arg_stream
@@ -1107,8 +1107,8 @@ class DTScanner(object):
         #   }}}
 
     def _util_CombineStreamList(self, arg_stream_list, flag_keepOpen=False):
-        #   {{{
         """Given a list of streams, create and return single stream containing combined data from all streams"""
+        #   {{{
         if (arg_stream_list is None):
             return None
         if isinstance(arg_stream_list, io.TextIOWrapper):
@@ -1124,8 +1124,8 @@ class DTScanner(object):
         #   }}}
 
     def _util_ListAsStream(self, arg_list):
-        #   {{{
         """Create and return a (tempfile based) stream from a list"""
+        #   {{{
         result_string = ""
         if (arg_list is None):
             return None
@@ -1136,8 +1136,8 @@ class DTScanner(object):
         #   }}}
 
     def _util_ListOfListsAsStream(self, arg_list):
-        #   {{{
         """Combine list-of-lists into string, one line per output list, and inner list items delimited by _delim, unless inner 'list' is actually string"""
+        #   {{{
     #   TODO: 2020-12-09T19:47:36AEDT use delim from <>?
         result_string = ""
         _delim = "\t"
@@ -1155,8 +1155,8 @@ class DTScanner(object):
         #   }}}
 
     def _resource_read_regexlist(self, arg_regexfile=None):
-        #   {{{
         """Read resource self._scan_regexfile, list of regex-as-strings (as well as arg_regexfile if given) to append to list self._scan_regexlist."""
+        #   {{{
         self._scan_regexlist = []
 
         fid = None
