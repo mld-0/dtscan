@@ -60,8 +60,8 @@ class DTRange(object):
         #   }}}
 
     def _DTRange_Date_From_Integer(self, arg_datetime_offset, arg_interval):
-        #   {{{
         """Given an integer, and an interval [ymwdHMS], subtract given number of intervals from current datetime"""
+        #   {{{
         date_now = datetime.now()
         arg_datetime_offset = arg_datetime_offset
         offset_list = [0] * 7
