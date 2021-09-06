@@ -154,8 +154,8 @@ class Test_CliScan(unittest.TestCase):
         return path_scandir
 
     def read_scandir_datetimeitems_transposedlist_file(self, path_checkfile):
-        #   {{{
         """Read results of scandir_datetimeitems_results_to_transposedlist() (with surrounding '()' removed) into list-of-lists matching origional output of scandir_datetimeitems()"""
+        #   {{{
         check_list = []
         _delim = '\t'
         f = open(path_checkfile, "r")
@@ -177,8 +177,8 @@ class Test_CliScan(unittest.TestCase):
         #   }}}
 
     def scandir_datetimeitems_results_to_transposedlist(self, results_test):
-        #   {{{
         """Output results of scandir_datetimeitems in such a way that (with surrounding '()' removed), read_scandir_datetimeitems_transposedlist_file() can read them into an identical list of lists"""
+        #   {{{
         results_test = list(zip(*results_test))
         for loop_result in results_test:
             loop_line = ""
