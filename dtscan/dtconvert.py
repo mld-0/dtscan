@@ -68,8 +68,8 @@ class DTConvert(object):
         #   }}}
 
     def Convert_DateTimes2Delta_YMWDhms(self, arg_datetime_start, arg_datetime_end):
-        #   {{{
         """Given two python datetimes, calculate the difference between them using dateutil.relativedelta, and return as 'YMWDhms' string"""
+        #   {{{
     #   Continue: 2020-10-09T22:33:52AEDT Conversion between years/months/weeks/ect is more than we want to handle <- ask python('s relativedelta) for <>
         if (self._printdebug_func_inputs) and (self._printdebug_func_includeConvert):
             _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
@@ -140,14 +140,14 @@ class DTConvert(object):
         #   }}}
 
     def Convert_seconds2WDhms(self, arg_seconds):
-        #   {{{
         """Wrapper (for) Convert_seconds2Dhms"""
+        #   {{{
         return self.Convert_seconds2Dhms(arg_seconds, arg_include_W=True)
         #   }}}
 
     def Convert_seconds2Dhms(self, arg_seconds, arg_include_W=False):
-        #   {{{
         """Convert seconds value to a string %iD%ih%im%ds, (days, hours, minutes, seconds), (optionally including weeks) of equivelent time."""
+        #   {{{
     #   Status: 2020-10-19T01:03:43AEDT Untested
     #   Created: 2020-10-19T01:03:22AEDT Copied from Convert_seconds2WDhms(), with 'W' list value removed
         if (arg_seconds is not int):
@@ -204,8 +204,8 @@ class DTConvert(object):
         #   }}}
 
     def Convert_DateTime2String(self, arg_datetime):
-        #   {{{
         """Convert a python datetime to a string representation, using iso-format with %Z timezone. Decimal seconds and timezone only includeded if applicable. If self.flag_dt2str_prefer_tz_Z is False, revert to datetime.isoformat()."""
+        #   {{{
     #   Ongoing: 2020-11-18T18:40:19AEDT only include as many decimal figures as are non-zero for microseconds?
         flag_strip_trailing_decimalZeros = True
         result_datetime_str = ""
@@ -223,8 +223,8 @@ class DTConvert(object):
         #   }}}
 
     def Convert_string2DateTime(self, arg_datetime_str):
-        #   {{{
         """Handle conversion of string identified-as-datetime to python datetime by attempting conversion with series of assorted parser functions"""
+        #   {{{
     #   TODO: 2020-12-28T18:43:19AEST dtscan, Convert_string2DateTime -> (test oriented rewrite), focused around correct handeling of datetimes
         parse_result = None
         #   TODO: 2020-10-12T22:22:38AEDT Decimal timestamps?
@@ -299,8 +299,8 @@ class DTConvert(object):
         #   }}}
 
     def _Convert_string2DateTime_AssumeTimeZone(self, result_datetime):
-        #   {{{
         """If a datetime does not contain timezone information, determine the local timezone as of the given datetime (daylight saving is set according to date), add this timezone information to datetime variable, and return."""
+        #   {{{
         if not (result_datetime.tzinfo is None) and not isinstance(result_datetime.tzinfo, dateutil.tz.tzoffset):
             if (self._printdebug_func_outputs) and (self._printdebug_func_includeConvert):
                 _log.debug("Not None tzinfo/tzoffset, Done" % str(result_datetime.tzinfo))
@@ -319,8 +319,8 @@ class DTConvert(object):
         #   }}}
 
     def Convert_DateTimes2Delta_s(self, arg_datetime_start, arg_datetime_end):
-        #   {{{
         """Given two python datetimes, determine and return number of seconds (including decimals if applicable) between them."""
+        #   {{{
         if (self._printdebug_func_inputs) and (self._printdebug_func_includeConvert):
             _log.debug("arg_datetime_start=(%s)" % str(arg_datetime_start))
             _log.debug("arg_datetime_end=(%s)" % str(arg_datetime_end))
@@ -342,8 +342,8 @@ class DTConvert(object):
         #   }}}
 
     def Convert_string2Delta_YMWDhms(self, arg_delta_str, arg_delta_setdirection=None, arg_delta_strict_format_parsing=False):
-        #   {{{
         """Given a string, 'YMWDhms' delta, parse 7 digits, taken from imediately before coresponding letters. Match performed with regex, if multiple matches are found in input, they are combined (with warning) if they do not contain duplicate values. (Presumedly this approach is overly complication, and better would be to clearly define what is allowable as a ymwdhms string - the reason for which being to allow mismatched use of case for 'ymwdhms' to be deciphered relying on order of values)."""
+        #   {{{
     #   {{{
     #   Rules for negative values:
     #       '-' at start -> entire delta (each number in YMWDhms) is negative, otherwise they are positive,
@@ -591,8 +591,8 @@ class DTConvert(object):
         #   }}}
 
     def Convert_SplitListItem2String(self, arg_splitlist_item, arg_nodhms=False, arg_fixed_width=False):
-        #   {{{
         """Given a split (info on a group of adjacent datetimes) (as a list, [0,1,2,3,4,5,6]=[startindex, endindex, count, elapsed, starttime, endtime, before, after]), convert to a string, either as a fixed width of 98chars, or variable width with self._OFS as delim."""
+        #   {{{
     #   TODO: 2020-11-30T00:13:20AEDT a split should be an itterable object, storing columns of the split as a dictionary, and this method provided as the 'to-string
         _delim = self._OFS
 
@@ -615,8 +615,8 @@ class DTConvert(object):
         #   }}}
 
     def OffsetDateTime_DeltaYMWDhms(self, arg_datetime, arg_YMWDhms):
-        #   {{{
         """Given a datetime (either string or python datetime), and 'delta' (as either seconds, or ymwdhms as string/list), add delta to datetime and return resulting datetime."""
+        #   {{{
         #   Convert arg_YMWDhms to (7 value) list (arg_YMWDhms as last element) if it is a number (presumed to be seconds)
         #   {{{
         if (isinstance(arg_YMWDhms, float)):
