@@ -78,8 +78,8 @@ previous command, (to be implemented) 'uniques' (how? caller of dtscan? perl/xar
 		--historic
 
 # unused:
-#	quickfilter range, intervals before now
-#		--qfnum
+quickfilter range, intervals before now
+	--qfnum
 
 TODO: 2020-12-14T19:22:24AEDT qfstart/qfend - support for epochs, (various) seperators between '%F' and '%H/%M/%S'
 
