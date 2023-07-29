@@ -1,5 +1,7 @@
 #	dtscan (Date-Time Scanner)
 
+UPDATE: 2023-07-29T22:15:07AEST consider this an example of how not to write something. See 'mld-0/datetimescan' for a much better (less offensive code, running at a less offensive speed) re-write of this utility.
+
 Python cli utility, identify/convert/analyse datetimes in text. 
 
 ##	Getting Started
